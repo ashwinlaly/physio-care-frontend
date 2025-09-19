@@ -24,6 +24,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: DEBUG - Check if secret is present
+        run: |
+          if [ -z "${{ secrets.GCP_SA_KEY }}" ]; then
+            echo "Error: The GCP_SA_KEY secret is not available or is empty."
+            exit 1
+          else
+            echo "Success: The GCP_SA_KEY secret was found."
+          fi
+          
       - name: Authenticate to Google Cloud
         id: auth
         uses: 'google-github-actions/auth@v1'
