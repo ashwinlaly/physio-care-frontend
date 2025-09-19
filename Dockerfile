@@ -27,11 +27,16 @@ FROM nginx:1.23-alpine
 # Note: Vite builds to a 'dist' folder. If you used Create React App, it would be 'build'.
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Copy our custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN mkdir -p /etc/nginx/template
 
-# Expose port 80 to the outside world
-EXPOSE 80
+# Copy our custom Nginx configuration
+COPY nginx.conf.template /etc/nginx/template/nginx.conf.template
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
 
 # The command to start Nginx when the container launches
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/start.sh"]
