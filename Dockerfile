@@ -25,7 +25,7 @@ FROM nginx:1.23-alpine
 
 # Copy the built static files from the 'builder' stage
 # Note: Vite builds to a 'dist' folder. If you used Create React App, it would be 'build'.
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Copy our custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
