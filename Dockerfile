@@ -1,15 +1,15 @@
 # ---- Stage 1: Build the React App ----
 # Use an official Node.js image as the builder environment
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 # Set the working directory inside the container
 WORKDIR /app
-
+RUN apk add --no-cache python3 make g++
 # Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install
+RUN npm ci
 
 # Copy the rest of the application's source code
 COPY . .
@@ -39,4 +39,4 @@ RUN chmod +x /start.sh
 EXPOSE 8080
 
 # The command to start Nginx when the container launches
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
