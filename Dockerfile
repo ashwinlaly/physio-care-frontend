@@ -33,7 +33,7 @@ COPY --from=builder /app/build /usr/share/nginx/html
 RUN mkdir -p /etc/nginx/template
 
 # Copy our custom Nginx configuration
-COPY nginx.conf.template /etc/nginx/template/nginx.conf.template
+COPY nginx.conf.template /etc/nginx/templates/nginx.conf.template
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
