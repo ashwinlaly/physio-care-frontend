@@ -4,6 +4,7 @@ FROM node:20-alpine as builder
 
 # Set the working directory inside the container
 WORKDIR /app
+RUN apk add --no-cache gettext
 RUN apk add --no-cache python3 make g++
 # Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./
