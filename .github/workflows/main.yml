@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   # Example: us-central1
-  REGION: 'asia-south1'
+  REGION: 'asia-southeast1'
   # The name of your Artifact Registry repository
   REPO_NAME: 'icure-frontend'
   # The name you want for your Cloud Run service
