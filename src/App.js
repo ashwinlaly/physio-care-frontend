@@ -3,7 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './features/auth/LoginPage';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { AppLayout } from './components/AppLayout';
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme, Typography } from '@mui/material';
+import Home from './webpage/components/Home';
+
+import {PatientSearchAndSelect} from './features/patients/PatientSearchAndSelect';
+import { NewPatientForm } from './features/patients/NewPatientForm';
+import { AssessmentForm } from './features/patients/AssessmentForm';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const theme = createTheme({
   palette: {
@@ -32,31 +39,36 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-function App() {
+function App() {  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardPage />} />
-            <Route path="masters" element={<div>Masters Page</div>} />
-            <Route path="patient" element={<div>Patient Management Page</div>} />
-            <Route path="patients" element={<div>Patients Management Page</div>} />
-            <Route path="appointments" element={<div>Appointments Page</div>} />
-            <Route path="financial" element={<div>Financial Page</div>} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Home />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardPage />} />
+              <Route path="masters" element={<div>Masters Page</div>} />
+              
+              <Route path="patients" element={<PatientSearchAndSelect />} />
+              <Route path="patients/new" element={<NewPatientForm/>} />
+              <Route path="patients/:patientId/assessment" element={<AssessmentForm />} />
+
+              <Route path="appointments" element={<div>Appointments Page</div>} />
+              <Route path="financial" element={<div>Financial Page</div>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }
