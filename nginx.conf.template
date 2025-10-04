@@ -6,16 +6,27 @@ server {
   root /usr/share/nginx/html;
   index index.html index.htm;
 
-  # This is the key part for a Single-Page Application (SPA)
-  # It tries to find the file requested, then a directory,
-  # and if it fails, it falls back to serving /index.html.
   location / {
+    # This is the key part for a Single-Page Application (SPA)
+    # It tries to find the file requested, then a directory,
+    # and if it fails, it falls back to serving /index.html.
     try_files $uri $uri/ /index.html;
+
+    # IMPORTANT: Ensure index.html is NOT cached aggressively.
+    # It must always be fetched fresh or revalidated to pick up new asset hashes.
+    if ($uri = /index.html) {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
   }
 
-  # Optional: Improve caching for static assets
-  location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+  # Improve caching for static assets (hashed JS, CSS, images, fonts, etc.)
+  # These files typically have unique hashes in their names, making long-term caching safe.
+  location ~* \.(?:ico|css|js|gif|jpe?g|png|webp|svg|woff2?|eot|ttf|otf)$ {
     expires 1y;
-    add_header Cache-Control "public";
+    add_header Cache-Control "public, immutable"; # 'immutable' hints browser not to revalidate
+    # Add CORS headers if you're serving these from a different domain or CDN
+    # add_header Access-Control-Allow-Origin "*";
   }
 }
