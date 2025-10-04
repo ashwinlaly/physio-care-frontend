@@ -148,7 +148,7 @@ function ContactUsSection() {
           <Grid item xs={12} md={6}>
             <Box sx={{ textAlign: 'left' }}>
               <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}>
-                Find Us
+                Find Us - v1
               </Typography>
               
               <Card sx={{ 
@@ -164,7 +164,7 @@ function ContactUsSection() {
               }}>
                 <LocationOnIcon sx={{ fontSize: 60, mb: 1 }} />
                 <Typography variant="h6">Icure Physiotherapy</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>123 Health Street, Medical City</Typography>
+                <Typography variant="body2" sx={{ mb: 1 }}>city</Typography>
                 <Link href="https://maps.app.goo.gl/RTQBmQ3S7AGdqpfQ7" target="_blank" rel="noopener noreferrer" 
                   sx={{ color: 'white', textDecoration: 'underline', '&:hover': { color: 'white', textDecoration: 'none' } }}>
                   Click to view on Google Maps

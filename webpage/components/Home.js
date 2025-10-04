@@ -40,7 +40,6 @@ function Home() {
         <ServicesSection />
         <FeaturedBlogSection />
         <ContactUsSection />
-        {/* Potentially a Footer component would go here */}
       </Box>
     </ThemeProvider>
   );
