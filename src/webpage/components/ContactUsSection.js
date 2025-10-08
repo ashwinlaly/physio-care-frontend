@@ -58,7 +58,7 @@ function ContactUsSection() {
           mx: 'auto',
           fontSize: { xs: '1rem', md: '1.25rem' }
         }}>
-          Get in touch with our team to schedule your appointment or learn more about our services
+          Get in touch with our team 
         </Typography>
 
         <Grid container spacing={{ xs: 5, md: 8 }}>
