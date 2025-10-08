@@ -22,19 +22,17 @@ import {
   People,
   PersonAdd,
   Receipt,
-  Assessment,
   ExitToApp,
   AccountCircle,
   MedicalServices,
-  DirectionsRun,
-  AirlineSeatIndividualSuite,
 } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/' },
+  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
   { text: 'New Patient', icon: <MedicalServices />, path: '/patients/new' },
   { text: 'Patient Details', icon: <People />, path: '/patients' },
   { text: 'Appointments', icon: <PersonAdd />, path: '/appointments' },
@@ -46,6 +44,7 @@ export const AppLayout = () => {
   // This is the line that likely caused the error. We ensure it's correct here.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +57,11 @@ export const AppLayout = () => {
   const handleLogout = () => {
     console.log('Logging out...');
     handleClose();
-    navigate('/login');
+    navigate('/');
+  };
+
+  const handleSideBar = () => {
+    setDrawerOpen((prev) => !prev);
   };
 
   return (
@@ -66,8 +69,11 @@ export const AppLayout = () => {
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
+          <IconButton onClick={handleSideBar} sx={{ mr: 2 }}>
+            <MenuIcon  />
+          </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          ICare Physio
+            ICare Physio
           </Typography>
           <div>
             <Tooltip title="Account settings">
@@ -91,7 +97,9 @@ export const AppLayout = () => {
         </Toolbar>
       </AppBar>
       <Drawer
-        variant="permanent"
+        variant="temporary"
+        open={drawerOpen}
+        onClose={handleSideBar}
         sx={{
           width: drawerWidth,
           flexShrink: 0,

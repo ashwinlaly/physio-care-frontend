@@ -173,6 +173,18 @@ export const AssessmentForm = () => {
     setCurrentTab(newValue);
   };
 
+  const MAP = {
+    name: "my-body-map",
+    areas: [
+      { name: "head", shape: "poly", coords: [180,50,220,50,220,100,180,100], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Head" } },
+      { name: "left-arm", shape: "rect", coords: [100,150,120,250], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Left Arm" } },
+      { name: "right-arm", shape: "rect", coords: [280,150,300,250], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Right Arm" } },
+      { name: "torso", shape: "poly", coords: [150,100,250,100,250,300,150,300], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Torso" } },
+      // Add more areas for other body parts
+    ]
+  };
+
+
   return (
     // Removed justifyContent, alignItems, and maxWidth from the outer Box
     <Box sx={{
@@ -232,84 +244,88 @@ export const AssessmentForm = () => {
               <Typography variant="h6" gutterBottom color="primary">
                 2. Chief Complaint
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Controller
-                    name="chiefComplaintOnset"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="When did the problem start?"
-                        fullWidth
-                        required
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.chiefComplaintOnset}
-                        helperText={errors.chiefComplaintOnset?.message}
-                      />
-                    )}
-                  />
+                <Grid container spacing={2} mb={2}>
+                  <Grid item size={6} xs={6} sm={6}  >
+                    <Controller
+                      name="chiefComplaintOnset"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="When did the problem start?"
+                          fullWidth
+                          required
+                          multiline
+                          rows={1}
+                          variant="outlined"
+                          error={!!errors.chiefComplaintOnset}
+                          helperText={errors.chiefComplaintOnset?.message}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item  size={6} xs={6} sm={6} >
+                    <Controller
+                      name="chiefComplaintWorse"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="What makes the problem worse?"
+                          fullWidth
+                          required
+                          multiline
+                          rows={1}
+                          variant="outlined"
+                          error={!!errors.chiefComplaintWorse}
+                          helperText={errors.chiefComplaintWorse?.message}
+                        />
+                      )}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="chiefComplaintWorse"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="What makes the problem worse?"
-                        fullWidth
-                        required
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.chiefComplaintWorse}
-                        helperText={errors.chiefComplaintWorse?.message}
-                      />
-                    )}
-                  />
+                <Grid  container spacing={2} mb={2}>
+                  <Grid item size={6} xs={6} sm={6}  >
+                    <Controller
+                      name="chiefComplaintBetter"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="What makes the problem better?"
+                          fullWidth
+                          required
+                          multiline
+                          rows={1}
+                          variant="outlined"
+                          error={!!errors.chiefComplaintBetter}
+                          helperText={errors.chiefComplaintBetter?.message}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item size={6} xs={6} sm={6}  >
+                    <Controller
+                      name="chiefComplaintTreatment"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Have you had any previous treatments for this problem?"
+                          fullWidth
+                          required
+                          multiline
+                          rows={1}
+                          variant="outlined"
+                          error={!!errors.chiefComplaintTreatment}
+                          helperText={errors.chiefComplaintTreatment?.message}
+                        />
+                      )}
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="chiefComplaintBetter"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="What makes the problem better?"
-                        fullWidth
-                        required
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.chiefComplaintBetter}
-                        helperText={errors.chiefComplaintBetter?.message}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="chiefComplaintTreatment"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Have you had any previous treatments for this problem?"
-                        fullWidth
-                        required
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.chiefComplaintTreatment}
-                        helperText={errors.chiefComplaintTreatment?.message}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} size={12}>
                   <Controller
                     name="chiefComplaintDescription"
                     control={control}
@@ -328,7 +344,7 @@ export const AssessmentForm = () => {
                     )}
                   />
                 </Grid>
-              </Grid>
+                </Grid>
             </Box>
 
             <Divider />
@@ -338,213 +354,235 @@ export const AssessmentForm = () => {
               <Typography variant="h6" gutterBottom color="primary">
                 3. Pain Evaluation
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painOnset"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Onset of Pain"
-                        fullWidth
-                        variant="outlined"
-                        error={!!errors.painOnset}
-                        helperText={errors.painOnset?.message}
+              <Grid container spacing={2} mb={2}>
+                <Grid item size={8}>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item size={6} xs={12} sm={12}>
+                      <Controller
+                        name="painOnset"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Onset of Pain"
+                            fullWidth
+                            variant="outlined"
+                            error={!!errors.painOnset}
+                            helperText={errors.painOnset?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painDuration"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Duration of Pain"
-                        fullWidth
-                        variant="outlined"
-                        error={!!errors.painDuration}
-                        helperText={errors.painDuration?.message}
+                    </Grid>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painDuration"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Duration of Pain"
+                            fullWidth
+                            variant="outlined"
+                            error={!!errors.painDuration}
+                            helperText={errors.painDuration?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painLocation"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Pain Location"
-                        fullWidth
-                        variant="outlined"
-                        error={!!errors.painLocation}
-                        helperText={errors.painLocation?.message}
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item  size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painLocation"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Pain Location"
+                            fullWidth
+                            variant="outlined"
+                            error={!!errors.painLocation}
+                            helperText={errors.painLocation?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painType"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Pain Type (e.g., sharp, dull, throbbing)"
-                        fullWidth
-                        variant="outlined"
-                        error={!!errors.painType}
-                        helperText={errors.painType?.message}
+                    </Grid>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painType"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Pain Type (e.g., sharp, dull, throbbing)"
+                            fullWidth
+                            variant="outlined"
+                            error={!!errors.painType}
+                            helperText={errors.painType?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="aggravatingFactors"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Aggravating Factors"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        variant="outlined"
-                        error={!!errors.aggravatingFactors}
-                        helperText={errors.aggravatingFactors?.message}
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="aggravatingFactors"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Aggravating Factors"
+                            fullWidth
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            error={!!errors.aggravatingFactors}
+                            helperText={errors.aggravatingFactors?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="relievingFactors"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Relieving Factors"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        variant="outlined"
-                        error={!!errors.relievingFactors}
-                        helperText={errors.relievingFactors?.message}
+                    </Grid>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="relievingFactors"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Relieving Factors"
+                            fullWidth
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            error={!!errors.relievingFactors}
+                            helperText={errors.relievingFactors?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth error={!!errors.painScale}>
-                    <Typography component="legend" variant="subtitle1" sx={{ mb: 1 }}>Pain Scale (0-10)</Typography>
-                    <Controller
-                      name="painScale"
-                      control={control}
-                      render={({ field: { onChange, value, ...restField } }) => (
-                        <Slider
-                          {...restField}
-                          value={typeof value === 'number' ? value : 0}
-                          onChange={(event, newValue) => onChange(newValue)}
-                          aria-labelledby="pain-scale-slider"
-                          valueLabelDisplay="auto"
-                          step={1}
-                          marks
-                          min={0}
-                          max={10}
-                          sx={{ mt: 2, width: '95%', ml: '2.5%' }}
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <FormControl fullWidth error={!!errors.painScale}>
+                        <Typography component="legend" variant="subtitle1" sx={{ mb: 1 }}>Pain Scale (0-10)</Typography>
+                        <Controller
+                          name="painScale"
+                          control={control}
+                          render={({ field: { onChange, value, ...restField } }) => (
+                            <Slider
+                              {...restField}
+                              value={typeof value === 'number' ? value : 0}
+                              onChange={(event, newValue) => onChange(newValue)}
+                              aria-labelledby="pain-scale-slider"
+                              valueLabelDisplay="auto"
+                              step={1}
+                              marks
+                              min={0}
+                              max={10}
+                              sx={{ mt: 2, width: '95%', ml: '2.5%' }}
+                            />
+                          )}
                         />
-                      )}
-                    />
-                    {errors.painScale && (
-                      <Typography variant="caption" color="error">
-                        {errors.painScale?.message}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painFrequency"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Frequency of Pain"
-                        fullWidth
-                        variant="outlined"
-                        error={!!errors.painFrequency}
-                        helperText={errors.painFrequency?.message}
+                        {errors.painScale && (
+                          <Typography variant="caption" color="error">
+                            {errors.painScale?.message}
+                          </Typography>
+                        )}
+                      </FormControl>
+                    </Grid>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painFrequency"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Frequency of Pain"
+                            fullWidth
+                            variant="outlined"
+                            error={!!errors.painFrequency}
+                            helperText={errors.painFrequency?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painRadiation"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Radiation of Pain (e.g., Yes/No, description)"
-                        fullWidth
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.painRadiation}
-                        helperText={errors.painRadiation?.message}
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painRadiation"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Radiation of Pain (e.g., Yes/No, description)"
+                            fullWidth
+                            multiline
+                            rows={1}
+                            variant="outlined"
+                            error={!!errors.painRadiation}
+                            helperText={errors.painRadiation?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="painTiming"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Timing of Pain (e.g., morning, night, activity-related)"
-                        fullWidth
-                        multiline
-                        rows={1}
-                        variant="outlined"
-                        error={!!errors.painTiming}
-                        helperText={errors.painTiming?.message}
+                    </Grid>
+                    <Grid item  size={6} xs={12} sm={6}>
+                      <Controller
+                        name="painTiming"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Timing of Pain (e.g., morning, night, activity-related)"
+                            fullWidth
+                            multiline
+                            rows={1}
+                            variant="outlined"
+                            error={!!errors.painTiming}
+                            helperText={errors.painTiming?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="functionalLimitation"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Functional Limitations due to Pain"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        variant="outlined"
-                        error={!!errors.functionalLimitation}
-                        helperText={errors.functionalLimitation?.message}
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={2} mb={2}>
+                    <Grid item size={6} xs={ 12} sm={6}>
+                      <Controller
+                        name="functionalLimitation"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Functional Limitations due to Pain"
+                            fullWidth
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            error={!!errors.functionalLimitation}
+                            helperText={errors.functionalLimitation?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item size={4}>
+                  <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
+                    <img
+                        src="https://www.researchgate.net/profile/Justin-Carpentier/publication/331063965/figure/fig2/AS:725802211610628@1550056140430/Unveiled-human-body-Illustration-of-the-main-skeletal-muscles-constitutive-of-the-human.ppm"
+                        useMap="#image-map"/>
+
+                    <map name="image-map">
+                      <area target="_self" alt="sholder" title="sholder" href={alert(1)} coords="123,159,169,198" shape="rect" />
+                      <area target="_self" alt="arm" title="arm" href="" coords="159,294,111,205" shape="rect"/>
+                    </map>
+                  </Box>
                 </Grid>
               </Grid>
-              {/* Image placeholder */}
-              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-                <img src="https://via.placeholder.com/300x400?text=Pain+Diagram" alt="Pain Diagram" style={{ maxWidth: '100%', height: 'auto' }} />
-              </Box>
             </Box>
 
-            <Divider />
+            <Divider/>
 
             {/* 4. Palpation Section */}
             <Box>
@@ -552,11 +590,11 @@ export const AssessmentForm = () => {
                 4. Palpation
               </Typography>
               <Controller
-                name="palpationFindings"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
+                  name="palpationFindings"
+                  control={control}
+                  render={({field}) => (
+                      <TextField
+                          {...field}
                     label="Palpation Findings"
                     fullWidth
                     multiline

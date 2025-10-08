@@ -30,9 +30,9 @@ const theme = createTheme({
 const ProtectedRoute = ({ children }) => {
   // To test the login flow, set this to false. Go to /, you'll be redirected
   // to /login. After "logging in," you'll be sent back to /.
-  const isAuthenticated = true; 
+  const isAuthenticated = localStorage.getItem("login"); 
 
-  if (!isAuthenticated) {
+  if (isAuthenticated != 'true') {
     return <Navigate to="/login" replace />;
   }
 
@@ -46,25 +46,20 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<Home />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<DashboardPage />} />
-              <Route path="masters" element={<div>Masters Page</div>} />
-              
-              <Route path="patients" element={<PatientSearchAndSelect />} />
-              <Route path="patients/new" element={<NewPatientForm/>} />
-              <Route path="patients/:patientId/assessment" element={<AssessmentForm />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/dashboard"  element={<DashboardPage />} />
+              <Route path="/masters" element={<div>Masters Page</div>} />
 
-              <Route path="appointments" element={<div>Appointments Page</div>} />
-              <Route path="financial" element={<div>Financial Page</div>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/patients" element={<PatientSearchAndSelect />} />
+              <Route path="/patients/new" element={<NewPatientForm/>} />
+              <Route path="/patients/:patientId/assessment" element={<AssessmentForm />} />
+
+              <Route path="/appointments" element={<div>Appointments Page</div>} />
+              <Route path="/financial" element={<div>Financial Page</div>} />
+
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

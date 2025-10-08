@@ -25,8 +25,9 @@ export const LoginPage = () => {
   const onSubmit = (data) => {
     // In a real application, you would make an API call here.
     // For now, we'll simulate a successful login and navigate to the dashboard.
+    localStorage.setItem("login", "true")
     console.log('Login Data:', data);
-    navigate('/'); // Navigate to the dashboard on successful login
+    navigate('/dashboard'); // Navigate to the dashboard on successful login
   };
 
   return (
