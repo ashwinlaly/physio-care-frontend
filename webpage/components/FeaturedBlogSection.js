@@ -9,7 +9,7 @@ import CallToActionGradientButton from './CallToActionGradientButton'; // Import
 function BlogCard({ image, author, readTime, title, description, link }) {
   return (
     <Card 
-      sx={{ 
+      sx={{
         height: '100%', 
         display: 'flex', 
         flexDirection: 'column',
@@ -95,8 +95,11 @@ function FeaturedBlogSection() {
     <Box sx={{ 
       py: { xs: 8, md: 12 }, 
       bgcolor: '#ffffff', 
-      textAlign: 'center' 
-    }}>
+      textAlign: 'center' ,
+    pt: { xs: 10, md: 12 }
+    }}
+         id={"blog-section"}
+    >
       <Container maxWidth="lg">
         <Typography variant="h3" component="h2" gutterBottom 
           sx={{ 

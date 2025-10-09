@@ -69,11 +69,14 @@ function ServicesSection() {
   ];
 
   return (
-    <Box sx={{ 
+    <Box sx={{
+      pt: { xs: 10, md: 12 },
       py: { xs: 8, md: 12 }, 
       bgcolor: '#f5f7fa', 
       textAlign: 'center' 
-    }}>
+    }}
+    id='services-section'
+    >
       <Container maxWidth="lg">
         <Typography variant="h3" component="h2" gutterBottom 
           sx={{ 
