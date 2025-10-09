@@ -3,11 +3,18 @@ import { Button, Stack } from '@mui/material';
 
 function Navigation() {
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Services', href: '/services' },
-    { name: 'Featured Blog', href: '/blog' },
-    { name: 'Contact Us', href: '/contact' },
+    { name: 'Home', target: 'home-section' },
+    { name: 'Services', target: 'services-section' },
+    { name: 'Featured Blog', target: 'blog-section' },
+    { name: 'Contact Us', target: 'contact-section' },
   ];
+
+  const handleScroll = (target) => {
+    const section = document.getElementById(target);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <Stack direction="row" spacing={4}>
@@ -24,6 +31,7 @@ function Navigation() {
               bgcolor: 'transparent' 
             } 
           }}
+          onClick={() => handleScroll(link.target)}
         >
           {link.name}
         </Button>

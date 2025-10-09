@@ -10,7 +10,7 @@ function Header() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
-    <AppBar position="absolute" elevation={0} sx={{ background: 'transparent' }}>
+    <AppBar position="fixed" elevation={0}>
       <Toolbar sx={{ justifyContent: 'space-between', padding: { xs: 2, md: 3 } }}>
         <Logo />
         {isMobile ? (

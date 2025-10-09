@@ -39,8 +39,11 @@ function ContactUsSection() {
     <Box sx={{ 
       py: { xs: 8, md: 12 }, 
       bgcolor: '#f5f7fa', 
-      textAlign: 'center' 
-    }}>
+      textAlign: 'center',
+      pt: { xs: 10, md: 12 },
+    }}
+    id="contact-section"
+    >
       <Container maxWidth="lg">
         <Typography variant="h3" component="h2" gutterBottom 
           sx={{ 
@@ -72,17 +75,18 @@ function ContactUsSection() {
               <ContactInfoItem 
                 icon={LocationOnIcon} 
                 title="Address" 
-                content={['123 Health Street', 'Medical City, MC 12345', 'United States']} 
+                content={['1st Floor, Podhigai Shopping Centre,', 'No-5c, Vadavalli-Thondamuthur Rd,', 'Marutha Nagar, Vadavalli,', 'Coimbatore, Tamil Nadu 641041']}
               />
               <ContactInfoItem 
                 icon={PhoneIcon} 
-                title="Phone" 
-                content="+1 (555) 123-4567" 
+                title="Phone"
+                href="tel:7639991387"
+                content="+91 7639991387"
               />
               <ContactInfoItem 
                 icon={EmailIcon} 
                 title="Email" 
-                content="info@icurephysiotherapy.com" 
+                content="icurephysiotherapy@gmail.com"
               />
               <ContactInfoItem 
                 icon={AccessTimeIcon} 
@@ -122,6 +126,7 @@ function ContactUsSection() {
                 icon={<PhoneIcon />} 
                 fullWidth 
                 sx={{ mb: 2 }}
+                href="tel:7639991387"
               />
               <Button 
                 variant="contained" 
@@ -138,6 +143,8 @@ function ContactUsSection() {
                     bgcolor: '#f0f0f0',
                   }
                 }}
+                href="https://wa.me/7639991387"
+                target="_blank"
               >
                 WhatsApp Us
               </Button>
@@ -148,7 +155,7 @@ function ContactUsSection() {
           <Grid item xs={12} md={6}>
             <Box sx={{ textAlign: 'left' }}>
               <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}>
-                Find Us - v1
+                Find Us
               </Typography>
               
               <Card sx={{ 

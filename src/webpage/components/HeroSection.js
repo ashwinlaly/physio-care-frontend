@@ -21,7 +21,9 @@ function HeroSection() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         px: { xs: 2, md: 4 },
+        pt: { xs: 10, md: 12 },
       }}
+      id="home-section"
     >
       {/* Blue overlay */}
       <Box sx={{
@@ -75,6 +77,8 @@ function HeroSection() {
               borderColor: 'white', 
               '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', borderColor: 'white' } 
             }}
+            href="https://wa.me/7639991387"
+            target="_blank"
           >
             WhatsApp
           </Button>
@@ -94,6 +98,7 @@ function HeroSection() {
               borderColor: 'white', 
               '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', borderColor: 'white' } 
             }}
+            href="tel:7639991387"
           >
             Call Now
           </Button>
@@ -107,7 +112,7 @@ function HeroSection() {
           sx={{ fontSize: { xs: '0.9rem', md: '1rem' } }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <PhoneIcon sx={{ mr: 1 }} /> +1 (555) 123-4567
+            <PhoneIcon sx={{ mr: 1 }} /> +91 7639991387
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AccessTimeIcon sx={{ mr: 1 }} /> Available 24/7
