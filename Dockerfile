@@ -1,13 +1,14 @@
 FROM node:20-alpine as builder
 
 WORKDIR /app
-# RUN apk add --no-cache gettext
-# RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache gettext
+RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 COPY package-lock.json ./
 
 RUN ls -la
 RUN npm ci
+ENV REACT_APP_API_BASE_URL=https://api.prod.com
 
 COPY . .
 

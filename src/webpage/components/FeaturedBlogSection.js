@@ -74,7 +74,7 @@ function BlogCard({ image, author, readTime, title, description, link }) {
 function FeaturedBlogSection() {
   const blogPosts = [
     {
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99f232b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', // Example image URL
+      image: '/images/sarah.png', // Example image URL
       author: 'Dr. Sarah Johnson',
       readTime: '5 min read',
       title: '5 Essential Exercises for Lower Back Pain Relief',
@@ -82,7 +82,7 @@ function FeaturedBlogSection() {
       link: '/blog/lower-back-pain-relief'
     },
     {
-      image: 'https://images.unsplash.com/photo-1629904908999-53e778970423?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80', // Example image URL
+      image: '/images/micheal.png', // Example image URL
       author: 'Dr. Michael Chen',
       readTime: '8 min read',
       title: 'Recovery Tips After Knee Surgery: A Complete Guide',
@@ -122,7 +122,7 @@ function FeaturedBlogSection() {
 
         <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
           {blogPosts.map((post, index) => (
-            <Grid item xs={12} sm={6} md={6} key={index}>
+            <Grid item xs={12} sm={6} md={6} key={index} size={6}>
               <BlogCard {...post} />
             </Grid>
           ))}

@@ -3,15 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-// Dummy patient data for demonstration
-const dummyPatients = [
-  { id: 'p001', name: 'John Doe', contact: '123-456-7890' },
-  { id: 'p002', name: 'Jane Smith', contact: '098-765-4321' },
-  { id: 'p003', name: 'Peter Jones', contact: '555-123-4567' },
-  { id: 'p004', name: 'Alice Brown', contact: '111-222-3333' },
-  { id: 'p005', name: 'Robert White', contact: '444-555-6666' },
-  { id: 'p006', name: 'Emily Davis', contact: '777-888-9999' },
-];
 
 export const PatientSearchAndSelect = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,15 +11,27 @@ export const PatientSearchAndSelect = () => {
 
   // Effect to filter dummy patients based on search term
   useEffect(() => {
-    if (searchTerm.length > 0) {
-      const filtered = dummyPatients.filter(patient =>
-        patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.contact.includes(searchTerm)
-      );
-      setSearchResults(filtered);
-    } else {
-      setSearchResults([]); // Clear results if search term is empty
-    }
+    const fetchPatients = async () => {
+      if (searchTerm.length > 0) {
+        try {
+          const response = await fetch(`http://localhost:8080/api/v1/patients?searchTerm=${searchTerm}`);
+          const data = await response.json();
+          setSearchResults(data);
+        } catch (error) {
+          console.error('Error fetching patients:', error);
+          setSearchResults([]);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    // Debounce the API call to avoid too many requests while typing
+    const delayDebounceFn = setTimeout(() => {
+      fetchPatients();
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
   // Handler for selecting an existing patient
@@ -68,7 +71,7 @@ export const PatientSearchAndSelect = () => {
           <List>
             {searchResults.map(patient => (
               <ListItem button key={patient.id} onClick={() => handleSelectPatient(patient.id)}>
-                <ListItemText primary={patient.name} secondary={`Contact: ${patient.contact}`} />
+                <ListItemText primary={patient.name} secondary={`Contact: ${patient.contactNo}`} />
               </ListItem>
             ))}
           </List>

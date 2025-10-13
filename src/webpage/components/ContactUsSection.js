@@ -66,7 +66,7 @@ function ContactUsSection() {
 
         <Grid container spacing={{ xs: 5, md: 8 }}>
           {/* Left Column: Get In Touch */}
-          <Grid item xs={12} md={6}>
+          <Grid item size={6} xs={12} md={6}>
             <Box sx={{ textAlign: 'left', mb: { xs: 4, md: 0 } }}>
               <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}>
                 Get In Touch
@@ -152,33 +152,46 @@ function ContactUsSection() {
           </Grid>
 
           {/* Right Column: Find Us */}
-          <Grid item xs={12} md={6}>
-            <Box sx={{ textAlign: 'left' }}>
-              <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}>
-                Find Us
-              </Typography>
-              
-              <Card sx={{ 
-                height: 300, 
-                mb: 4, 
-                borderRadius: 3, 
-                bgcolor: 'primary.light', 
-                display: 'flex', 
-                flexDirection: 'column',
-                justifyContent: 'center', 
-                alignItems: 'center',
-                color: 'white'
-              }}>
-                <LocationOnIcon sx={{ fontSize: 60, mb: 1 }} />
-                <Typography variant="h6">Icure Physiotherapy</Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}>city</Typography>
-                <Link href="https://maps.app.goo.gl/RTQBmQ3S7AGdqpfQ7" target="_blank" rel="noopener noreferrer" 
-                  sx={{ color: 'white', textDecoration: 'underline', '&:hover': { color: 'white', textDecoration: 'none' } }}>
-                  Click to view on Google Maps
-                </Link>
-              </Card>
+          <Grid item size={6} xs={12} md={6}>
+          <Box sx={{
+            position: 'relative',
+            textAlign: 'right',
+            height: 560,
+            width: 820,
+            maxWidth: '100%',
+            mx: 'auto',
+            mb: 2,
+            borderRadius: 2,
+            overflow: 'hidden',
+            boxShadow: 2,
+          }}>
+            <Box sx={{
+              overflow: 'hidden',
+              background: 'none',
+              height: 560,
+              width: 820,
+              maxWidth: '100%',
+            }}>
+              <iframe
+                  width="100%"
+                  height="560"
+                  id="gmap_canvas"
+                  src="https://maps.google.com/maps?q=iCure+Physiotherapy+clinic%2C1st+Floor%2C+Podhigai+Shopping+Centre%2C+No-5c%2C+Vadavalli-Thondamuthur+Rd%2C+Marutha+Nagar%2C+Vadavalli%2C+Coimbatore%2C+Tamil+Nadu+641041&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                  frameBorder="0"
+                  scrolling="no"
+                  marginHeight="0"
+                  marginWidth="0"
+                  style={{ border: 0, borderRadius: '8px' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Google Map"
+              />
             </Box>
-          </Grid>
+          </Box>
+        </Grid>
+
+
         </Grid>
       </Container>
     </Box>

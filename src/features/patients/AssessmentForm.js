@@ -574,7 +574,7 @@ export const AssessmentForm = () => {
                         useMap="#image-map"/>
 
                     <map name="image-map">
-                      <area target="_self" alt="sholder" title="sholder" href={alert(1)} coords="123,159,169,198" shape="rect" />
+                      <area target="_self" alt="sholder" title="sholder" coords="123,159,169,198" shape="rect" />
                       <area target="_self" alt="arm" title="arm" href="" coords="159,294,111,205" shape="rect"/>
                     </map>
                   </Box>

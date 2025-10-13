@@ -65,11 +65,28 @@ export const NewPatientForm = () => {
     }
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log('New Patient Data (validated):', data);
-    const newPatientId = `p${Math.floor(Math.random() * 100000) + 1000}`;
-    alert(`Patient ${data.name} registered with ID: ${newPatientId}`);
-    navigate(`/patients/${newPatientId}/assessment`);
+    // const newPatientId = `p${Math.floor(Math.random() * 100000) + 1000}`;
+    // alert(`Patient ${data.name} registered with ID: ${newPatientId}`);
+    const response = await fetch(`http://localhost:8080/api/v1/patients`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any authorization headers if needed, e.g.,
+        // 'Authorization': `Bearer ${yourAuthToken}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    const newPatient = await response.json();
+    console.log(newPatient);
+    alert(`Patient ${newPatient.name} registered successfully.`);
+    // navigate(`/patients/${newPatientId}/assessment`);
   };
 
   return (
