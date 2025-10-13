@@ -14,7 +14,7 @@ export const PatientSearchAndSelect = () => {
     const fetchPatients = async () => {
       if (searchTerm.length > 0) {
         try {
-          const response = await fetch(`http://localhost:8080/api/v1/patients?searchTerm=${searchTerm}`);
+          const response = await fetch(`https://icure-backend-434067823144.asia-southeast1.run.app/api/v1/patients?searchTerm=${searchTerm}`);
           const data = await response.json();
           setSearchResults(data);
         } catch (error) {
