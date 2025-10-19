@@ -22,7 +22,8 @@ import * as yup from 'yup';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-const endpoint = process.env.REACT_APP_PATIENTS_API_ENDPOINT;
+const endpoint = process.env.REACT_APP_API_URL;
+
 // Define the validation schema using Yup (unchanged)
 const schema = yup.object().shape({
   name: yup.string().required('Patient Name is required').min(2, 'Name must be at least 2 characters'),

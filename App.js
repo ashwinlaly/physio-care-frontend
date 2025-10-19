@@ -39,7 +39,8 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-function App() {  
+function App() {
+  console.log("prop", window, process);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

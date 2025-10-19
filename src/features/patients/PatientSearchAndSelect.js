@@ -9,7 +9,8 @@ export const PatientSearchAndSelect = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  const endpoint = process.env.REACT_APP_PATIENTS_API_ENDPOINT;
+  const endpoint = process.env.REACT_APP_API_URL;
+
   // Effect to filter dummy patients based on search term
   useEffect(() => {
     const fetchPatients = async () => {
