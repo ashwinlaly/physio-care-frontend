@@ -22,6 +22,7 @@ import * as yup from 'yup';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+const endpoint = process.env.REACT_APP_PATIENTS_API_ENDPOINT;
 // Define the validation schema using Yup (unchanged)
 const schema = yup.object().shape({
   name: yup.string().required('Patient Name is required').min(2, 'Name must be at least 2 characters'),
@@ -69,7 +70,7 @@ export const NewPatientForm = () => {
     console.log('New Patient Data (validated):', data);
     // const newPatientId = `p${Math.floor(Math.random() * 100000) + 1000}`;
     // alert(`Patient ${data.name} registered with ID: ${newPatientId}`);
-    const response = await fetch(`http://localhost:8080/api/v1/patients`, {
+    const response = await fetch(`${endpoint}/api/v1/patients`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

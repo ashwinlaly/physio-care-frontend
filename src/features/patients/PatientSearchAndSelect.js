@@ -9,12 +9,13 @@ export const PatientSearchAndSelect = () => {
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
+  const endpoint = process.env.REACT_APP_PATIENTS_API_ENDPOINT;
   // Effect to filter dummy patients based on search term
   useEffect(() => {
     const fetchPatients = async () => {
       if (searchTerm.length > 0) {
         try {
-          const response = await fetch(`https://icure-backend-434067823144.asia-southeast1.run.app/api/v1/patients?searchTerm=${searchTerm}`);
+          const response = await fetch(`${endpoint}/api/v1/patients?searchTerm=${searchTerm}`);
           const data = await response.json();
           setSearchResults(data);
         } catch (error) {
