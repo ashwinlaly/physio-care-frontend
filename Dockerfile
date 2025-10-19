@@ -13,6 +13,7 @@ ENV REACT_APP_API_URL=https://icure-backend-434067823144.europe-west1.run.app
 
 COPY . .
 
+RUN rm -rf build node_modules/.cache || true
 RUN npm run build
 FROM nginx:1.23-alpine
 COPY --from=builder /app/build /usr/share/nginx/html
