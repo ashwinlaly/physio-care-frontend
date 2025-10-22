@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {showToast} from "../../common/util";
 
 
 export const PatientSearchAndSelect = () => {
@@ -14,12 +15,13 @@ export const PatientSearchAndSelect = () => {
   // Effect to filter dummy patients based on search term
   useEffect(() => {
     const fetchPatients = async () => {
-      if (searchTerm.length > 0) {
+      if (searchTerm.length > 4) {
         try {
           const response = await fetch(`${endpoint}/api/v1/patients?searchTerm=${searchTerm}`);
           const data = await response.json();
           setSearchResults(data);
         } catch (error) {
+          showToast(error);
           console.error('Error fetching patients:', error);
           setSearchResults([]);
         }

@@ -11,6 +11,7 @@ import { NewPatientForm } from './features/patients/NewPatientForm';
 import { AssessmentForm } from './features/patients/AssessmentForm';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {Bounce, ToastContainer} from "react-toastify";
 
 const theme = createTheme({
   palette: {
@@ -44,6 +45,19 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+          transition={Bounce}
+      />
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <BrowserRouter>
           <Routes>

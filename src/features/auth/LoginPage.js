@@ -43,7 +43,7 @@ export const LoginPage = () => {
     >
       <Container maxWidth="xs">
         <Typography variant="h4" component="h1" align="center" sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}>
-          ICare Physio
+          icure physiotherapy
         </Typography>
         <Paper
           elevation={6}

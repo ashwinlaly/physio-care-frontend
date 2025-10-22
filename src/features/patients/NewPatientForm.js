@@ -21,11 +21,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { ToastContainer, toast } from 'react-toastify';
+import {showToast} from "../../common/util";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
 // Define the validation schema using Yup (unchanged)
 const schema = yup.object().shape({
+  title: yup.string().required('Title is required'),
   name: yup.string().required('Patient Name is required').min(2, 'Name must be at least 2 characters'),
   date: yup.date().required('Date is required').typeError('Invalid date format'),
   age: yup.number()
@@ -56,6 +59,7 @@ export const NewPatientForm = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
+      title: '',
       name: '',
       date: null,
       age: null,
@@ -71,23 +75,30 @@ export const NewPatientForm = () => {
     console.log('New Patient Data (validated):', data);
     // const newPatientId = `p${Math.floor(Math.random() * 100000) + 1000}`;
     // alert(`Patient ${data.name} registered with ID: ${newPatientId}`);
-    const response = await fetch(`${endpoint}/api/v1/patients`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any authorization headers if needed, e.g.,
-        // 'Authorization': `Bearer ${yourAuthToken}`
-      },
-      body: JSON.stringify(data)
-    });
+    try {
+      const response = await fetch(`${endpoint}/api/v1/patients`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any authorization headers if needed, e.g.,
+          // 'Authorization': `Bearer ${yourAuthToken}`
+        },
+        body: JSON.stringify(data)
+      }).catch((reason) => {
+        showToast(reason);
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        showToast(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+      const newPatient = await response.json();
+      console.log(newPatient);
+      showToast(`Patient ${newPatient.name} registered successfully.`, 'info');
+    } catch (error) {
+      console.log("error", error);
     }
-    const newPatient = await response.json();
-    console.log(newPatient);
-    alert(`Patient ${newPatient.name} registered successfully.`);
     // navigate(`/patients/${newPatientId}/assessment`);
   };
 
@@ -116,7 +127,33 @@ export const NewPatientForm = () => {
                 Personal Details
               </Typography>
                 <Grid container spacing={1}>
-                  <Grid size={12} xs={12} sm={6} >
+                  <Grid size={2} item xs={12} sm={4}>
+                    <Controller
+                        name="title"
+                        control={control}
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                select
+                                label="Title"
+                                fullWidth
+                                required
+                                error={!!errors.title}
+                                helperText={errors.title?.message}
+                                variant="outlined"
+                                SelectProps={{ native: true }}
+                            >
+                              <option value=""></option>
+                              <option value="Mr.">Mr.</option>
+                              <option value="Mrs.">Mrs.</option>
+                              <option value="Miss">Miss</option>
+                              <option value="Ms.">Ms.</option>
+                              <option value="Mx.">Mx.</option>
+                            </TextField>
+                        )}
+                    />
+                  </Grid>
+                  <Grid size={10} xs={12} sm={8} >
                     <Controller
                       name="name"
                       control={control}
