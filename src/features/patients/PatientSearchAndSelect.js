@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {showToast} from "../../common/util";
+import {apiRequest} from "../../common/api";
 
 
 export const PatientSearchAndSelect = () => {
@@ -17,11 +18,13 @@ export const PatientSearchAndSelect = () => {
     const fetchPatients = async () => {
       if (searchTerm.length > 4) {
         try {
-          const response = await fetch(`${endpoint}/api/v1/patients?searchTerm=${searchTerm}`);
-          const data = await response.json();
+          const data = await apiRequest(`${endpoint}/patients?searchTerm=${searchTerm}`, {
+            method: 'GET',
+            auth: true, // set to true if this endpoint requires auth token
+          });
           setSearchResults(data);
         } catch (error) {
-          showToast(error);
+          showToast(error.message, 'error');
           console.error('Error fetching patients:', error);
           setSearchResults([]);
         }
@@ -30,7 +33,6 @@ export const PatientSearchAndSelect = () => {
       }
     };
 
-    // Debounce the API call to avoid too many requests while typing
     const delayDebounceFn = setTimeout(() => {
       fetchPatients();
     }, 300); // 300ms delay

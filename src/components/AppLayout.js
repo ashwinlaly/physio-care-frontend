@@ -60,6 +60,11 @@ export const AppLayout = () => {
     navigate('/');
   };
 
+
+  const handleProfile = () => {
+    navigate('/me/profile');
+  };
+
   const handleSideBar = () => {
     setDrawerOpen((prev) => !prev);
   };
@@ -73,7 +78,7 @@ export const AppLayout = () => {
             <MenuIcon  />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            ICare Physio
+            Icure Physiotherapy
           </Typography>
           <div>
             <Tooltip title="Account settings">
@@ -90,7 +95,7 @@ export const AppLayout = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}><AccountCircle sx={{ mr: 1 }}/> Profile</MenuItem>
+              <MenuItem onClick={handleProfile}><AccountCircle sx={{ mr: 1 }}/> Profile</MenuItem>
               <MenuItem onClick={handleLogout}><ExitToApp sx={{ mr: 1 }}/> Log Out</MenuItem>
             </Menu>
           </div>

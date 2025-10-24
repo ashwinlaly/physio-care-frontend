@@ -11,7 +11,9 @@ import {
   IconButton,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import {apiRequest} from "../../common/api";
+import {showToast} from "../../common/util"; // Import useNavigate
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,13 +24,20 @@ export const LoginPage = () => {
   } = useForm();
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const onSubmit = (data) => {
-    // In a real application, you would make an API call here.
-    // For now, we'll simulate a successful login and navigate to the dashboard.
-    localStorage.setItem("login", "true")
-    console.log('Login Data:', data);
-    navigate('/dashboard'); // Navigate to the dashboard on successful login
-  };
+    const onSubmit = async (data) => {
+      try {
+        const response = await apiRequest(`${process.env.REACT_APP_API_URL}/user/login`, {
+          method: 'POST',
+          body: data,
+        });
+        localStorage.setItem('authToken', response.token);
+        showToast("Logged in successfully", 'info');
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Login failed:', error);
+        showToast("Logged in Failed", 'error');
+      }
+    };
 
   return (
     <Box

@@ -12,6 +12,7 @@ import { AssessmentForm } from './features/patients/AssessmentForm';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {Bounce, ToastContainer} from "react-toastify";
+import {Profile} from "./components/Profile";
 
 const theme = createTheme({
   palette: {
@@ -73,6 +74,8 @@ function App() {
 
               <Route path="/appointments" element={<div>Appointments Page</div>} />
               <Route path="/financial" element={<div>Financial Page</div>} />
+
+              <Route path="/me/profile" element={<Profile/>} />
 
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>

@@ -23,6 +23,7 @@ import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import {showToast} from "../../common/util";
+import {apiRequest} from "../../common/api";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -73,33 +74,19 @@ export const NewPatientForm = () => {
 
   const onSubmit = async (data) => {
     console.log('New Patient Data (validated):', data);
-    // const newPatientId = `p${Math.floor(Math.random() * 100000) + 1000}`;
-    // alert(`Patient ${data.name} registered with ID: ${newPatientId}`);
+    let newPatientId = '';
     try {
-      const response = await fetch(`${endpoint}/api/v1/patients`, {
+      const newPatient = await apiRequest(`${endpoint}/patients`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add any authorization headers if needed, e.g.,
-          // 'Authorization': `Bearer ${yourAuthToken}`
-        },
-        body: JSON.stringify(data)
-      }).catch((reason) => {
-        showToast(reason);
+        body: data,
+        auth: true, // set to true if endpoint requires auth
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        showToast(errorData.message || `HTTP error! status: ${response.status}`);
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-      const newPatient = await response.json();
-      console.log(newPatient);
+      newPatientId = newPatient.id;
       showToast(`Patient ${newPatient.name} registered successfully.`, 'info');
+      navigate(`/patients/${newPatientId}/assessment`);
     } catch (error) {
-      console.log("error", error);
+      showToast(error.message, 'error');
     }
-    // navigate(`/patients/${newPatientId}/assessment`);
   };
 
   return (
