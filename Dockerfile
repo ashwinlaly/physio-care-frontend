@@ -8,8 +8,8 @@ COPY package-lock.json ./
 
 RUN ls -la
 RUN npm ci
-ENV REACT_APP_API_BASE_URL=https://icure-backend-434067823144.asia-southeast1.run.app
-ENV REACT_APP_API_URL=https://icure-backend-434067823144.asia-southeast1.run.app
+ENV REACT_APP_API_BASE_URL=https://icure-backend-434067823144.asia-southeast1.run.app/api/v1
+ENV REACT_APP_API_URL=https://icure-backend-434067823144.asia-southeast1.run.app/api/v1
 
 COPY . .
 
