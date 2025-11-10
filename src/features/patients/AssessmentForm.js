@@ -19,6 +19,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import {showToast} from "../../common/util";
+import {apiRequest} from "../../common/api";
+import {MuscularEvaluationMMT} from "./components/MuscularEvaluationMMT";
 
 // Helper component for Tab Panels
 function TabPanel(props) {
@@ -94,6 +97,7 @@ const assessmentSchema = yup.object().shape({
   interventions: yup.string().optional().max(1000, 'Max 1000 characters'),
 });
 
+const endpoint = process.env.REACT_APP_API_URL;
 export const AssessmentForm = () => {
   const { patientId } = useParams();
   const navigate = useNavigate();
@@ -149,25 +153,43 @@ export const AssessmentForm = () => {
     }
   });
 
+  const [patientDetails, setPatientDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    const fetchPatientDetails = async () => {
+      setLoading(true);
+      try {
+        const details = await apiRequest(`${endpoint}/patients/${patientId}`, {
+          method: 'GET',
+          auth: true, // set to true if endpoint requires auth
+        });
+        setPatientDetails(details);
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (patientId) {
-      console.log(`Loading assessment for patient ID: ${patientId}`);
-      setValue('patientId', patientId);
-      // In a real app, fetch existing patient data and pre-fill the form
-      // e.g., const fetchedData = await fetchPatientAssessment(patientId);
-      // for (const key in fetchedData) { setValue(key, fetchedData[key]); }
-    } else {
-      console.error("No patient ID provided for assessment.");
-      navigate('/patients');
+      fetchPatientDetails();
     }
-  }, [patientId, setValue, navigate]);
+  }, [patientId]);
 
   const onSubmit = async (data) => {
-    console.log('Assessment Form Data:', data);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    alert(`Assessment saved for patient ${patientId}!`);
-    navigate(`/patients/${patientId}/history`);
-  };
+    try {
+      const newPatient = await apiRequest(`${endpoint}/assessment/${patientDetails.id}/assessments`, {
+        method: 'POST',
+        body: data,
+        auth: true,
+      });
+      showToast(`Patient assessment ${newPatient.name} added successfully.`, 'info');
+      navigate(`/patients/${patientDetails.id}/assessment`);
+    } catch (error) {
+      showToast(error.message, 'error');
+    }
+  }
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
@@ -201,7 +223,7 @@ export const AssessmentForm = () => {
           Patient Assessment Form
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" align="center" sx={{ mb: 3 }}>
-          Complete the comprehensive assessment for Patient ID: {patientId}
+          Complete the comprehensive assessment for Patient ID: {patientDetails?.contactNo}
         </Typography>
 
         <Divider sx={{ mb: 4 }} />
@@ -225,13 +247,13 @@ export const AssessmentForm = () => {
               </Typography>
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Typography variant="body1" color="text.secondary">
-                  Name: John Doe (Pre-filled from patient record)
+                  Name: {patientDetails?.name?.toUpperCase()}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                  Age: 35, Gender: Male
+                  Age: {patientDetails?.age}, Gender: {patientDetails?.gender?.toUpperCase()}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                  Contact: 123-456-7890
+                  Contact: {patientDetails?.contactNo}
                 </Typography>
                 <Button variant="outlined" size="small" sx={{ mt: 1 }}>Edit Patient Info</Button>
               </Paper>
@@ -568,16 +590,16 @@ export const AssessmentForm = () => {
                   </Grid>
                 </Grid>
                 <Grid item size={4}>
-                  <Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>
-                    <img
-                        src="https://www.researchgate.net/profile/Justin-Carpentier/publication/331063965/figure/fig2/AS:725802211610628@1550056140430/Unveiled-human-body-Illustration-of-the-main-skeletal-muscles-constitutive-of-the-human.ppm"
-                        useMap="#image-map"/>
+                  {/*<Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>*/}
+                  {/*  <img*/}
+                  {/*      src="https://www.researchgate.net/profile/Justin-Carpentier/publication/331063965/figure/fig2/AS:725802211610628@1550056140430/Unveiled-human-body-Illustration-of-the-main-skeletal-muscles-constitutive-of-the-human.ppm"*/}
+                  {/*      useMap="#image-map"/>*/}
 
-                    <map name="image-map">
-                      <area target="_self" alt="sholder" title="sholder" coords="123,159,169,198" shape="rect" />
-                      <area target="_self" alt="arm" title="arm" href="" coords="159,294,111,205" shape="rect"/>
-                    </map>
-                  </Box>
+                  {/*  <map name="image-map">*/}
+                  {/*    <area target="_self" alt="sholder" title="sholder" coords="123,159,169,198" shape="rect" />*/}
+                  {/*    <area target="_self" alt="arm" title="arm" href="" coords="159,294,111,205" shape="rect"/>*/}
+                  {/*  </map>*/}
+                  {/*</Box>*/}
                 </Grid>
               </Grid>
             </Box>
@@ -641,32 +663,7 @@ export const AssessmentForm = () => {
                 <Tab label="7. Joint Evaluation" />
               </Tabs>
               <TabPanel value={currentTab} index={0}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Muscular Evaluation
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Fields for Muscle Strength, Tone, Power, Endurance, etc. will go here.
-                    (e.g., MMT grades, specific muscle assessments).
-                    For now, a simple text area.
-                  </Typography>
-                  <Controller
-                    name="muscularEvaluation"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Muscular Evaluation Findings"
-                        fullWidth
-                        multiline
-                        rows={5}
-                        variant="outlined"
-                        error={!!errors.muscularEvaluation}
-                        helperText={errors.muscularEvaluation?.message}
-                      />
-                    )}
-                  />
-                </Paper>
+                <MuscularEvaluationMMT />
               </TabPanel>
               <TabPanel value={currentTab} index={1}>
                 <Typography variant="h6" gutterBottom color="primary">

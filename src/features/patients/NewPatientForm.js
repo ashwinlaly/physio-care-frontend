@@ -52,6 +52,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export const NewPatientForm = () => {
+  const [isDisabled, setDisabled] = React.useState(false);
   const navigate = useNavigate();
   const {
     control,
@@ -73,6 +74,7 @@ export const NewPatientForm = () => {
   });
 
   const onSubmit = async (data) => {
+    setDisabled(true);
     console.log('New Patient Data (validated):', data);
     let newPatientId = '';
     try {
@@ -86,6 +88,7 @@ export const NewPatientForm = () => {
       navigate(`/patients/${newPatientId}/assessment`);
     } catch (error) {
       showToast(error.message, 'error');
+      setDisabled(false);
     }
   };
 
@@ -309,7 +312,7 @@ export const NewPatientForm = () => {
                 </Grid>
               </Grid>
             </Box>
-
+            {console.log(errors)}
             <Button
               type="submit"
               variant="contained"
@@ -317,6 +320,7 @@ export const NewPatientForm = () => {
               fullWidth
               size="large"
               sx={{ mt: 4 }}
+              disabled={isDisabled}
             >
               Register Patient & Start Assessment
             </Button>
