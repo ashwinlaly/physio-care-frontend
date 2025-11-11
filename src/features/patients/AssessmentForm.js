@@ -22,6 +22,7 @@ import * as yup from 'yup';
 import {showToast} from "../../common/util";
 import {apiRequest} from "../../common/api";
 import {MuscularEvaluationMMT} from "./components/MuscularEvaluationMMT";
+import {JointEvaluationComponent} from "./components/JointEvaluationComponent";
 
 // Helper component for Tab Panels
 function TabPanel(props) {
@@ -666,32 +667,7 @@ export const AssessmentForm = () => {
                 <MuscularEvaluationMMT />
               </TabPanel>
               <TabPanel value={currentTab} index={1}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Joint Evaluation
-                </Typography>
-                <Paper variant="outlined" sx={{ p: 2 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    Fields for Range of Motion (ROM), Joint Play, Swelling, Tenderness, etc. will go here.
-                    (e.g., goniometric measurements, specific joint assessments).
-                    For now, a simple text area.
-                  </Typography>
-                  <Controller
-                    name="jointEvaluation"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Joint Evaluation Findings"
-                        fullWidth
-                        multiline
-                        rows={5}
-                        variant="outlined"
-                        error={!!errors.jointEvaluation}
-                        helperText={errors.jointEvaluation?.message}
-                      />
-                    )}
-                  />
-                </Paper>
+                <JointEvaluationComponent control={control} errors={errors} />
               </TabPanel>
             </Box>
 

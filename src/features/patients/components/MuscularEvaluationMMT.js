@@ -64,7 +64,7 @@ export const MuscularEvaluationMMT = ({ control, errors }) => {
                 <TableCell sx={{ fontWeight: 'bold' }}>Movement / Muscle Group</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Left</TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>Right</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Bilateral</TableCell>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>Remark</TableCell>
             </TableRow>
         </TableHead>
     );
