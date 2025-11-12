@@ -362,7 +362,6 @@ export const AssessmentForm = () => {
     setShowPreview(true);
   };
 
-  const assessmentId = '2XCbjDYJzYdAhxGfnXeM';
 useEffect(() => {
   const fetchAssessment = async () => {
     setLoading(true);
@@ -374,8 +373,7 @@ useEffect(() => {
       setPatientDetails(details);
 
       // Fetch existing assessment if editing
-      // const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
-
+      const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
       if (assessmentId) {
         const existingAssessment = await apiRequest(`${endpoint}/assessment/${patientId}/assessments/${assessmentId}`, {
           method: 'GET',
@@ -401,7 +399,7 @@ useEffect(() => {
 
 const handleConfirmSubmit = async () => {
   try {
-    // const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
+    const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
     const method = assessmentId ? 'PUT' : 'POST';
     const url = assessmentId
       ? `${endpoint}/assessment/${patientDetails.id}/assessments/${assessmentId}`
