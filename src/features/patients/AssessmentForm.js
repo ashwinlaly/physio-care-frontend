@@ -18,91 +18,21 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import {showToast} from "../../common/util";
 import {apiRequest} from "../../common/api";
 import {MuscularEvaluationMMT} from "./components/MuscularEvaluationMMT";
 import {JointEvaluationComponent} from "./components/JointEvaluationComponent";
-
-// Helper component for Tab Panels
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-// Define the expanded validation schema using Yup (unchanged)
-const assessmentSchema = yup.object().shape({
-  patientId: yup.string().required('Patient ID is required'),
-
-  // Chief Complaint Section
-  chiefComplaintOnset: yup.string().required('When did it start? is required').max(200, 'Max 200 characters'),
-  chiefComplaintWorse: yup.string().required('What makes it worse? is required').max(200, 'Max 200 characters'),
-  chiefComplaintBetter: yup.string().required('What makes it better? is required').max(200, 'Max 200 characters'),
-  chiefComplaintTreatment: yup.string().required('Any previous treatments? is required').max(200, 'Max 200 characters'),
-  chiefComplaintDescription: yup.string().required('Chief Complaint description is required').max(500, 'Max 500 characters'),
-
-  // Pain Evaluation Section
-  painOnset: yup.string().optional().max(100, 'Max 100 characters'),
-  painDuration: yup.string().optional().max(100, 'Max 100 characters'),
-  painLocation: yup.string().optional().max(200, 'Max 200 characters'),
-  painType: yup.string().optional().max(100, 'Max 100 characters'),
-  aggravatingFactors: yup.string().optional().max(200, 'Max 200 characters'),
-  relievingFactors: yup.string().optional().max(200, 'Max 200 characters'),
-  painScale: yup.number().min(0).max(10).required('Pain scale is required').typeError('Pain scale must be a number'),
-  painFrequency: yup.string().optional().max(100, 'Max 100 characters'),
-  painRadiation: yup.string().optional().max(200, 'Max 200 characters'),
-  painTiming: yup.string().optional().max(100, 'Max 100 characters'),
-  functionalLimitation: yup.string().optional().max(300, 'Max 300 characters'),
-
-  // Palpation
-  palpationFindings: yup.string().optional().max(500, 'Max 500 characters'),
-
-  // Associated Problems
-  associatedProblems: yup.string().optional().max(500, 'Max 500 characters'),
-
-  // Muscular Evaluation (placeholders for now)
-  muscularEvaluation: yup.string().optional(),
-  // Joint Evaluation (placeholders for now)
-  jointEvaluation: yup.string().optional(),
-
-  // Posture Evaluation
-  postureFindings: yup.string().optional().max(500, 'Max 500 characters'),
-
-  // Gait Evaluation
-  gaitAnalysis: yup.string().optional().max(500, 'Max 500 characters'),
-
-  // Special Tests
-  specialTests: yup.string().optional().max(500, 'Max 500 characters'),
-
-  // Diagnosis
-  diagnosis: yup.string().required('Diagnosis is required').max(500, 'Max 500 characters'),
-
-  // Treatment Plan
-  shortTermGoals: yup.string().optional().max(500, 'Max 500 characters'),
-  longTermGoals: yup.string().optional().max(500, 'Max 500 characters'),
-  interventions: yup.string().optional().max(1000, 'Max 1000 characters'),
-});
+import {assessmentSchema} from "../../Schema/AssessmentSchema";
+import {TabPanel} from "../../components/TabPanel";
+import {PreviewTreatment} from "./components/PreviewTreatment";
 
 const endpoint = process.env.REACT_APP_API_URL;
 export const AssessmentForm = () => {
   const { patientId } = useParams();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0); // State for managing tabs
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
 
   const {
     control,
@@ -136,9 +66,278 @@ export const AssessmentForm = () => {
       // Associated Problems
       associatedProblems: '',
       // Muscular Evaluation
-      muscularEvaluation: '',
+      muscularEvaluation: {
+        spine_cervical_flexion: '',
+        spine_cervical_extension: '',
+        spine_cervical_lateral_flexion_left: '',
+        spine_cervical_lateral_flexion_right: '',
+        spine_cervical_rotation_left: '',
+        spine_cervical_rotation_right: '',
+        spine_thoracic_extension: '',
+        spine_thoracic_rotation_left: '',
+        spine_thoracic_rotation_right: '',
+        spine_lumbar_flexion: '',
+        spine_lumbar_extension: '',
+        spine_lumbar_lateral_flexion_left: '',
+        spine_lumbar_lateral_flexion_right: '',
+        spine_lumbar_rotation_left: '',
+        spine_lumbar_rotation_right: '',
+        upper_limb_shoulder_flexion_left: '',
+        upper_limb_shoulder_flexion_right: '',
+        upper_limb_shoulder_extension_left: '',
+        upper_limb_shoulder_extension_right: '',
+        upper_limb_shoulder_abduction_left: '',
+        upper_limb_shoulder_abduction_right: '',
+        upper_limb_shoulder_adduction_left: '',
+        upper_limb_shoulder_adduction_right: '',
+        upper_limb_shoulder_internal_rotation_left: '',
+        upper_limb_shoulder_internal_rotation_right: '',
+        upper_limb_shoulder_external_rotation_left: '',
+        upper_limb_shoulder_external_rotation_right: '',
+        upper_limb_elbow_flexion_left: '',
+        upper_limb_elbow_flexion_right: '',
+        upper_limb_elbow_extension_left: '',
+        upper_limb_elbow_extension_right: '',
+        upper_limb_forearm_supination_left: '',
+        upper_limb_forearm_supination_right: '',
+        upper_limb_forearm_pronation_left: '',
+        upper_limb_forearm_pronation_right: '',
+        upper_limb_wrist_flexion_left: '',
+        upper_limb_wrist_flexion_right: '',
+        upper_limb_wrist_extension_left: '',
+        upper_limb_wrist_extension_right: '',
+        upper_limb_wrist_radial_deviation_left: '',
+        upper_limb_wrist_radial_deviation_right: '',
+        upper_limb_wrist_ulnar_deviation_left: '',
+        upper_limb_wrist_ulnar_deviation_right: '',
+        upper_limb_hand_finger_flexion_left: '',
+        upper_limb_hand_finger_flexion_right: '',
+        upper_limb_hand_finger_extension_left: '',
+        upper_limb_hand_finger_extension_right: '',
+        upper_limb_hand_finger_abduction_left: '',
+        upper_limb_hand_finger_abduction_right: '',
+        upper_limb_hand_finger_adduction_left: '',
+        upper_limb_hand_finger_adduction_right: '',
+        upper_limb_hand_thumb_opposition_left: '',
+        upper_limb_hand_thumb_opposition_right: '',
+        upper_limb_hand_grip_strength_left: '',
+        upper_limb_hand_grip_strength_right: '',
+        lower_limb_hip_flexion_left: '',
+        lower_limb_hip_flexion_right: '',
+        lower_limb_hip_extension_left: '',
+        lower_limb_hip_extension_right: '',
+        lower_limb_hip_abduction_left: '',
+        lower_limb_hip_abduction_right: '',
+        lower_limb_hip_adduction_left: '',
+        lower_limb_hip_adduction_right: '',
+        lower_limb_hip_internal_rotation_left: '',
+        lower_limb_hip_internal_rotation_right: '',
+        lower_limb_hip_external_rotation_left: '',
+        lower_limb_hip_external_rotation_right: '',
+        lower_limb_knee_flexion_left: '',
+        lower_limb_knee_flexion_right: '',
+        lower_limb_knee_extension_left: '',
+        lower_limb_knee_extension_right: '',
+        lower_limb_ankle_dorsiflexion_left: '',
+        lower_limb_ankle_dorsiflexion_right: '',
+        lower_limb_ankle_plantarflexion_left: '',
+        lower_limb_ankle_plantarflexion_right: '',
+        lower_limb_ankle_inversion_left: '',
+        lower_limb_ankle_inversion_right: '',
+        lower_limb_ankle_eversion_left: '',
+        lower_limb_ankle_eversion_right: '',
+        lower_limb_ankle_toe_flexion_left: '',
+        lower_limb_ankle_toe_flexion_right: '',
+        lower_limb_ankle_toe_extension_left: '',
+        lower_limb_ankle_toe_extension_right: '',
+        muscularEvaluation_notes: '',
+      },
       // Joint Evaluation
-      jointEvaluation: '',
+      jointEvaluation: {
+        joint_spine_cervical_flexion_rom: '',
+        joint_spine_cervical_flexion_notes: '',
+        joint_spine_cervical_extension_rom: '',
+        joint_spine_cervical_extension_notes: '',
+        joint_spine_cervical_lateral_flexion_left_rom: '',
+        joint_spine_cervical_lateral_flexion_left_notes: '',
+        joint_spine_cervical_lateral_flexion_right_rom: '',
+        joint_spine_cervical_lateral_flexion_right_notes: '',
+        joint_spine_cervical_rotation_left_rom: '',
+        joint_spine_cervical_rotation_left_notes: '',
+        joint_spine_cervical_rotation_right_rom: '',
+        joint_spine_cervical_rotation_right_notes: '',
+        joint_spine_cervical_special_tests: '',
+        joint_spine_thoracic_extension_rom: '',
+        joint_spine_thoracic_extension_notes: '',
+        joint_spine_thoracic_rotation_left_rom: '',
+        joint_spine_thoracic_rotation_left_notes: '',
+        joint_spine_thoracic_rotation_right_rom: '',
+        joint_spine_thoracic_rotation_right_notes: '',
+        joint_spine_thoracic_special_tests: '',
+        joint_spine_lumbar_flexion_rom: '',
+        joint_spine_lumbar_flexion_notes: '',
+        joint_spine_lumbar_extension_rom: '',
+        joint_spine_lumbar_extension_notes: '',
+        joint_spine_lumbar_lateral_flexion_left_rom: '',
+        joint_spine_lumbar_lateral_flexion_left_notes: '',
+        joint_spine_lumbar_lateral_flexion_right_rom: '',
+        joint_spine_lumbar_lateral_flexion_right_notes: '',
+        joint_spine_lumbar_rotation_left_rom: '',
+        joint_spine_lumbar_rotation_left_notes: '',
+        joint_spine_lumbar_rotation_right_rom: '',
+        joint_spine_lumbar_rotation_right_notes: '',
+        joint_spine_lumbar_special_tests: '',
+        joint_upper_limb_shoulder_flexion_left_rom: '',
+        joint_upper_limb_shoulder_flexion_left_notes: '',
+        joint_upper_limb_shoulder_flexion_right_rom: '',
+        joint_upper_limb_shoulder_flexion_right_notes: '',
+        joint_upper_limb_shoulder_extension_left_rom: '',
+        joint_upper_limb_shoulder_extension_left_notes: '',
+        joint_upper_limb_shoulder_extension_right_rom: '',
+        joint_upper_limb_shoulder_extension_right_notes: '',
+        joint_upper_limb_shoulder_abduction_left_rom: '',
+        joint_upper_limb_shoulder_abduction_left_notes: '',
+        joint_upper_limb_shoulder_abduction_right_rom: '',
+        joint_upper_limb_shoulder_abduction_right_notes: '',
+        joint_upper_limb_shoulder_adduction_left_rom: '',
+        joint_upper_limb_shoulder_adduction_left_notes: '',
+        joint_upper_limb_shoulder_adduction_right_rom: '',
+        joint_upper_limb_shoulder_adduction_right_notes: '',
+        joint_upper_limb_shoulder_internal_rotation_left_rom: '',
+        joint_upper_limb_shoulder_internal_rotation_left_notes: '',
+        joint_upper_limb_shoulder_internal_rotation_right_rom: '',
+        joint_upper_limb_shoulder_internal_rotation_right_notes: '',
+        joint_upper_limb_shoulder_external_rotation_left_rom: '',
+        joint_upper_limb_shoulder_external_rotation_left_notes: '',
+        joint_upper_limb_shoulder_external_rotation_right_rom: '',
+        joint_upper_limb_shoulder_external_rotation_right_notes: '',
+        joint_upper_limb_shoulder_special_tests: '',
+        joint_upper_limb_elbow_flexion_left_rom: '',
+        joint_upper_limb_elbow_flexion_left_notes: '',
+        joint_upper_limb_elbow_flexion_right_rom: '',
+        joint_upper_limb_elbow_flexion_right_notes: '',
+        joint_upper_limb_elbow_extension_left_rom: '',
+        joint_upper_limb_elbow_extension_left_notes: '',
+        joint_upper_limb_elbow_extension_right_rom: '',
+        joint_upper_limb_elbow_extension_right_notes: '',
+        joint_upper_limb_elbow_special_tests: '',
+        joint_upper_limb_forearm_supination_left_rom: '',
+        joint_upper_limb_forearm_supination_left_notes: '',
+        joint_upper_limb_forearm_supination_right_rom: '',
+        joint_upper_limb_forearm_supination_right_notes: '',
+        joint_upper_limb_forearm_pronation_left_rom: '',
+        joint_upper_limb_forearm_pronation_left_notes: '',
+        joint_upper_limb_forearm_pronation_right_rom: '',
+        joint_upper_limb_forearm_pronation_right_notes: '',
+        joint_upper_limb_wrist_flexion_left_rom: '',
+        joint_upper_limb_wrist_flexion_left_notes: '',
+        joint_upper_limb_wrist_flexion_right_rom: '',
+        joint_upper_limb_wrist_flexion_right_notes: '',
+        joint_upper_limb_wrist_extension_left_rom: '',
+        joint_upper_limb_wrist_extension_left_notes: '',
+        joint_upper_limb_wrist_extension_right_rom: '',
+        joint_upper_limb_wrist_extension_right_notes: '',
+        joint_upper_limb_wrist_radial_deviation_left_rom: '',
+        joint_upper_limb_wrist_radial_deviation_left_notes: '',
+        joint_upper_limb_wrist_radial_deviation_right_rom: '',
+        joint_upper_limb_wrist_radial_deviation_right_notes: '',
+        joint_upper_limb_wrist_ulnar_deviation_left_rom: '',
+        joint_upper_limb_wrist_ulnar_deviation_left_notes: '',
+        joint_upper_limb_wrist_ulnar_deviation_right_rom: '',
+        joint_upper_limb_wrist_ulnar_deviation_right_notes: '',
+        joint_upper_limb_wrist_special_tests: '',
+        joint_upper_limb_fingers_mcp_flexion_left_rom: '',
+        joint_upper_limb_fingers_mcp_flexion_left_notes: '',
+        joint_upper_limb_fingers_mcp_flexion_right_rom: '',
+        joint_upper_limb_fingers_mcp_flexion_right_notes: '',
+        joint_upper_limb_fingers_pip_flexion_left_rom: '',
+        joint_upper_limb_fingers_pip_flexion_left_notes: '',
+        joint_upper_limb_fingers_pip_flexion_right_rom: '',
+        joint_upper_limb_fingers_pip_flexion_right_notes: '',
+        joint_upper_limb_fingers_dip_flexion_left_rom: '',
+        joint_upper_limb_fingers_dip_flexion_left_notes: '',
+        joint_upper_limb_fingers_dip_flexion_right_rom: '',
+        joint_upper_limb_fingers_dip_flexion_right_notes: '',
+        joint_upper_limb_fingers_abduction_left_rom: '',
+        joint_upper_limb_fingers_abduction_left_notes: '',
+        joint_upper_limb_fingers_abduction_right_rom: '',
+        joint_upper_limb_fingers_abduction_right_notes: '',
+        joint_upper_limb_fingers_special_tests: '',
+        joint_lower_limb_hip_flexion_left_rom: '',
+        joint_lower_limb_hip_flexion_left_notes: '',
+        joint_lower_limb_hip_flexion_right_rom: '',
+        joint_lower_limb_hip_flexion_right_notes: '',
+        joint_lower_limb_hip_extension_left_rom: '',
+        joint_lower_limb_hip_extension_left_notes: '',
+        joint_lower_limb_hip_extension_right_rom: '',
+        joint_lower_limb_hip_extension_right_notes: '',
+        joint_lower_limb_hip_abduction_left_rom: '',
+        joint_lower_limb_hip_abduction_left_notes: '',
+        joint_lower_limb_hip_abduction_right_rom: '',
+        joint_lower_limb_hip_abduction_right_notes: '',
+        joint_lower_limb_hip_adduction_left_rom: '',
+        joint_lower_limb_hip_adduction_left_notes: '',
+        joint_lower_limb_hip_adduction_right_rom: '',
+        joint_lower_limb_hip_adduction_right_notes: '',
+        joint_lower_limb_hip_internal_rotation_left_rom: '',
+        joint_lower_limb_hip_internal_rotation_left_notes: '',
+        joint_lower_limb_hip_internal_rotation_right_rom: '',
+        joint_lower_limb_hip_internal_rotation_right_notes: '',
+        joint_lower_limb_hip_external_rotation_left_rom: '',
+        joint_lower_limb_hip_external_rotation_left_notes: '',
+        joint_lower_limb_hip_external_rotation_right_rom: '',
+        joint_lower_limb_hip_external_rotation_right_notes: '',
+        joint_lower_limb_hip_special_tests: '',
+        joint_lower_limb_knee_flexion_left_rom: '',
+        joint_lower_limb_knee_flexion_left_notes: '',
+        joint_lower_limb_knee_flexion_right_rom: '',
+        joint_lower_limb_knee_flexion_right_notes: '',
+        joint_lower_limb_knee_extension_left_rom: '',
+        joint_lower_limb_knee_extension_left_notes: '',
+        joint_lower_limb_knee_extension_right_rom: '',
+        joint_lower_limb_knee_extension_right_notes: '',
+        joint_lower_limb_knee_special_tests: '',
+        joint_lower_limb_ankle_dorsiflexion_left_rom: '',
+        joint_lower_limb_ankle_dorsiflexion_left_notes: '',
+        joint_lower_limb_ankle_dorsiflexion_right_rom: '',
+        joint_lower_limb_ankle_dorsiflexion_right_notes: '',
+        joint_lower_limb_ankle_plantarflexion_left_rom: '',
+        joint_lower_limb_ankle_plantarflexion_left_notes: '',
+        joint_lower_limb_ankle_plantarflexion_right_rom: '',
+        joint_lower_limb_ankle_plantarflexion_right_notes: '',
+        joint_lower_limb_ankle_inversion_left_rom: '',
+        joint_lower_limb_ankle_inversion_left_notes: '',
+        joint_lower_limb_ankle_inversion_right_rom: '',
+        joint_lower_limb_ankle_inversion_right_notes: '',
+        joint_lower_limb_ankle_eversion_left_rom: '',
+        joint_lower_limb_ankle_eversion_left_notes: '',
+        joint_lower_limb_ankle_eversion_right_rom: '',
+        joint_lower_limb_ankle_eversion_right_notes: '',
+        joint_lower_limb_ankle_special_tests: '',
+        joint_lower_limb_toes_great_flexion_left_rom: '',
+        joint_lower_limb_toes_great_flexion_left_notes: '',
+        joint_lower_limb_toes_great_flexion_right_rom: '',
+        joint_lower_limb_toes_great_flexion_right_notes: '',
+        joint_lower_limb_toes_great_extension_left_rom: '',
+        joint_lower_limb_toes_great_extension_left_notes: '',
+        joint_lower_limb_toes_great_extension_right_rom: '',
+        joint_lower_limb_toes_great_extension_right_notes: '',
+        joint_lower_limb_toes_lesser_flexion_left_rom: '',
+        joint_lower_limb_toes_lesser_flexion_left_notes: '',
+        joint_lower_limb_toes_lesser_flexion_right_rom: '',
+        joint_lower_limb_toes_lesser_flexion_right_notes: '',
+        joint_lower_limb_toes_lesser_extension_left_rom: '',
+        joint_lower_limb_toes_lesser_extension_left_notes: '',
+        joint_lower_limb_toes_lesser_extension_right_rom: '',
+        joint_lower_limb_toes_lesser_extension_right_notes: '',
+        joint_lower_limb_toes_abduction_left_rom: '',
+        joint_lower_limb_toes_abduction_left_notes: '',
+        joint_lower_limb_toes_abduction_right_rom: '',
+        joint_lower_limb_toes_abduction_right_notes: '',
+        joint_lower_limb_toes_special_tests: '',
+        jointEvaluation_notes: '',
+      },
+
       // Posture Evaluation
       postureFindings: '',
       // Gait Evaluation
@@ -157,56 +356,79 @@ export const AssessmentForm = () => {
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchPatientDetails = async () => {
-      setLoading(true);
-      try {
-        const details = await apiRequest(`${endpoint}/patients/${patientId}`, {
-          method: 'GET',
-          auth: true, // set to true if endpoint requires auth
-        });
-        setPatientDetails(details);
-      } catch (error) {
-        showToast(error.message, 'error');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (patientId) {
-      fetchPatientDetails();
-    }
-  }, [patientId]);
-
   const onSubmit = async (data) => {
+    console.log(data)
+    setPreviewData(data);
+    setShowPreview(true);
+  };
+
+  const assessmentId = '2XCbjDYJzYdAhxGfnXeM';
+useEffect(() => {
+  const fetchAssessment = async () => {
+    setLoading(true);
     try {
-      const newPatient = await apiRequest(`${endpoint}/assessment/${patientDetails.id}/assessments`, {
-        method: 'POST',
-        body: data,
+      const details = await apiRequest(`${endpoint}/patients/${patientId}`, {
+        method: 'GET',
         auth: true,
       });
-      showToast(`Patient assessment ${newPatient.name} added successfully.`, 'info');
-      navigate(`/patients/${patientDetails.id}/assessment`);
+      setPatientDetails(details);
+
+      // Fetch existing assessment if editing
+      // const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
+
+      if (assessmentId) {
+        const existingAssessment = await apiRequest(`${endpoint}/assessment/${patientId}/assessments/${assessmentId}`, {
+          method: 'GET',
+          auth: true,
+        });
+        // Populate form with existing data
+        Object.keys(existingAssessment).forEach(key => {
+          setValue(key, existingAssessment[key]);
+        });
+      }
     } catch (error) {
       showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  if (patientId) {
+    fetchAssessment();
   }
+}, [patientId, setValue]);
+
+
+const handleConfirmSubmit = async () => {
+  try {
+    // const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
+    const method = assessmentId ? 'PUT' : 'POST';
+    const url = assessmentId
+      ? `${endpoint}/assessment/${patientDetails.id}/assessments/${assessmentId}`
+      : `${endpoint}/assessment/${patientDetails.id}/assessments`;
+
+    const response = await apiRequest(url, {
+      method,
+      body: previewData,
+      auth: true,
+    });
+
+    const message = assessmentId ? 'Assessment updated successfully.' : 'Assessment created successfully.';
+    showToast(message, 'info');
+    setShowPreview(false);
+    navigate(`/patients/${patientDetails.id}/assessment`);
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+};
+
+  const handleCancelPreview = () => {
+    setShowPreview(false);
+  };
 
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
   };
-
-  const MAP = {
-    name: "my-body-map",
-    areas: [
-      { name: "head", shape: "poly", coords: [180,50,220,50,220,100,180,100], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Head" } },
-      { name: "left-arm", shape: "rect", coords: [100,150,120,250], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Left Arm" } },
-      { name: "right-arm", shape: "rect", coords: [280,150,300,250], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Right Arm" } },
-      { name: "torso", shape: "poly", coords: [150,100,250,100,250,300,150,300], preFillColor: "rgba(200,200,200,0.5)", fillColor: "rgba(0,123,255,0.7)", data: { part: "Torso" } },
-      // Add more areas for other body parts
-    ]
-  };
-
 
   return (
     // Removed justifyContent, alignItems, and maxWidth from the outer Box
@@ -664,10 +886,10 @@ export const AssessmentForm = () => {
                 <Tab label="7. Joint Evaluation" />
               </Tabs>
               <TabPanel value={currentTab} index={0}>
-                <MuscularEvaluationMMT />
+                <MuscularEvaluationMMT control={control} errors={errors.muscularEvaluation || {}} />
               </TabPanel>
               <TabPanel value={currentTab} index={1}>
-                <JointEvaluationComponent control={control} errors={errors} />
+                <JointEvaluationComponent control={control} errors={errors.jointEvaluation || {}} />
               </TabPanel>
             </Box>
 
@@ -832,19 +1054,31 @@ export const AssessmentForm = () => {
             </Box>
 
             <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              size="large"
-              sx={{ mt: 4 }}
-              disabled={isSubmitting}
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                size="large"
+                sx={{ mt: 4 }}
+                disabled={isSubmitting || showPreview}
             >
-              {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Save Assessment'}
+              {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Review Assessment'}
             </Button>
           </Stack>
         </form>
       </Paper>
+
+
+      {showPreview && (
+          <PreviewTreatment
+              patientDetails={patientDetails}
+              previewData={previewData}
+              handleCancelPreview={handleCancelPreview}
+              handleConfirmSubmit={handleConfirmSubmit}
+          />
+      )}
+
+
     </Box>
   );
 };

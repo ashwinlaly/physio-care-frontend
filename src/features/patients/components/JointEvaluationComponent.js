@@ -1,5 +1,3 @@
-// src/features/patients/components/JointEvaluationComponent.jsx
-
 import React, { useState } from 'react';
 import {
     Accordion,
@@ -18,6 +16,7 @@ import {
     Grid,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Controller } from 'react-hook-form';
 
 export const JointEvaluationComponent = ({ control, errors }) => {
     const [expanded, setExpanded] = useState({
@@ -34,7 +33,7 @@ export const JointEvaluationComponent = ({ control, errors }) => {
     };
 
     // Helper component for joint assessment rows
-    const JointTableRow = ({ movement, leftROM, rightROM, bilateralROM, leftNotes, rightNotes, bilateralNotes }) => (
+    const JointTableRow = ({ movement, leftROMName, rightROMName, bilateralROMName, leftNotesName, rightNotesName, bilateralNotesName }) => (
         <TableRow>
             <TableCell sx={{ width: '25%' }}>
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
@@ -42,27 +41,45 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                 </Typography>
             </TableCell>
             <TableCell sx={{ width: '25%', px: 1 }}>
-                {leftROM || leftNotes ? (
+                {leftROMName || leftNotesName ? (
                     <Grid container spacing={1}>
-                        {leftROM && (
+                        {leftROMName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="ROM (e.g., 0-90°)"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${leftROMName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="ROM (e.g., 0-90°)"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[leftROMName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
-                        {leftNotes && (
+                        {leftNotesName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="Notes"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${leftNotesName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="ROM (e.g., 0-90°)"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[leftNotesName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
@@ -70,27 +87,45 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                 ) : '—'}
             </TableCell>
             <TableCell sx={{ width: '25%', px: 1 }}>
-                {rightROM || rightNotes ? (
+                {rightROMName || rightNotesName ? (
                     <Grid container spacing={1}>
-                        {rightROM && (
+                        {rightROMName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="ROM (e.g., 0-90°)"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${rightROMName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="ROM (e.g., 0-90°)"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[rightROMName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
-                        {rightNotes && (
+                        {rightNotesName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="Notes"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${rightNotesName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="ROM (e.g., 0-90°)"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[rightNotesName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
@@ -98,27 +133,45 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                 ) : '—'}
             </TableCell>
             <TableCell sx={{ width: '25%', px: 1 }}>
-                {bilateralROM || bilateralNotes ? (
+                {bilateralROMName || bilateralNotesName ? (
                     <Grid container spacing={1}>
-                        {bilateralROM && (
+                        {bilateralROMName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="ROM (e.g., 0-90°)"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${bilateralROMName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="ROM (e.g., 0-90°)"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[bilateralROMName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
-                        {bilateralNotes && (
+                        {bilateralNotesName && (
                             <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    placeholder="Notes"
-                                    fullWidth
-                                    multiline
-                                    sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                <Controller
+                                    name={`jointEvaluation.${bilateralNotesName}`}
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            size="small"
+                                            placeholder="Notes"
+                                            fullWidth
+                                            multiline
+                                            sx={{ '& .MuiInputBase-input': { fontSize: '0.875rem' } }}
+                                            error={!!errors[bilateralNotesName]}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         )}
@@ -177,27 +230,27 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                             <TableBody>
                                 <JointTableRow
                                     movement="Flexion"
-                                    bilateralROM={true}
-                                    bilateralNotes={true}
+                                    bilateralROMName="joint_spine_cervical_flexion_rom"
+                                    bilateralNotesName="joint_spine_cervical_flexion_notes"
                                 />
                                 <JointTableRow
                                     movement="Extension"
-                                    bilateralROM={true}
-                                    bilateralNotes={true}
+                                    bilateralROMName="joint_spine_cervical_extension_rom"
+                                    bilateralNotesName="joint_spine_cervical_extension_notes"
                                 />
                                 <JointTableRow
                                     movement="Lateral Flexion"
-                                    leftROM={true}
-                                    leftNotes={true}
-                                    rightROM={true}
-                                    rightNotes={true}
+                                    leftROMName="joint_spine_cervical_lateral_flexion_left_rom"
+                                    leftNotesName="joint_spine_cervical_lateral_flexion_left_notes"
+                                    rightROMName="joint_spine_cervical_lateral_flexion_right_rom"
+                                    rightNotesName="joint_spine_cervical_lateral_flexion_right_notes"
                                 />
                                 <JointTableRow
                                     movement="Rotation"
-                                    leftROM={true}
-                                    leftNotes={true}
-                                    rightROM={true}
-                                    rightNotes={true}
+                                    leftROMName="joint_spine_cervical_rotation_left_rom"
+                                    leftNotesName="joint_spine_cervical_rotation_left_notes"
+                                    rightROMName="joint_spine_cervical_rotation_right_rom"
+                                    rightNotesName="joint_spine_cervical_rotation_right_notes"
                                 />
                             </TableBody>
                         </Table>
@@ -207,13 +260,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Spurling's test, distraction test, instability, crepitus, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_spine_cervical_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Spurling's test, distraction test, instability, crepitus, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_spine_cervical_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Thoracic Spine */}
@@ -226,15 +288,15 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                             <TableBody>
                                 <JointTableRow
                                     movement="Extension"
-                                    bilateralROM={true}
-                                    bilateralNotes={true}
+                                    bilateralROMName="joint_spine_thoracic_extension_rom"
+                                    bilateralNotesName="joint_spine_thoracic_extension_notes"
                                 />
                                 <JointTableRow
                                     movement="Rotation"
-                                    leftROM={true}
-                                    leftNotes={true}
-                                    rightROM={true}
-                                    rightNotes={true}
+                                    leftROMName="joint_spine_thoracic_rotation_left_rom"
+                                    leftNotesName="joint_spine_thoracic_rotation_left_notes"
+                                    rightROMName="joint_spine_thoracic_rotation_right_rom"
+                                    rightNotesName="joint_spine_thoracic_rotation_right_notes"
                                 />
                             </TableBody>
                         </Table>
@@ -244,13 +306,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., rib mobility, postural assessment, breathing pattern, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_spine_thoracic_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., rib mobility, postural assessment, breathing pattern, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_spine_thoracic_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Lumbar Spine */}
@@ -263,27 +334,27 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                             <TableBody>
                                 <JointTableRow
                                     movement="Flexion"
-                                    bilateralROM={true}
-                                    bilateralNotes={true}
+                                    bilateralROMName="joint_spine_lumbar_flexion_rom"
+                                    bilateralNotesName="joint_spine_lumbar_flexion_notes"
                                 />
                                 <JointTableRow
                                     movement="Extension"
-                                    bilateralROM={true}
-                                    bilateralNotes={true}
+                                    bilateralROMName="joint_spine_lumbar_extension_rom"
+                                    bilateralNotesName="joint_spine_lumbar_extension_notes"
                                 />
                                 <JointTableRow
                                     movement="Lateral Flexion"
-                                    leftROM={true}
-                                    leftNotes={true}
-                                    rightROM={true}
-                                    rightNotes={true}
+                                    leftROMName="joint_spine_lumbar_lateral_flexion_left_rom"
+                                    leftNotesName="joint_spine_lumbar_lateral_flexion_left_notes"
+                                    rightROMName="joint_spine_lumbar_lateral_flexion_right_rom"
+                                    rightNotesName="joint_spine_lumbar_lateral_flexion_right_notes"
                                 />
                                 <JointTableRow
                                     movement="Rotation"
-                                    leftROM={true}
-                                    leftNotes={true}
-                                    rightROM={true}
-                                    rightNotes={true}
+                                    leftROMName="joint_spine_lumbar_rotation_left_rom"
+                                    leftNotesName="joint_spine_lumbar_rotation_left_notes"
+                                    rightROMName="joint_spine_lumbar_rotation_right_rom"
+                                    rightNotesName="joint_spine_lumbar_rotation_right_notes"
                                 />
                             </TableBody>
                         </Table>
@@ -293,12 +364,21 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., SLR, slump test, instability tests, joint play, etc."
-                        variant="outlined"
+                    <Controller
+                        name={`jointEvaluation.joint_spine_lumbar_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., SLR, slump test, instability tests, joint play, etc."
+                                variant="outlined"
+                                error={!!errors.joint_spine_lumbar_special_tests}
+                            />
+                        )}
                     />
                 </AccordionDetails>
             </Accordion>
@@ -319,7 +399,7 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         <Typography sx={{ fontWeight: 'bold' }}>Upper Limb Joint Evaluation</Typography>
                         <Typography sx={{ color: 'text.secondary', ml: 2, fontSize: '0.875rem' }}>
-                            (Shoulder, Elbow, Forearm, Wrist)
+                            (Shoulder, Elbow, Forearm, Wrist, Fingers)
                         </Typography>
                     </Box>
                 </AccordionSummary>
@@ -332,12 +412,12 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Flexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Extension" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Abduction" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Adduction" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Internal Rotation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="External Rotation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Flexion" leftROMName="joint_upper_limb_shoulder_flexion_left_rom" leftNotesName="joint_upper_limb_shoulder_flexion_left_notes" rightROMName="joint_upper_limb_shoulder_flexion_right_rom" rightNotesName="joint_upper_limb_shoulder_flexion_right_notes" />
+                                <JointTableRow movement="Extension" leftROMName="joint_upper_limb_shoulder_extension_left_rom" leftNotesName="joint_upper_limb_shoulder_extension_left_notes" rightROMName="joint_upper_limb_shoulder_extension_right_rom" rightNotesName="joint_upper_limb_shoulder_extension_right_notes" />
+                                <JointTableRow movement="Abduction" leftROMName="joint_upper_limb_shoulder_abduction_left_rom" leftNotesName="joint_upper_limb_shoulder_abduction_left_notes" rightROMName="joint_upper_limb_shoulder_abduction_right_rom" rightNotesName="joint_upper_limb_shoulder_abduction_right_notes" />
+                                <JointTableRow movement="Adduction" leftROMName="joint_upper_limb_shoulder_adduction_left_rom" leftNotesName="joint_upper_limb_shoulder_adduction_left_notes" rightROMName="joint_upper_limb_shoulder_adduction_right_rom" rightNotesName="joint_upper_limb_shoulder_adduction_right_notes" />
+                                <JointTableRow movement="Internal Rotation" leftROMName="joint_upper_limb_shoulder_internal_rotation_left_rom" leftNotesName="joint_upper_limb_shoulder_internal_rotation_left_notes" rightROMName="joint_upper_limb_shoulder_internal_rotation_right_rom" rightNotesName="joint_upper_limb_shoulder_internal_rotation_right_notes" />
+                                <JointTableRow movement="External Rotation" leftROMName="joint_upper_limb_shoulder_external_rotation_left_rom" leftNotesName="joint_upper_limb_shoulder_external_rotation_left_notes" rightROMName="joint_upper_limb_shoulder_external_rotation_right_rom" rightNotesName="joint_upper_limb_shoulder_external_rotation_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -346,13 +426,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Hawkins-Kennedy, Neer's, Empty Can, Drop Arm, Apprehension, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_upper_limb_shoulder_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Hawkins-Kennedy, Neer's, Empty Can, Drop Arm, Apprehension, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_upper_limb_shoulder_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Elbow */}
@@ -363,8 +452,8 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Flexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Extension" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Flexion" leftROMName="joint_upper_limb_elbow_flexion_left_rom" leftNotesName="joint_upper_limb_elbow_flexion_left_notes" rightROMName="joint_upper_limb_elbow_flexion_right_rom" rightNotesName="joint_upper_limb_elbow_flexion_right_notes" />
+                                <JointTableRow movement="Extension" leftROMName="joint_upper_limb_elbow_extension_left_rom" leftNotesName="joint_upper_limb_elbow_extension_left_notes" rightROMName="joint_upper_limb_elbow_extension_right_rom" rightNotesName="joint_upper_limb_elbow_extension_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -373,13 +462,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Varus/valgus stress, tennis/golfer's elbow tests, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_upper_limb_elbow_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Varus/valgus stress, tennis/golfer's elbow tests, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_upper_limb_elbow_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Forearm */}
@@ -390,8 +488,8 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Supination" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Pronation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Supination" leftROMName="joint_upper_limb_forearm_supination_left_rom" leftNotesName="joint_upper_limb_forearm_supination_left_notes" rightROMName="joint_upper_limb_forearm_supination_right_rom" rightNotesName="joint_upper_limb_forearm_supination_right_notes" />
+                                <JointTableRow movement="Pronation" leftROMName="joint_upper_limb_forearm_pronation_left_rom" leftNotesName="joint_upper_limb_forearm_pronation_left_notes" rightROMName="joint_upper_limb_forearm_pronation_right_rom" rightNotesName="joint_upper_limb_forearm_pronation_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -404,10 +502,10 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Flexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Extension" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Radial Deviation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Ulnar Deviation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Flexion" leftROMName="joint_upper_limb_wrist_flexion_left_rom" leftNotesName="joint_upper_limb_wrist_flexion_left_notes" rightROMName="joint_upper_limb_wrist_flexion_right_rom" rightNotesName="joint_upper_limb_wrist_flexion_right_notes" />
+                                <JointTableRow movement="Extension" leftROMName="joint_upper_limb_wrist_extension_left_rom" leftNotesName="joint_upper_limb_wrist_extension_left_notes" rightROMName="joint_upper_limb_wrist_extension_right_rom" rightNotesName="joint_upper_limb_wrist_extension_right_notes" />
+                                <JointTableRow movement="Radial Deviation" leftROMName="joint_upper_limb_wrist_radial_deviation_left_rom" leftNotesName="joint_upper_limb_wrist_radial_deviation_left_notes" rightROMName="joint_upper_limb_wrist_radial_deviation_right_rom" rightNotesName="joint_upper_limb_wrist_radial_deviation_right_notes" />
+                                <JointTableRow movement="Ulnar Deviation" leftROMName="joint_upper_limb_wrist_ulnar_deviation_left_rom" leftNotesName="joint_upper_limb_wrist_ulnar_deviation_left_notes" rightROMName="joint_upper_limb_wrist_ulnar_deviation_right_rom" rightNotesName="joint_upper_limb_wrist_ulnar_deviation_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -416,12 +514,59 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Phalen's, Tinel's, Finkelstein's, carpal mobility, etc."
-                        variant="outlined"
+                    <Controller
+                        name={`jointEvaluation.joint_upper_limb_wrist_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Phalen's, Tinel's, Finkelstein's, carpal mobility, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_upper_limb_wrist_special_tests}
+                            />
+                        )}
+                    />
+
+                    {/* Fingers */}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: 'primary.main' }}>
+                        Fingers
+                    </Typography>
+                    <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                        <Table size="small">
+                            <TableHeader />
+                            <TableBody>
+                                <JointTableRow movement="MCP Flexion" leftROMName="joint_upper_limb_fingers_mcp_flexion_left_rom" leftNotesName="joint_upper_limb_fingers_mcp_flexion_left_notes" rightROMName="joint_upper_limb_fingers_mcp_flexion_right_rom" rightNotesName="joint_upper_limb_fingers_mcp_flexion_right_notes" />
+                                <JointTableRow movement="PIP Flexion" leftROMName="joint_upper_limb_fingers_pip_flexion_left_rom" leftNotesName="joint_upper_limb_fingers_pip_flexion_left_notes" rightROMName="joint_upper_limb_fingers_pip_flexion_right_rom" rightNotesName="joint_upper_limb_fingers_pip_flexion_right_notes" />
+                                <JointTableRow movement="DIP Flexion" leftROMName="joint_upper_limb_fingers_dip_flexion_left_rom" leftNotesName="joint_upper_limb_fingers_dip_flexion_left_notes" rightROMName="joint_upper_limb_fingers_dip_flexion_right_rom" rightNotesName="joint_upper_limb_fingers_dip_flexion_right_notes" />
+                                <JointTableRow movement="Finger Abduction" leftROMName="joint_upper_limb_fingers_abduction_left_rom" leftNotesName="joint_upper_limb_fingers_abduction_left_notes" rightROMName="joint_upper_limb_fingers_abduction_right_rom" rightNotesName="joint_upper_limb_fingers_abduction_right_notes" />
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                    {/* Special Tests for Fingers */}
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Special Tests / Observations
+                    </Typography>
+                    <Controller
+                        name={`jointEvaluation.joint_upper_limb_fingers_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Grip strength, finger dexterity, swelling, deformities, etc."
+                                variant="outlined"
+                                error={!!errors.joint_upper_limb_fingers_special_tests}
+                            />
+                        )}
                     />
                 </AccordionDetails>
             </Accordion>
@@ -442,7 +587,7 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         <Typography sx={{ fontWeight: 'bold' }}>Lower Limb Joint Evaluation</Typography>
                         <Typography sx={{ color: 'text.secondary', ml: 2, fontSize: '0.875rem' }}>
-                            (Hip, Knee, Ankle)
+                            (Hip, Knee, Ankle, toe)
                         </Typography>
                     </Box>
                 </AccordionSummary>
@@ -455,12 +600,12 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Flexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Extension" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Abduction" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Adduction" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Internal Rotation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="External Rotation" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Flexion" leftROMName="joint_lower_limb_hip_flexion_left_rom" leftNotesName="joint_lower_limb_hip_flexion_left_notes" rightROMName="joint_lower_limb_hip_flexion_right_rom" rightNotesName="joint_lower_limb_hip_flexion_right_notes" />
+                                <JointTableRow movement="Extension" leftROMName="joint_lower_limb_hip_extension_left_rom" leftNotesName="joint_lower_limb_hip_extension_left_notes" rightROMName="joint_lower_limb_hip_extension_right_rom" rightNotesName="joint_lower_limb_hip_extension_right_notes" />
+                                <JointTableRow movement="Abduction" leftROMName="joint_lower_limb_hip_abduction_left_rom" leftNotesName="joint_lower_limb_hip_abduction_left_notes" rightROMName="joint_lower_limb_hip_abduction_right_rom" rightNotesName="joint_lower_limb_hip_abduction_right_notes" />
+                                <JointTableRow movement="Adduction" leftROMName="joint_lower_limb_hip_adduction_left_rom" leftNotesName="joint_lower_limb_hip_adduction_left_notes" rightROMName="joint_lower_limb_hip_adduction_right_rom" rightNotesName="joint_lower_limb_hip_adduction_right_notes" />
+                                <JointTableRow movement="Internal Rotation" leftROMName="joint_lower_limb_hip_internal_rotation_left_rom" leftNotesName="joint_lower_limb_hip_internal_rotation_left_notes" rightROMName="joint_lower_limb_hip_internal_rotation_right_rom" rightNotesName="joint_lower_limb_hip_internal_rotation_right_notes" />
+                                <JointTableRow movement="External Rotation" leftROMName="joint_lower_limb_hip_external_rotation_left_rom" leftNotesName="joint_lower_limb_hip_external_rotation_left_notes" rightROMName="joint_lower_limb_hip_external_rotation_right_rom" rightNotesName="joint_lower_limb_hip_external_rotation_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -469,13 +614,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., FABER, FADIR, Thomas test, Trendelenburg, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_lower_limb_hip_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., FABER, FADIR, Thomas test, Trendelenburg, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_lower_limb_hip_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Knee */}
@@ -486,8 +640,8 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Flexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Extension" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Flexion" leftROMName="joint_lower_limb_knee_flexion_left_rom" leftNotesName="joint_lower_limb_knee_flexion_left_notes" rightROMName="joint_lower_limb_knee_flexion_right_rom" rightNotesName="joint_lower_limb_knee_flexion_right_notes" />
+                                <JointTableRow movement="Extension" leftROMName="joint_lower_limb_knee_extension_left_rom" leftNotesName="joint_lower_limb_knee_extension_left_notes" rightROMName="joint_lower_limb_knee_extension_right_rom" rightNotesName="joint_lower_limb_knee_extension_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -496,13 +650,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Lachman, Drawer, McMurray, Varus/Valgus stress, Patellar mobility, etc."
-                        variant="outlined"
-                        sx={{ mb: 3 }}
+                    <Controller
+                        name={`jointEvaluation.joint_lower_limb_knee_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Lachman, Drawer, McMurray, Varus/Valgus stress, Patellar mobility, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_lower_limb_knee_special_tests}
+                            />
+                        )}
                     />
 
                     {/* Ankle & Foot */}
@@ -513,10 +676,10 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                         <Table size="small">
                             <TableHeader />
                             <TableBody>
-                                <JointTableRow movement="Dorsiflexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Plantarflexion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Inversion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
-                                <JointTableRow movement="Eversion" leftROM={true} leftNotes={true} rightROM={true} rightNotes={true} />
+                                <JointTableRow movement="Dorsiflexion" leftROMName="joint_lower_limb_ankle_dorsiflexion_left_rom" leftNotesName="joint_lower_limb_ankle_dorsiflexion_left_notes" rightROMName="joint_lower_limb_ankle_dorsiflexion_right_rom" rightNotesName="joint_lower_limb_ankle_dorsiflexion_right_notes" />
+                                <JointTableRow movement="Plantarflexion" leftROMName="joint_lower_limb_ankle_plantarflexion_left_rom" leftNotesName="joint_lower_limb_ankle_plantarflexion_left_notes" rightROMName="joint_lower_limb_ankle_plantarflexion_right_rom" rightNotesName="joint_lower_limb_ankle_plantarflexion_right_notes" />
+                                <JointTableRow movement="Inversion" leftROMName="joint_lower_limb_ankle_inversion_left_rom" leftNotesName="joint_lower_limb_ankle_inversion_left_notes" rightROMName="joint_lower_limb_ankle_inversion_right_rom" rightNotesName="joint_lower_limb_ankle_inversion_right_notes" />
+                                <JointTableRow movement="Eversion" leftROMName="joint_lower_limb_ankle_eversion_left_rom" leftNotesName="joint_lower_limb_ankle_eversion_left_notes" rightROMName="joint_lower_limb_ankle_eversion_right_rom" rightNotesName="joint_lower_limb_ankle_eversion_right_notes" />
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -525,12 +688,60 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                     <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
                         Special Tests / Observations
                     </Typography>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        placeholder="e.g., Anterior drawer, Talar tilt, Thompson test, weight-bearing assessment, etc."
-                        variant="outlined"
+                    <Controller
+                        name={`jointEvaluation.joint_lower_limb_ankle_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Anterior drawer, Talar tilt, Thompson test, weight-bearing assessment, etc."
+                                variant="outlined"
+                                sx={{ mb: 3 }}
+                                error={!!errors.joint_lower_limb_ankle_special_tests}
+                            />
+                        )}
+                    />
+
+                    {/* Toes */}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2, color: 'primary.main' }}>
+                        Toes
+                    </Typography>
+                    <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                        <Table size="small">
+                            <TableHeader />
+                            <TableBody>
+                                <JointTableRow movement="Great Toe Flexion" leftROMName="joint_lower_limb_toes_great_flexion_left_rom" leftNotesName="joint_lower_limb_toes_great_flexion_left_notes" rightROMName="joint_lower_limb_toes_great_flexion_right_rom" rightNotesName="joint_lower_limb_toes_great_flexion_right_notes" />
+                                <JointTableRow movement="Great Toe Extension" leftROMName="joint_lower_limb_toes_great_extension_left_rom" leftNotesName="joint_lower_limb_toes_great_extension_left_notes" rightROMName="joint_lower_limb_toes_great_extension_right_rom" rightNotesName="joint_lower_limb_toes_great_extension_right_notes" />
+                                <JointTableRow movement="Lesser Toe Flexion" leftROMName="joint_lower_limb_toes_lesser_flexion_left_rom" leftNotesName="joint_lower_limb_toes_lesser_flexion_left_notes" rightROMName="joint_lower_limb_toes_lesser_flexion_right_rom" rightNotesName="joint_lower_limb_toes_lesser_flexion_right_notes" />
+                                <JointTableRow movement="Lesser Toe Extension" leftROMName="joint_lower_limb_toes_lesser_extension_left_rom" leftNotesName="joint_lower_limb_toes_lesser_extension_left_notes" rightROMName="joint_lower_limb_toes_lesser_extension_right_rom" rightNotesName="joint_lower_limb_toes_lesser_extension_right_notes" />
+                                <JointTableRow movement="Toe Abduction" leftROMName="joint_lower_limb_toes_abduction_left_rom" leftNotesName="joint_lower_limb_toes_abduction_left_notes" rightROMName="joint_lower_limb_toes_abduction_right_rom" rightNotesName="joint_lower_limb_toes_abduction_right_notes" />
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                    {/* Special Tests for Toes */}
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+                        Special Tests / Observations
+                    </Typography>
+                    <Controller
+                        name={`jointEvaluation.joint_lower_limb_toes_special_tests`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                fullWidth
+                                multiline
+                                rows={2}
+                                placeholder="e.g., Hallux limitus, toe deformities, calluses, nail condition, etc."
+                                variant="outlined"
+                                error={!!errors.joint_lower_limb_toes_special_tests}
+                            />
+                        )}
                     />
                 </AccordionDetails>
             </Accordion>
@@ -540,13 +751,22 @@ export const JointEvaluationComponent = ({ control, errors }) => {
                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                     General Joint Evaluation Notes
                 </Typography>
-                <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    placeholder="Overall joint mobility, patterns of restriction, hypermobility, compensations, etc."
-                    variant="outlined"
-                    sx={{ mt: 1 }}
+                <Controller
+                    name={`jointEvaluation.joint_lower_limb_toes_special_tests`}
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            fullWidth
+                            multiline
+                            rows={4}
+                            placeholder="Overall joint mobility, patterns of restriction, hypermobility, compensations, etc."
+                            variant="outlined"
+                            sx={{ mt: 1 }}
+                            error={!!errors.jointEvaluation_notes}
+                        />
+                    )}
                 />
             </Box>
         </Box>
