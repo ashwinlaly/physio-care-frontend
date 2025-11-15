@@ -25,10 +25,11 @@ import {JointEvaluationComponent} from "./components/JointEvaluationComponent";
 import {assessmentSchema} from "../../Schema/AssessmentSchema";
 import {TabPanel} from "../../components/TabPanel";
 import {PreviewTreatment} from "./components/PreviewTreatment";
+import {TreatmentSessionsTable} from "./components/TreatmentSessionsTable";
 
 const endpoint = process.env.REACT_APP_API_URL;
 export const AssessmentForm = () => {
-  const { patientId } = useParams();
+  const { patientId, appointmentId } = useParams();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState(0); // State for managing tabs
   const [showPreview, setShowPreview] = useState(false);
@@ -355,6 +356,7 @@ export const AssessmentForm = () => {
 
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [assessment, setAssessment] = useState(null);
 
   const onSubmit = async (data) => {
     console.log(data)
@@ -373,7 +375,9 @@ useEffect(() => {
       setPatientDetails(details);
 
       // Fetch existing assessment if editing
-      const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
+      const assessmentId = appointmentId;
+      console.log("assessmentId" ,appointmentId);
+      setAssessment(assessmentId);
       if (assessmentId) {
         const existingAssessment = await apiRequest(`${endpoint}/assessment/${patientId}/assessments/${assessmentId}`, {
           method: 'GET',
@@ -399,7 +403,7 @@ useEffect(() => {
 
 const handleConfirmSubmit = async () => {
   try {
-    const assessmentId = new URLSearchParams(window.location.search).get('assessmentId');
+    const assessmentId = appointmentId;
     const method = assessmentId ? 'PUT' : 'POST';
     const url = assessmentId
       ? `${endpoint}/assessment/${patientDetails.id}/assessments/${assessmentId}`
@@ -1050,6 +1054,17 @@ const handleConfirmSubmit = async () => {
                 )}
               />
             </Box>
+
+            {assessment ?
+              <>
+                <Divider sx={{ my: 4 }} />
+                <TreatmentSessionsTable
+                    patientId={patientId}
+                    assessmentId={assessment || 'temp-id'}
+                    patientDetails={patientDetails}
+                />
+                <Divider sx={{ my: 4 }} />
+              </> : ''}
 
             <Button
                 type="submit"

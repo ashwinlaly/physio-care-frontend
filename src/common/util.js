@@ -27,3 +27,11 @@ export const showToast = (message, type = 'error') => {
         transition: Bounce,
     });
 }
+
+export const fireBaseDate = (firebaseTimestamp) => {
+    if (firebaseTimestamp) {
+        const totalMilliseconds = (firebaseTimestamp._seconds * 1000) + (firebaseTimestamp._nanoseconds / 1000000);
+        const date = new Date(totalMilliseconds);
+        return date.toLocaleDateString();
+    }
+}
