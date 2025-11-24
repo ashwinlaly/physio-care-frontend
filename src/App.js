@@ -13,7 +13,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {Bounce, ToastContainer} from "react-toastify";
 import {Profile} from "./components/Profile";
-import {PatientAppointments} from "./features/patients/appointments/PatientAppointments";
+import { DoctorsPage } from './features/doctors/DoctorsPage';
+import { AppointmentsPage } from './features/appointment/AppointmentsPage';
 import {FinancialDashboard} from "./features/Financial/FinancialDashboard";
 
 const theme = createTheme({
@@ -76,10 +77,11 @@ function App() {
               <Route path="/patients/:patientId/appointments/new" element={<AssessmentForm />} />
               <Route path="/patients/:patientId/appointments/:appointmentId/edit" element={<AssessmentForm />} />
 
-              <Route path="/appointments" element={<div>Appointments Page</div>} />
               <Route path="/financial" element={<FinancialDashboard/>} />
 
               <Route path="/me/profile" element={<Profile/>} />
+              <Route path="/doctors" element={<DoctorsPage />} />
+              <Route path="/appointments" element={<AppointmentsPage />} />
 
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>

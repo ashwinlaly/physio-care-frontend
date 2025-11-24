@@ -4,10 +4,6 @@ export const assessmentSchema = yup.object().shape({
     patientId: yup.string().required('Patient ID is required'),
 
     // Chief Complaint Section
-    chiefComplaintOnset: yup.string().required('When did it start? is required').max(200, 'Max 200 characters'),
-    chiefComplaintWorse: yup.string().required('What makes it worse? is required').max(200, 'Max 200 characters'),
-    chiefComplaintBetter: yup.string().required('What makes it better? is required').max(200, 'Max 200 characters'),
-    chiefComplaintTreatment: yup.string().required('Any previous treatments? is required').max(200, 'Max 200 characters'),
     chiefComplaintDescription: yup.string().required('Chief Complaint description is required').max(500, 'Max 500 characters'),
 
     // Pain Evaluation Section

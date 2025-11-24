@@ -45,10 +45,6 @@ export const AssessmentForm = () => {
     defaultValues: {
       patientId: patientId,
       // Chief Complaint
-      chiefComplaintOnset: '',
-      chiefComplaintWorse: '',
-      chiefComplaintBetter: '',
-      chiefComplaintTreatment: '',
       chiefComplaintDescription: '',
       // Pain Evaluation
       painOnset: '',
@@ -491,86 +487,6 @@ const handleConfirmSubmit = async () => {
               <Typography variant="h6" gutterBottom color="primary">
                 2. Chief Complaint
               </Typography>
-                <Grid container spacing={2} mb={2}>
-                  <Grid item size={6} xs={6} sm={6}  >
-                    <Controller
-                      name="chiefComplaintOnset"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="When did the problem start?"
-                          fullWidth
-                          required
-                          multiline
-                          rows={1}
-                          variant="outlined"
-                          error={!!errors.chiefComplaintOnset}
-                          helperText={errors.chiefComplaintOnset?.message}
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item  size={6} xs={6} sm={6} >
-                    <Controller
-                      name="chiefComplaintWorse"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="What makes the problem worse?"
-                          fullWidth
-                          required
-                          multiline
-                          rows={1}
-                          variant="outlined"
-                          error={!!errors.chiefComplaintWorse}
-                          helperText={errors.chiefComplaintWorse?.message}
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid  container spacing={2} mb={2}>
-                  <Grid item size={6} xs={6} sm={6}  >
-                    <Controller
-                      name="chiefComplaintBetter"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="What makes the problem better?"
-                          fullWidth
-                          required
-                          multiline
-                          rows={1}
-                          variant="outlined"
-                          error={!!errors.chiefComplaintBetter}
-                          helperText={errors.chiefComplaintBetter?.message}
-                        />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item size={6} xs={6} sm={6}  >
-                    <Controller
-                      name="chiefComplaintTreatment"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          label="Have you had any previous treatments for this problem?"
-                          fullWidth
-                          required
-                          multiline
-                          rows={1}
-                          variant="outlined"
-                          error={!!errors.chiefComplaintTreatment}
-                          helperText={errors.chiefComplaintTreatment?.message}
-                        />
-                      )}
-                    />
-                  </Grid>
-                </Grid>
                 <Grid container spacing={2}>
                   <Grid item xs={12} size={12}>
                   <Controller

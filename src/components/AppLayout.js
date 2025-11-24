@@ -28,15 +28,17 @@ import {
 } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
-
+import EventIcon from '@mui/icons-material/Event';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 const drawerWidth = 240;
 
 const menuItems = [
   { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
   { text: 'New Patient', icon: <MedicalServices />, path: '/patients/new' },
   { text: 'Patient Details', icon: <People />, path: '/patients' },
-  { text: 'Appointments', icon: <PersonAdd />, path: '/appointments' },
-  { text: 'Financial', icon: <Receipt />, path: '/financial' }
+  { text: 'Financial', icon: <Receipt />, path: '/financial' },
+  { text: 'Appointments', icon: <EventIcon />, path: '/appointments' },
+  { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors' },
 ];
 
 export const AppLayout = () => {
