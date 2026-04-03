@@ -25,10 +25,14 @@ import { format } from 'date-fns';
 import { AddDoctorModal } from '../doctors/AddDoctorModal';
 import { apiRequest } from "../../common/api";
 import { showToast } from "../../common/util";
+import * as patient from "date-fns/locale";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
 const TIME_SLOTS = [
+    '06:30',
+    '07:00', '07:30',
+    '08:00', '08:30',
     '09:00', '09:30',
     '10:00', '10:30',
     '11:00', '11:30',
@@ -38,7 +42,9 @@ const TIME_SLOTS = [
     '15:00', '15:30',
     '16:00', '16:30',
     '17:00', '17:30',
-    '18:00'
+    '18:00', '18:30',
+    '19:00', '19:30',
+    '20:00'
 ];
 
 const DURATIONS = [
@@ -48,7 +54,7 @@ const DURATIONS = [
     { value: 120, label: '2 hours' },
 ];
 
-export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, selectedDate }) => {
+export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, selectedDate, patientId, patientDetails }) => {
     const [patients, setPatients] = useState([]);
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -71,6 +77,21 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
         notes: '',
     });
     const [formErrors, setFormErrors] = useState({});
+
+    useEffect(() => {
+        if (patientId != '') {
+            setFormData({
+                ...formData,
+                patientId: patientId,
+                patientName: patientDetails.name,
+                contactNo: patientDetails.contactNo,
+            });
+        }
+    }, [patientId])
+
+    useEffect(() => {
+        console.log(patientId, patientDetails, formData);
+    }, [formData]);
 
     const fetchPatients = async (searchTerm) => {
         try {
@@ -139,7 +160,6 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
     useEffect(() => {
         if (open) {
             fetchDoctors();
-
             if (appointment?.id) {
                 const dateValue = appointment.date?.seconds
                     ? new Date(appointment.date.seconds * 1000)
@@ -160,18 +180,20 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                     notes: appointment.notes || '',
                 });
             } else {
-                setFormData({
-                    patientId: '',
-                    contactNo: '',
-                    patientName: '',
-                    doctorId: '',
-                    doctorName: '',
-                    date: appointment?.date ? new Date(appointment.date) : selectedDate || new Date(),
-                    timeSlot: appointment?.timeSlot || '09:00',
-                    duration: 60,
-                    status: 'scheduled',
-                    notes: '',
-                });
+                if(patientId == '') {
+                    setFormData({
+                        patientId: '',
+                        contactNo: '',
+                        patientName: '',
+                        doctorId: '',
+                        doctorName: '',
+                        date: appointment?.date ? new Date(appointment.date) : selectedDate || new Date(),
+                        timeSlot: appointment?.timeSlot || '09:00',
+                        duration: 60,
+                        status: 'scheduled',
+                        notes: '',
+                    });
+                }
             }
 
             setPatientInputValue('');
@@ -287,10 +309,6 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
         }
     };
 
-    useEffect(() => {
-        console.log("formData", formData);
-    }, [formData]);
-
     const handlePatientChange = (event, newValue) => {
         if (newValue) {
             setFormData({
@@ -336,7 +354,8 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                 <DialogContent>
                     <Grid spacing={3} sx={{ mt: 0.5 }}>
                         {/* Patient Selection */}
-                        <Grid item style={{padding: '10px' }} xs={12} >
+                        {patientId === '' ?
+                            <Grid item style={{padding: '10px' }} xs={12} >
                             <Autocomplete
                                 options={patients}
                                 loading={loadingPatients}
@@ -384,7 +403,11 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                                 filterOptions={(x) => x}
                             />
                         </Grid>
-
+                        :
+                            <h3 style={{paddingLeft: '10px'}}>
+                                {formData.patientName} - {formData.contactNo}
+                            </h3>
+                        }
                         {/* Date */}
                         <Grid item xs={12} style={{padding: '10px' }} sm={6}>
                             <DatePicker

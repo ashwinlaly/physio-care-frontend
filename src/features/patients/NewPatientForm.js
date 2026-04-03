@@ -21,9 +21,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { ToastContainer, toast } from 'react-toastify';
 import {showToast} from "../../common/util";
 import {apiRequest} from "../../common/api";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -163,27 +164,28 @@ export const NewPatientForm = () => {
                 </Grid>
                 <Grid container spacing={2}>
                   <Grid size={8} xs={12} sm={6}>
-                    <Controller
-                      name="date"
-                      control={control}
-                      render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          label="Registration Date"
-                          inputFormat="dd/MM/yyyy"
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              fullWidth
-                              required
-                              error={!!errors.date}
-                              helperText={errors.date?.message}
-                              variant="outlined"
-                            />
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <Controller
+                          name="date"
+                          control={control}
+                          render={({ field }) => (
+                              <DatePicker
+                                  {...field}
+                                  label="Registration Date"
+                                  format="DD/MM/YYYY"
+                                  slotProps={{
+                                    textField: {
+                                      fullWidth: true,
+                                      required: true,
+                                      error: !!errors.date,
+                                      helperText: errors.date?.message,
+                                      variant: "outlined",
+                                    },
+                                  }}
+                              />
                           )}
-                        />
-                      )}
-                    />
+                      />
+                    </LocalizationProvider>
                   </Grid>
                   <Grid size={4} xs={12} sm={6}>
                     <Controller

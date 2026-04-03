@@ -20,7 +20,6 @@ import {
 import {
   Dashboard,
   People,
-  PersonAdd,
   Receipt,
   ExitToApp,
   AccountCircle,
@@ -30,6 +29,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
 import EventIcon from '@mui/icons-material/Event';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import Inventory from '@mui/icons-material/Inventory';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 const drawerWidth = 240;
 
 const menuItems = [
@@ -39,6 +40,8 @@ const menuItems = [
   { text: 'Financial', icon: <Receipt />, path: '/financial' },
   { text: 'Appointments', icon: <EventIcon />, path: '/appointments' },
   { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors' },
+  { text: 'Products', icon: <Inventory />, path: '/products' },
+  { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses' },
 ];
 
 export const AppLayout = () => {

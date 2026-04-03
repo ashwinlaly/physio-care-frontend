@@ -30,6 +30,8 @@ import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
+import {CreateAppointmentDialog} from "../../appointment/CreateAppointmentDialog";
+import {TextWithTooltip} from "../../../components/TextWithTooltip";
 
 
 const endpoint = process.env.REACT_APP_API_URL;
@@ -51,6 +53,10 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
     });
     const [deleteDialog, setDeleteDialog] = useState({ open: false, sessionId: null });
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [openDialog, setOpenDialog] = useState(false);
+    const [editingAppointment, setEditingAppointment] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [appointments, setAppointments] = useState([]);
 
     // Fetch sessions on component mount
     useEffect(() => {
@@ -72,6 +78,23 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
         } catch (error) {
             console.error('Error fetching sessions:', error);
             showSnackbar('Error fetching treatment sessions', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchAppointments = async () => {
+        try {
+            setLoading(true);
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
+            const response = await fetch(`${endpoint}/appointments/date/${dateStr}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                setAppointments(data);
+            }
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
         } finally {
             setLoading(false);
         }
@@ -441,6 +464,19 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
     };
 
 
+    const handleOpenDialog = (appointment = null) => {
+        setEditingAppointment(appointment);
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setEditingAppointment(null);
+    };
+
+    const handleAppointmentSaved = () => {
+        fetchAppointments();
+        handleCloseDialog();
+    };
 
     return (
         <Box sx={{ width: '100%', mt: 4 }}>
@@ -451,6 +487,13 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     {/* Export/Print Buttons */}
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        Book Appointment
+                    </Button>
                     {sessions.length > 0 && (
                         <>
                             <Button
@@ -532,7 +575,6 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                     <TextField
                                         size="small"
                                         fullWidth
-                                        multiline
                                         value={newSession.electrotherapy}
                                         onChange={(e) => setNewSession({ ...newSession, electrotherapy: e.target.value })}
                                     />
@@ -541,7 +583,6 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                     <TextField
                                         size="small"
                                         fullWidth
-                                        multiline
                                         value={newSession.movementTherapy}
                                         onChange={(e) => setNewSession({ ...newSession, movementTherapy: e.target.value })}
                                     />
@@ -550,7 +591,6 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                     <TextField
                                         size="small"
                                         fullWidth
-                                        multiline
                                         value={newSession.exerciseTherapy}
                                         onChange={(e) => setNewSession({ ...newSession, exerciseTherapy: e.target.value })}
                                     />
@@ -567,7 +607,6 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                     <TextField
                                         size="small"
                                         fullWidth
-                                        multiline
                                         value={newSession.remarks}
                                         onChange={(e) => setNewSession({ ...newSession, remarks: e.target.value })}
                                     />
@@ -624,7 +663,7 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                     onChange={(e) => handleFieldChange('vas', e.target.value)}
                                                 />
                                             ) : (
-                                                session.vas
+                                                <TextWithTooltip text={session.vas} maxLength={30} />
                                             )}
                                         </TableCell>
                                         <TableCell>
@@ -632,12 +671,11 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                 <TextField
                                                     size="small"
                                                     fullWidth
-                                                    multiline
                                                     value={editData.electrotherapy || ''}
                                                     onChange={(e) => handleFieldChange('electrotherapy', e.target.value)}
                                                 />
                                             ) : (
-                                                session.electrotherapy
+                                                <TextWithTooltip text={session.electrotherapy} maxLength={30} />
                                             )}
                                         </TableCell>
                                         <TableCell>
@@ -645,12 +683,11 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                 <TextField
                                                     size="small"
                                                     fullWidth
-                                                    multiline
                                                     value={editData.movementTherapy || ''}
                                                     onChange={(e) => handleFieldChange('movementTherapy', e.target.value)}
                                                 />
                                             ) : (
-                                                session.movementTherapy
+                                                <TextWithTooltip text={session.movementTherapy} maxLength={30} />
                                             )}
                                         </TableCell>
                                         <TableCell>
@@ -658,12 +695,11 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                 <TextField
                                                     size="small"
                                                     fullWidth
-                                                    multiline
                                                     value={editData.exerciseTherapy || ''}
                                                     onChange={(e) => handleFieldChange('exerciseTherapy', e.target.value)}
                                                 />
                                             ) : (
-                                                session.exerciseTherapy
+                                                <TextWithTooltip text={session.exerciseTherapy} maxLength={30} />
                                             )}
                                         </TableCell>
                                         <TableCell>
@@ -683,12 +719,11 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                 <TextField
                                                     size="small"
                                                     fullWidth
-                                                    multiline
                                                     value={editData.remarks || ''}
                                                     onChange={(e) => handleFieldChange('remarks', e.target.value)}
                                                 />
                                             ) : (
-                                                session.remarks
+                                                <TextWithTooltip text={session.remarks} maxLength={30} />
                                             )}
                                         </TableCell>
                                         <TableCell align="center">
@@ -760,6 +795,16 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            <CreateAppointmentDialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                onSaved={handleAppointmentSaved}
+                appointment={editingAppointment}
+                selectedDate={selectedDate}
+                patientId={patientId}
+                patientDetails={patientDetails}
+            />
         </Box>
     );
 };

@@ -47,6 +47,7 @@ export const FinancialDashboard = () => {
     // State management
     const [viewType, setViewType] = useState('single'); // 'single' or 'all'
     const [patients, setPatients] = useState([]);
+    const [patient, setPatient] = useState({});
     const [selectedPatient, setSelectedPatient] = useState('');
     const [fromDate, setFromDate] = useState(startOfMonth(new Date()));
     const [toDate, setToDate] = useState(endOfMonth(new Date()));
@@ -93,7 +94,6 @@ export const FinancialDashboard = () => {
             setLoading(true);
 
             if (viewType === 'single' && !selectedPatient) {
-                console.log('Single patient view but no patient selected');
                 setFinancialData([]);
                 setLoading(false);
                 return;
@@ -102,7 +102,6 @@ export const FinancialDashboard = () => {
             // Fetch all sessions
             let allSessions = [];
             allSessions = await fetchSessionsForPatient(selectedPatient.id);
-            console.log('Total sessions fetched:', allSessions.length); // Debug log
 
             // Filter by date range
             const filteredSessions = allSessions.filter(session => {
@@ -360,7 +359,7 @@ export const FinancialDashboard = () => {
     const summary = calculateSummary();
 
     const handleSelectPatient = (patientId) => {
-        // console.log('Selected patient ID:', setSelectedPatient);
+        console.log('Selected patient ID:', setSelectedPatient);
         setPatients(patients);
         setSelectedPatient(patientId);
         setSearchResults([]);
@@ -487,25 +486,25 @@ export const FinancialDashboard = () => {
                     {/*    </Grid>*/}
                     {/*)}*/}
 
-                    {/* Date Range */}
-                    {/*<Grid item xs={12} md={3}>*/}
-                    {/*    <DatePicker*/}
-                    {/*        label="From Date"*/}
-                    {/*        value={fromDate}*/}
-                    {/*        onChange={(newValue) => setFromDate(newValue)}*/}
-                    {/*        renderInput={(params) => <TextField {...params} fullWidth />}*/}
-                    {/*        inputFormat="dd/MM/yyyy"*/}
-                    {/*    />*/}
-                    {/*</Grid>*/}
-                    {/*<Grid item xs={12} md={3}>*/}
-                    {/*    <DatePicker*/}
-                    {/*        label="To Date"*/}
-                    {/*        value={toDate}*/}
-                    {/*        onChange={(newValue) => setToDate(newValue)}*/}
-                    {/*        renderInput={(params) => <TextField {...params} fullWidth />}*/}
-                    {/*        inputFormat="dd/MM/yyyy"*/}
-                    {/*    />*/}
-                    {/*</Grid>*/}
+                     Date Range
+                    <Grid item xs={12} md={3}>
+                        <DatePicker
+                            label="From Date"
+                            value={fromDate}
+                            onChange={(newValue) => setFromDate(newValue)}
+                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            inputFormat="dd/MM/yyyy"
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <DatePicker
+                            label="To Date"
+                            value={toDate}
+                            onChange={(newValue) => setToDate(newValue)}
+                            renderInput={(params) => <TextField {...params} fullWidth />}
+                            inputFormat="dd/MM/yyyy"
+                        />
+                    </Grid>
 
                     {/* Export Button */}
                     <Grid item xs={12} md={viewType === 'single' ? 12 : 3}>
@@ -553,7 +552,7 @@ export const FinancialDashboard = () => {
                     </Typography>
                 </Paper>
             ) : viewType === 'single' ? (
-                <SinglePatientView data={financialData[0]} formatDate={formatDate} />
+                <SinglePatientView data={financialData[0]} formatDate={formatDate} patient={patient} />
             ) : (
                 <AllPatientsView
                     data={filteredFinancialData}
@@ -567,13 +566,13 @@ export const FinancialDashboard = () => {
 };
 
 // Single Patient View Component
-const SinglePatientView = ({ data, formatDate }) => {
+const SinglePatientView = ({ data, formatDate, patients }) => {
     if (!data) return null;
 
     return (
         <Paper sx={{ p: 3 }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
-                {data.patientName}
+                {patients?.patientName}
             </Typography>
 
             {Object.values(data.assessments).map((assessment, index) => (

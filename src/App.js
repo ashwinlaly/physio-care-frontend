@@ -16,6 +16,8 @@ import {Profile} from "./components/Profile";
 import { DoctorsPage } from './features/doctors/DoctorsPage';
 import { AppointmentsPage } from './features/appointment/AppointmentsPage';
 import {FinancialDashboard} from "./features/Financial/FinancialDashboard";
+import {ProductsPage} from "./features/products/ProductsPage";
+import {ExpensesPage} from "./features/expense/ExpensesPage";
 
 const theme = createTheme({
   palette: {
@@ -82,6 +84,9 @@ function App() {
               <Route path="/me/profile" element={<Profile/>} />
               <Route path="/doctors" element={<DoctorsPage />} />
               <Route path="/appointments" element={<AppointmentsPage />} />
+
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/expenses" element={<ExpensesPage />} />
 
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>

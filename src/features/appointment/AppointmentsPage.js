@@ -25,6 +25,9 @@ import { CreateAppointmentDialog } from './CreateAppointmentDialog';
 const endpoint = process.env.REACT_APP_API_URL;
 // Time slots (1-hour intervals from 9 AM to 6 PM)
 const TIME_SLOTS = [
+    '06:30',
+    '07:00', '07:30',
+    '08:00', '08:30',
     '09:00', '09:30',
     '10:00', '10:30',
     '11:00', '11:30',
@@ -34,7 +37,9 @@ const TIME_SLOTS = [
     '15:00', '15:30',
     '16:00', '16:30',
     '17:00', '17:30',
-    '18:00'
+    '18:00', '18:30',
+    '19:00', '19:30',
+    '20:00'
 ];
 
 export const AppointmentsPage = () => {
@@ -188,7 +193,7 @@ export const AppointmentsPage = () => {
                                         <Chip
                                             label={
                                                 status === 'available' ? 'Available' :
-                                                    status === 'partial' ? `${slotAppointments.length}/3` :
+                                                    status === 'partial' ? `${slotAppointments.length}/5` :
                                                         'Fully Booked'
                                             }
                                             color={
@@ -286,6 +291,8 @@ export const AppointmentsPage = () => {
                 onSaved={handleAppointmentSaved}
                 appointment={editingAppointment}
                 selectedDate={selectedDate}
+                patientId={''}
+                patientDetails={''}
             />
         </Box>
     );
