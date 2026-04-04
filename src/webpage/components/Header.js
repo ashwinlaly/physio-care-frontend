@@ -11,7 +11,6 @@ function Header() {
   return (
     <AppBar position="fixed" elevation={0} color="transparent" sx={{ py: 2 }}>
       <Toolbar sx={{ justifyContent: 'center' }}>
-        {/* Floating pill */}
         <Box
           sx={{
             width: 'min(1200px, 100%)',
@@ -28,11 +27,13 @@ function Header() {
         >
           <Logo />
 
-          <Box sx={{ flex: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-            <Navigation />
-          </Box>
+          {/* push everything (nav + CTA) to the right */}
+          <Box sx={{ flex: 1 }} />
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* nav items near Contact Us */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {!isMobile && <Navigation />}
+
             {isMobile ? (
               <Button
                 variant="outlined"

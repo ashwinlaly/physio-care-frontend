@@ -50,29 +50,36 @@ function ServicesSection() {
           <Grid item xs={12} md={3}>
             <FeatureItem
               icon={<HomeOutlinedIcon />}
-              title="Home Physiotherapy"
-              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              title="Orthopedic Physiotherapy"
+              description="Specialized treatment for musculoskeletal conditions and injuries."
             />
           </Grid>
           <Grid item xs={12} md={3}>
             <FeatureItem
               icon={<PersonOutlinedIcon />}
-              title="Personalized Therapy"
-              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              title="Geriatric Physiotherapy"
+              description="Comprehensive care for age-related mobility and health concerns."
             />
           </Grid>
           <Grid item xs={12} md={3}>
             <FeatureItem
               icon={<HotelOutlinedIcon />}
-              title="Comfortable Healing"
-              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              title="Neuro Physiotherapy"
+              description="Specialized rehabilitation for neurological conditions and disorders."
             />
           </Grid>
           <Grid item xs={12} md={3}>
             <FeatureItem
               icon={<VerifiedOutlinedIcon />}
-              title="Certified Therapists"
-              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              title="Pediatric Physiotherapy"
+              description="Developmental and therapeutic care for children and adolescents."
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <FeatureItem
+              icon={<VerifiedOutlinedIcon />}
+              title="Women's Health"
+              description="Specialized physiotherapy addressing unique women's health needs."
             />
           </Grid>
         </Grid>

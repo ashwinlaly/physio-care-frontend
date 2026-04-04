@@ -16,9 +16,14 @@ function StatCard({ bgImage, value, label }) {
   return (
     <Card
       sx={{
-        borderRadius: 5,
+        // was looking like a circle; force a rounded box
+        borderRadius: 6,
         overflow: 'hidden',
-        height: { xs: 110, sm: 120, md: 130 }, // ✅ increased size
+
+        // increase size
+        height: { xs: 140, sm: 160, md: 180 },
+        minWidth: { xs: 180, sm: 210, md: 240 },
+
         boxShadow: '0 10px 25px rgba(0,0,0,0.10)',
       }}
     >
@@ -191,13 +196,17 @@ function HeroSection() {
                     ml: 8,
                     bgcolor: '#fff',
                     borderRadius: 999,
-                    px: 2,
-                    py: 0,
+
+                    width: 'fit-content',
+                    maxWidth: 'calc(100% - 64px)',
+                    height: '1px',
+                    // px: 1.5,
+                    // py: 0,
+
                     boxShadow: '0 10px 30px rgba(0,0,0,0.10)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 1,
-                    // margin : '0 0px 0 0'
                   }}
                 >
                   <Typography sx={{ fontSize: 13.5, color: 'text.primary', fontWeight: 700 }}>

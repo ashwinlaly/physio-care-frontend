@@ -20,16 +20,9 @@ function Navigation() {
         Services
       </Button>
       <Button onClick={() => handleScroll('blog-section')} sx={{ color: 'text.primary' }}>
-        About
+        Blog
       </Button>
 
-      <Button
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        endIcon={<KeyboardArrowDownIcon />}
-        sx={{ color: 'text.primary' }}
-      >
-        Page
-      </Button>
       <Menu anchorEl={anchorEl} open={pageMenuOpen} onClose={() => setAnchorEl(null)}>
         <MenuItem
           onClick={() => {
@@ -39,19 +32,7 @@ function Navigation() {
         >
           Blog
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
-            handleScroll('contact-section');
-          }}
-        >
-          Contact
-        </MenuItem>
       </Menu>
-
-      <Button onClick={() => handleScroll('contact-section')} sx={{ color: 'text.primary' }}>
-        Contact
-      </Button>
     </Stack>
   );
 }
