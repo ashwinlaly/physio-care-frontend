@@ -2,31 +2,32 @@ import React from 'react';
 import { CssBaseline, Box } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-// Import all the main section components
 import Header from './Header';
 import HeroSection from './HeroSection';
 import ServicesSection from './ServicesSection';
 import FeaturedBlogSection from './FeaturedBlogSection';
 import ContactUsSection from './ContactUsSection';
 
-// Define a custom theme to match the blue in your design
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#2196f3', // A shade of blue similar to your design
-      light: '#64b5f6', // Lighter shade for hover effects
-      dark: '#1976d2', // Darker shade for active/contained buttons
-    },
-    secondary: {
-      main: '#ffffff', // White for text/icons
-    },
-    text: {
-      primary: '#333333', // Dark text for readability
-      secondary: '#555555', // Lighter text for descriptions
-    }
+    primary: { main: '#2680c8' },      // deep green
+    secondary: { main: '#6B7C6E' },    // muted green/grey
+    background: { default: '#F6EFE7' },// warm beige
+    text: { primary: '#1F1F1F', secondary: '#5A5A5A' },
   },
+  shape: { borderRadius: 16 },
   typography: {
-    fontFamily: 'Roboto, sans-serif', // Or whatever font you prefer
+    fontFamily: 'Roboto, Arial, sans-serif',
+    h2: { fontWeight: 800, letterSpacing: '-0.02em' },
+    h3: { fontWeight: 800, letterSpacing: '-0.02em' },
+    button: { fontWeight: 700 },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: { borderRadius: 999, textTransform: 'none' },
+      },
+    },
   },
 });
 
@@ -34,10 +35,11 @@ function Home() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Header />
         <HeroSection />
         <ServicesSection />
+        {/* Keeping your existing sections below */}
         <FeaturedBlogSection />
         <ContactUsSection />
       </Box>
