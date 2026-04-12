@@ -25,7 +25,6 @@ import { format } from 'date-fns';
 import { AddDoctorModal } from '../doctors/AddDoctorModal';
 import { apiRequest } from "../../common/api";
 import { showToast } from "../../common/util";
-import * as patient from "date-fns/locale";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -44,7 +43,8 @@ const TIME_SLOTS = [
     '17:00', '17:30',
     '18:00', '18:30',
     '19:00', '19:30',
-    '20:00'
+    '20:00', '20:30',
+    '21:00'
 ];
 
 const DURATIONS = [
@@ -55,14 +55,15 @@ const DURATIONS = [
 ];
 
 export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, selectedDate, patientId, patientDetails }) => {
-    const [patients, setPatients] = useState([]);
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingPatients, setLoadingPatients] = useState(false);
     const [loadingDoctors, setLoadingDoctors] = useState(false);
     const [openAddDoctor, setOpenAddDoctor] = useState(false);
     const [conflictingAppointments, setConflictingAppointments] = useState([]);
-    const [patientInputValue, setPatientInputValue] = useState('');
+    const [checkingPhoneLookup, setCheckingPhoneLookup] = useState(false);
+    const [phoneLookupAttempted, setPhoneLookupAttempted] = useState(false);
+    const [phoneMatches, setPhoneMatches] = useState([]);
+    const [selectedExistingPatient, setSelectedExistingPatient] = useState(null);
 
     const [formData, setFormData] = useState({
         patientId: '',
@@ -78,40 +79,62 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
     });
     const [formErrors, setFormErrors] = useState({});
 
+    const normalizePhone = (value = '') => value.replace(/\D/g, '');
+
+    const isPhoneMatch = (candidatePhone, inputPhone) => {
+        const candidate = normalizePhone(candidatePhone);
+        const input = normalizePhone(inputPhone);
+        if (!candidate || !input) return false;
+        return (
+            candidate === input ||
+            candidate.endsWith(input) ||
+            input.endsWith(candidate) ||
+            candidate.slice(-10) === input.slice(-10)
+        );
+    };
+
     useEffect(() => {
-        if (patientId != '') {
-            setFormData({
-                ...formData,
-                patientId: patientId,
-                patientName: patientDetails.name,
-                contactNo: patientDetails.contactNo,
-            });
+        if (patientId !== '') {
+            setFormData((prev) => ({
+                ...prev,
+                patientId,
+                patientName: patientDetails?.name || '',
+                contactNo: patientDetails?.contactNo || '',
+            }));
         }
-    }, [patientId])
+    }, [patientId, patientDetails]);
 
     useEffect(() => {
         console.log(patientId, patientDetails, formData);
     }, [formData]);
 
-    const fetchPatients = async (searchTerm) => {
+    const fetchPatientsByPhone = async (contactNo) => {
+        const normalizedPhone = normalizePhone(contactNo);
+        if (normalizedPhone.length < 7) {
+            setPhoneMatches([]);
+            setPhoneLookupAttempted(false);
+            return;
+        }
+
         try {
-            setLoadingPatients(true);
-            const data = await apiRequest(`${endpoint}/patients?searchTerm=${searchTerm}`, {
+            setCheckingPhoneLookup(true);
+            setPhoneLookupAttempted(true);
+            const data = await apiRequest(`${endpoint}/patients?searchTerm=${encodeURIComponent(normalizedPhone)}`, {
                 method: 'GET',
                 auth: true,
             });
 
             if (Array.isArray(data)) {
-                setPatients(data);
+                setPhoneMatches(data.filter((entry) => isPhoneMatch(entry.contactNo, normalizedPhone)));
             } else {
-                setPatients([]);
+                setPhoneMatches([]);
             }
         } catch (error) {
             console.error('Error fetching patients:', error);
             showToast(error.message || 'Error fetching patients', 'error');
-            setPatients([]);
+            setPhoneMatches([]);
         } finally {
-            setLoadingPatients(false);
+            setCheckingPhoneLookup(false);
         }
     };
 
@@ -196,22 +219,11 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                 }
             }
 
-            setPatientInputValue('');
-            setPatients([]);
+            setPhoneLookupAttempted(false);
+            setPhoneMatches([]);
+            setSelectedExistingPatient(null);
         }
     }, [open, appointment, selectedDate]);
-
-    useEffect(() => {
-        if (!open || !patientInputValue) return;
-
-        const delayDebounce = setTimeout(() => {
-            if (patientInputValue.trim().length >= 3) {
-                fetchPatients(patientInputValue.trim());
-            }
-        }, 500);
-
-        return () => clearTimeout(delayDebounce);
-    }, [patientInputValue, open]);
 
     useEffect(() => {
         if (open && formData.date && formData.timeSlot) {
@@ -234,8 +246,9 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
         });
         setFormErrors({});
         setConflictingAppointments([]);
-        setPatients([]);
-        setPatientInputValue('');
+        setPhoneLookupAttempted(false);
+        setPhoneMatches([]);
+        setSelectedExistingPatient(null);
         onClose();
     };
 
@@ -251,8 +264,11 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
 
     const validateForm = () => {
         const errors = {};
-        if (!formData.patientId) {
-            errors.patient = 'Patient is required';
+        if (!formData.patientName?.trim()) {
+            errors.patientName = 'Patient name is required';
+        }
+        if (!formData.contactNo?.trim()) {
+            errors.contactNo = 'Contact number is required';
         }
         if (!formData.date) {
             errors.date = 'Date is required';
@@ -271,7 +287,7 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
             setLoading(true);
 
             const dataToSubmit = {
-                patientId: formData.patientId,
+                patientId: formData.patientId || null,
                 contactNo: formData.contactNo,
                 patientName: formData.patientName,
                 doctorId: formData.doctorId || null,
@@ -309,28 +325,42 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
         }
     };
 
-    const handlePatientChange = (event, newValue) => {
-        if (newValue) {
-            setFormData({
-                ...formData,
-                patientId: newValue.id,
-                patientName: newValue.name,
-                contactNo: newValue.contactNo,
-            });
-        } else {
-            setFormData({
-                ...formData,
-                patientId: '',
-                patientName: '',
-                contactNo: '',
-            });
+    const handlePatientFieldChange = (field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value,
+            patientId: '',
+        }));
+        setSelectedExistingPatient(null);
+        if (field === 'contactNo') {
+            setPhoneLookupAttempted(false);
+            setPhoneMatches([]);
         }
     };
 
-    const handlePatientInputChange = (event, newInputValue, reason) => {
-        if (reason === 'input') {
-            setPatientInputValue(newInputValue);
+    const handleMatchSelection = (selectedId) => {
+        if (!selectedId) {
+            setSelectedExistingPatient(null);
+            setFormData((prev) => ({ ...prev, patientId: '' }));
+            return;
         }
+
+        const selectedMatch = phoneMatches.find((entry) => entry.id === selectedId);
+        if (selectedMatch) {
+            setSelectedExistingPatient(selectedMatch);
+            setFormData((prev) => ({
+                ...prev,
+                patientId: selectedMatch.id,
+                patientName: selectedMatch.name || prev.patientName,
+                contactNo: selectedMatch.contactNo || prev.contactNo,
+            }));
+            setFormErrors((prev) => ({ ...prev, patientName: '', contactNo: '' }));
+        }
+    };
+
+    const handleContactBlur = () => {
+        if (patientId !== '') return;
+        fetchPatientsByPhone(formData.contactNo);
     };
 
     const handleDoctorChange = (event, newValue) => {
@@ -342,8 +372,8 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
     };
 
     // Get selected patient/doctor
-    const currentPatient = patients.find(p => p.id === formData.patientId) || null;
     const currentDoctor = doctors.find(d => d.id === formData.doctorId) || null;
+    const normalizedContactNo = normalizePhone(formData.contactNo);
 
     return (
         <>
@@ -355,54 +385,67 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                     <Grid spacing={3} sx={{ mt: 0.5 }}>
                         {/* Patient Selection */}
                         {patientId === '' ?
-                            <Grid item style={{padding: '10px' }} xs={12} >
-                            <Autocomplete
-                                options={patients}
-                                loading={loadingPatients}
-                                value={currentPatient}
-                                onInputChange={handlePatientInputChange}
-                                onChange={handlePatientChange}
-                                getOptionLabel={(option) => option.name || ''}
-                                isOptionEqualToValue={(option, value) => option.id === value?.id}
-                                renderInput={(params) => (
+                            <>
+                                <Grid item style={{padding: '10px' }} xs={12} sm={6}>
                                     <TextField
-                                        {...params}
-                                        label="Patient"
-                                        placeholder="Type at least 3 characters to search..."
-                                        error={!!formErrors.patient}
-                                        helperText={formErrors.patient}
+                                        label="Patient Name"
+                                        fullWidth
                                         required
+                                        value={formData.patientName}
+                                        onChange={(e) => handlePatientFieldChange('patientName', e.target.value)}
+                                        error={!!formErrors.patientName}
+                                        helperText={formErrors.patientName}
+                                    />
+                                </Grid>
+                                <Grid item style={{padding: '10px' }} xs={12} sm={6}>
+                                    <TextField
+                                        label="Contact Number"
+                                        fullWidth
+                                        required
+                                        value={formData.contactNo}
+                                        onChange={(e) => handlePatientFieldChange('contactNo', e.target.value)}
+                                        onBlur={handleContactBlur}
+                                        error={!!formErrors.contactNo}
+                                        helperText={formErrors.contactNo || 'On blur, this number will be checked for existing patients.'}
                                         InputProps={{
-                                            ...params.InputProps,
-                                            endAdornment: (
-                                                <>
-                                                    {loadingPatients ? <CircularProgress color="inherit" size={20} /> : null}
-                                                    {params.InputProps.endAdornment}
-                                                </>
-                                            ),
+                                            endAdornment: checkingPhoneLookup ? <CircularProgress color="inherit" size={20} /> : null,
                                         }}
                                     />
+                                </Grid>
+
+                                {phoneMatches.length > 0 && (
+                                    <Grid item style={{padding: '10px' }} xs={12}>
+                                        <FormControl fullWidth>
+                                            <InputLabel>Existing Patients Found</InputLabel>
+                                            <Select
+                                                value={selectedExistingPatient?.id || ''}
+                                                label="Existing Patients Found"
+                                                onChange={(e) => handleMatchSelection(e.target.value)}
+                                            >
+                                                <MenuItem value="">Continue with entered details</MenuItem>
+                                                {phoneMatches.map((entry) => (
+                                                    <MenuItem key={entry.id} value={entry.id}>
+                                                        {entry.name} - {entry.contactNo}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <Alert sx={{ mt: 1.5 }} severity={selectedExistingPatient ? 'success' : 'warning'}>
+                                            {selectedExistingPatient
+                                                ? `Linked to existing patient: ${selectedExistingPatient.name}`
+                                                : `${phoneMatches.length} record(s) found for this number. Select one to link, or continue as ad-hoc.`}
+                                        </Alert>
+                                    </Grid>
                                 )}
-                                renderOption={(props, option) => (
-                                    <li {...props} key={option.id}>
-                                        <Box>
-                                            <Typography variant="body1">{option.name}</Typography>
-                                            <Typography variant="caption" color="text.secondary">
-                                                Contact: {option.contactNo}
-                                            </Typography>
-                                        </Box>
-                                    </li>
+
+                                {phoneLookupAttempted && !checkingPhoneLookup && phoneMatches.length === 0 && normalizedContactNo.length >= 7 && (
+                                    <Grid item style={{padding: '10px' }} xs={12}>
+                                        <Alert severity="info">
+                                            No existing patient found for this number. You can proceed with entered details.
+                                        </Alert>
+                                    </Grid>
                                 )}
-                                noOptionsText={
-                                    loadingPatients
-                                        ? "Searching..."
-                                        : patientInputValue.length < 3
-                                            ? "Type at least 3 characters"
-                                            : "No patients found"
-                                }
-                                filterOptions={(x) => x}
-                            />
-                        </Grid>
+                            </>
                         :
                             <h3 style={{paddingLeft: '10px'}}>
                                 {formData.patientName} - {formData.contactNo}
@@ -423,7 +466,7 @@ export const CreateAppointmentDialog = ({ open, onClose, onSaved, appointment, s
                                         required
                                     />
                                 )}
-                                inputFormat="dd/MM/yyyy"
+                                format="dd/MM/yyyy"
                             />
                         </Grid>
 

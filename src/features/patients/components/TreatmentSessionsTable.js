@@ -559,7 +559,7 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                         value={newSession.date}
                                         onChange={(newValue) => setNewSession({ ...newSession, date: newValue })}
                                         renderInput={(params) => <TextField {...params} size="small" fullWidth />}
-                                        inputFormat="dd/MM/yyyy"
+                                        format="dd/MM/yyyy"
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -648,7 +648,7 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
                                                     value={editData.date ? new Date(editData.date) : null}
                                                     onChange={(newValue) => handleFieldChange('date', newValue)}
                                                     renderInput={(params) => <TextField {...params} size="small" fullWidth />}
-                                                    inputFormat="dd/MM/yyyy"
+                                                    format="dd/MM/yyyy"
                                                 />
                                             ) : (
                                                 formatDate(session.date)

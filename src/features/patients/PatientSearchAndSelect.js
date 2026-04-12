@@ -20,7 +20,7 @@ export const PatientSearchAndSelect = () => {
 
   useEffect(() => {
     const fetchPatients = async () => {
-      if (searchTerm.length > 4) {
+      if (searchTerm.length >= 4) {
         try {
           const data = await apiRequest(`${endpoint}/patients?searchTerm=${searchTerm}`, {
             method: 'GET',
