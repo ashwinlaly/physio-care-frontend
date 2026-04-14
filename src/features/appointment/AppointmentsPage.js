@@ -17,10 +17,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import AddIcon from '@mui/icons-material/Add';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { format, addDays, subDays } from 'date-fns';
 import { CreateAppointmentDialog } from './CreateAppointmentDialog';
+import { toast } from 'react-toastify';
 
 const endpoint = process.env.REACT_APP_API_URL;
 // Time slots (1-hour intervals from 9 AM to 6 PM)
@@ -39,7 +40,8 @@ const TIME_SLOTS = [
     '17:00', '17:30',
     '18:00', '18:30',
     '19:00', '19:30',
-    '20:00'
+    '20:00', '20:30',
+    '21:00'
 ];
 
 export const AppointmentsPage = () => {
@@ -116,6 +118,37 @@ export const AppointmentsPage = () => {
         }
     };
 
+    const handleMarkAsCompleted = async (appointmentId, currentStatus) => {
+        try {
+            const response = await fetch(`${endpoint}/appointments/${appointmentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: currentStatus === 'completed' ? 'scheduled' : 'completed'
+                }),
+            });
+
+            if (response.ok) {
+                toast.success(currentStatus === 'completed' ? 'Marked as scheduled' : 'Marked as completed', {
+                    position: 'top-center',
+                    autoClose: 3000,
+                });
+                fetchAppointments();
+            } else {
+                toast.error('Failed to update appointment status', {
+                    position: 'top-center',
+                });
+            }
+        } catch (error) {
+            console.error('Error updating appointment:', error);
+            toast.error('Error updating appointment', {
+                position: 'top-center',
+            });
+        }
+    };
+
     const getAppointmentsForSlot = (timeSlot) => {
         return appointments.filter(apt => apt.timeSlot === timeSlot);
     };
@@ -164,6 +197,7 @@ export const AppointmentsPage = () => {
                         <DatePicker
                             label="Select Date"
                             value={selectedDate}
+                            format={"dd/MM/yyyy"}
                             onChange={(newValue) => setSelectedDate(newValue)}
                             renderInput={(params) => <Button {...params} variant="outlined" />}
                         />
@@ -239,17 +273,30 @@ export const AppointmentsPage = () => {
                                                                 <Chip
                                                                     label={appointment.status || 'scheduled'}
                                                                     size="small"
-                                                                    sx={{ mt: 1 }}
+                                                                    sx={{ 
+                                                                        mt: 1,
+                                                                        backgroundColor: 
+                                                                            appointment.status === 'completed' ? '#4caf50' :
+                                                                            appointment.status === 'cancelled' ? '#f44336' :
+                                                                            appointment.status === 'no-show' ? '#ff9800' :
+                                                                            '#2196f3',
+                                                                        color: '#fff',
+                                                                        fontWeight: 'bold'
+                                                                    }}
                                                                 />
                                                             </Box>
-                                                            <Box>
-                                                                {/*<IconButton*/}
-                                                                {/*    size="small"*/}
-                                                                {/*    color="primary"*/}
-                                                                {/*    onClick={() => handleOpenDialog(appointment)}*/}
-                                                                {/*>*/}
-                                                                {/*    <EditIcon />*/}
-                                                                {/*</IconButton>*/}
+                                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                                <IconButton
+                                                                    size="small"
+                                                                    color={appointment.status === 'completed' ? 'success' : 'default'}
+                                                                    title={appointment.status === 'completed' ? 'Mark as scheduled' : 'Mark as completed'}
+                                                                    onClick={() => handleMarkAsCompleted(appointment.id, appointment.status)}
+                                                                    sx={{
+                                                                        backgroundColor: appointment.status === 'completed' ? 'rgba(76, 175, 80, 0.1)' : 'transparent'
+                                                                    }}
+                                                                >
+                                                                    <CheckCircleIcon />
+                                                                </IconButton>
                                                                 <IconButton
                                                                     size="small"
                                                                     color="error"
