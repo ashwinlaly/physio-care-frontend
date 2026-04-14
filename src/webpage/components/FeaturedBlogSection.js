@@ -1,138 +1,162 @@
 import React from 'react';
-import { Box, Typography, Grid, Container, Button, Card, CardMedia, CardContent, Link, Stack } from '@mui/material';
+import { Box, Typography, Container, Link } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import PersonIcon from '@mui/icons-material/Person';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CallToActionGradientButton from './CallToActionGradientButton'; // Import the new component
 
-// Reusable component for blog cards
-function BlogCard({ image, author, readTime, title, description, link }) {
+function BlogCard({ image, title, link }) {
   return (
-    <Card 
+    <Box
       sx={{
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column',
-        borderRadius: 3, 
-        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
-        border: '1px solid #e0e0e0',
-        '&:hover': {
-          boxShadow: '0 6px 25px rgba(0,0,0,0.1)',
-          transform: 'translateY(-5px)',
-          transition: 'all 0.3s ease-in-out',
-        }
+        flex: '0 0 auto',
+        width: { xs: '280px', sm: '320px', md: '360px' },
+        minWidth: 0,
       }}
     >
-      <CardMedia
+      <Box
         component="img"
-        height="200"
-        image={image}
+        src={image}
         alt={title}
-        sx={{ borderTopLeftRadius: 12, borderTopRightRadius: 12, objectFit: 'cover' }}
+        sx={{
+          width: '100%',
+          height: { xs: 220, md: 255 },
+          display: 'block',
+          objectFit: 'cover',
+          borderRadius: '28px',
+        }}
       />
-      <CardContent sx={{ flexGrow: 1, p: { xs: 3, md: 4 } }}>
-        <Stack direction="row" spacing={2} alignItems="center" mb={2} color="text.secondary">
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <PersonIcon sx={{ fontSize: '1rem', mr: 0.5 }} />
-            <Typography variant="body2">{author}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTimeIcon sx={{ fontSize: '1rem', mr: 0.5 }} />
-            <Typography variant="body2">{readTime}</Typography>
-          </Box>
-        </Stack>
-        <Typography variant="h6" component="h3" gutterBottom 
-          sx={{ 
-            fontWeight: 'bold', 
-            color: 'primary.main', 
-            textAlign: 'left',
-            fontSize: { xs: '1.1rem', md: '1.25rem' }
-          }}>
-          {title}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'left', mb: 3, fontSize: { xs: '0.9rem', md: '1rem' } }}>
-          {description}
-        </Typography>
-        <Link href={link} underline="none" 
-          sx={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            color: 'primary.main', 
-            fontWeight: 'medium',
-            '&:hover': {
-              textDecoration: 'underline',
-              color: 'primary.dark'
-            }
-          }}>
-          Read More <ArrowForwardIcon sx={{ ml: 1, fontSize: '1rem' }} />
-        </Link>
-      </CardContent>
-    </Card>
+
+      <Typography
+        sx={{
+          mt: { xs: 2.5, md: 3 },
+          color: '#123F39',
+          fontWeight: 700,
+          fontSize: { xs: 16.5, md: 18 },
+          lineHeight: 1.45,
+          letterSpacing: '-0.01em',
+          textAlign: 'left',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          minHeight: { xs: '48px', md: '56px' },
+          maxWidth: '95%',
+        }}
+      >
+        {title}
+      </Typography>
+
+      <Link
+        href={link}
+        underline="none"
+        sx={{
+          mt: { xs: 2, md: 2.5 },
+          display: 'inline-flex',
+          alignItems: 'center',
+          color: '#123F39',
+          fontWeight: 700,
+          fontSize: { xs: 15.5, md: 16 },
+          lineHeight: 1.3,
+          '&:hover': {
+            opacity: 0.85,
+            textDecoration: 'none',
+          },
+        }}
+      >
+        Read More
+        <ArrowForwardIcon
+          sx={{
+            ml: 1,
+            fontSize: 18,
+          }}
+        />
+      </Link>
+    </Box>
   );
 }
 
 function FeaturedBlogSection() {
   const blogPosts = [
     {
-      image: '/images/sarah.png', // Example image URL
-      author: 'Dr. Sarah Johnson',
-      readTime: '5 min read',
-      title: '5 Essential Exercises for Lower Back Pain Relief',
-      description: 'Discover proven physiotherapy exercises that can help alleviate chronic lower back pain and improve your daily mobility.',
-      link: '/blog/lower-back-pain-relief'
+      image: '/images/sarah.png',
+      title: 'Mild Knee Pain Today, Serious Problem Tomorrow: Fix It Early With Phys...',
+      link: '#',
     },
     {
-      image: '/images/micheal.png', // Example image URL
-      author: 'Dr. Michael Chen',
-      readTime: '8 min read',
-      title: 'Recovery Tips After Knee Surgery: A Complete Guide',
-      description: 'Learn about the essential recovery steps and physiotherapy techniques to ensure optimal healing after knee surgery.',
-      link: '/blog/knee-surgery-recovery'
+      image: '/images/micheal.png',
+      title: 'Are You ‘fit’ But Still In Pain? Hidden Mobility Crisis – A Physiother...',
+      link: '#',
+    },
+    {
+      image: '/images/image1.png',
+      title: 'From Movement To Circulation: The Vital Role Of Calf Muscles And Physi...',
+      link: '#',
     },
   ];
 
   return (
-    <Box sx={{ 
-      py: { xs: 8, md: 12 }, 
-      bgcolor: '#ffffff', 
-      textAlign: 'center' ,
-    pt: { xs: 10, md: 12 }
-    }}
-         id={"blog-section"}
+    <Box
+      id="blog-section"
+      sx={{
+        bgcolor: '#FFFFFF',
+        pt: { xs: 7, md: '88px' },
+        pb: { xs: 7, md: '96px' },
+      }}
     >
-      <Container maxWidth="lg">
-        <Typography variant="h3" component="h2" gutterBottom 
-          sx={{ 
-            fontWeight: 'bold', 
-            color: 'primary.main', 
-            mb: { xs: 2, md: 3 },
-            fontSize: { xs: '2.5rem', md: '3.5rem' }
-          }}>
-          Featured Blog
-        </Typography>
-        <Typography variant="h6" component="p" sx={{ 
-          color: 'text.secondary', 
-          mb: { xs: 6, md: 8 },
-          maxWidth: 700,
-          mx: 'auto',
-          fontSize: { xs: '1rem', md: '1.25rem' }
-        }}>
-          Stay informed with our latest insights on physiotherapy, wellness, and recovery tips from our expert team
-        </Typography>
+      <Container
+        maxWidth={false}
+        sx={{
+          px: { xs: 2.5, sm: 3, md: '56px' },
+        }}
+      >
+        {/* Header */}
+        <Box sx={{ mb: { xs: 4.5, md: 6.5 } }}>
+          <Typography
+            component="h2"
+            sx={{
+              color: '#123F39',
+              fontWeight: 900,
+              fontSize: { xs: '2.0rem', sm: '2.1rem', md: '3.2rem' },
+              lineHeight: 0.95,
+              letterSpacing: '-0.04em',
+              textTransform: 'uppercase',
+              textAlign: 'left',
+              mb: { xs: 2, md: 2.5 },
+            }}
+          >
+            Latest Blogs
+          </Typography>
 
-        <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
+          <Typography
+            sx={{
+              color: '#33413F',
+              fontSize: { xs: 14.5, md: 17 },
+              lineHeight: 1.8,
+              maxWidth: '980px',
+              textAlign: 'left',
+            }}
+          >
+            Stay updated with the latest trends, expert insights, and news in physiotherapy — plus updates and highlights from icure Physiotherapy clinics.
+          </Typography>
+        </Box>
+
+        {/* Blogs row */}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: { xs: 2.5, md: '26px' },
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            pb: 1,
+            scrollBehavior: 'smooth',
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': {
+              display: 'none',
+            },
+          }}
+        >
           {blogPosts.map((post, index) => (
-            <Grid item xs={12} sm={6} md={6} key={index} size={6}>
-              <BlogCard {...post} />
-            </Grid>
+            <BlogCard key={index} {...post} />
           ))}
-        </Grid>
-
-        <CallToActionGradientButton 
-          text="View All Blog Posts" 
-          icon={<ArrowForwardIcon />}
-          sx={{ mt: { xs: 6, md: 8 } }}
-        />
+        </Box>
       </Container>
     </Box>
   );

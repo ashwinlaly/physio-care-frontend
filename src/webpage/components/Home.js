@@ -5,15 +5,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Header from './Header';
 import HeroSection from './HeroSection';
 import ServicesSection from './ServicesSection';
+import AIRecoverySection from './AIRecoverySection';
+import SpecialitiesSection from './SpecialitiesSection';
+import ExpertsSection from './ExpertsSection';
+import ClinicsSection from './ClinicsSection';
+import WhatWeTreatSection from './WhatWeTreatSection';
 import FeaturedBlogSection from './FeaturedBlogSection';
+import FAQSection from './FAQSection';
+import FooterSection from './FooterSection';
 import ContactUsSection from './ContactUsSection';
-
 const theme = createTheme({
   palette: {
-    primary: { main: '#2680c8' },      // deep green
-    secondary: { main: '#6B7C6E' },    // muted green/grey
-    background: { default: '#F6EFE7' },// warm beige
-    text: { primary: '#1F1F1F', secondary: '#5A5A5A' },
+    primary: { main: '#0B3D33' },
+    secondary: { main: '#2C7A6B' },
+    background: { default: '#F6EFE7' },
+    text: { primary: '#0F1C18', secondary: '#4B5A55' },
   },
   shape: { borderRadius: 16 },
   typography: {
@@ -39,9 +45,15 @@ function Home() {
         <Header />
         <HeroSection />
         <ServicesSection />
-        {/* Keeping your existing sections below */}
+        <AIRecoverySection />
+        <SpecialitiesSection />
+        <ExpertsSection />
+        {/* <ClinicsSection /> */}
+        <WhatWeTreatSection />
         <FeaturedBlogSection />
         <ContactUsSection />
+        <FAQSection />
+        <FooterSection />
       </Box>
     </ThemeProvider>
   );

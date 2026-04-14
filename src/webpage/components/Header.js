@@ -1,25 +1,43 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, useMediaQuery, useTheme, Button } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  useMediaQuery,
+  useTheme,
+  IconButton,
+  Button,
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Logo from './Logo';
 import Navigation from './Navigation';
 
 function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
 
   return (
-    <AppBar position="fixed" elevation={0} color="transparent" sx={{ py: 2 }}>
-      <Toolbar sx={{ justifyContent: 'center' }}>
+    <AppBar
+      position="fixed"
+      elevation={0}
+      color="transparent"
+      sx={{
+        bgcolor: 'rgba(255,255,255,0.92)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(11,61,51,0.10)',
+      }}
+    >
+      <Toolbar sx={{ justifyContent: 'center', minHeight: { xs: 64, md: 72 } }}>
         <Box
           sx={{
             width: 'min(1200px, 100%)',
             mx: 2,
-            px: { xs: 2, md: 3 },
-            py: 1.25,
-            bgcolor: '#fff',
-            borderRadius: 999,
-            boxShadow: '0 18px 40px rgba(0,0,0,0.08)',
             display: 'flex',
             alignItems: 'center',
             gap: 2,
@@ -27,37 +45,44 @@ function Header() {
         >
           <Logo />
 
-          {/* push everything (nav + CTA) to the right */}
           <Box sx={{ flex: 1 }} />
 
-          {/* nav items near Contact Us */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            {!isMobile && <Navigation />}
+          {!isMobile && <Navigation />}
 
-            {isMobile ? (
+          <Box sx={{ flex: 1, display: { xs: 'none', md: 'block' } }} />
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {!isMobile ? (
+              <>
+                <IconButton size="small" sx={{ color: 'primary.main' }}>
+                  <FacebookIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" sx={{ color: 'primary.main' }}>
+                  <InstagramIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" sx={{ color: 'primary.main' }}>
+                  <LinkedInIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="large"
+                  sx={{ color: 'primary.main' }}
+                  onClick={() => navigate('/login')}
+                >
+                  <AccountCircleOutlinedIcon />
+                </IconButton>
+              </>
+            ) : (
               <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<MenuIcon />}
-                sx={{ px: 2.25, py: 1, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
+                sx={{ px: 2, py: 0.9, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
                 onClick={() => {
-                  const section = document.getElementById('contact-section');
+                  const section = document.getElementById('faq-section');
                   if (section) section.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
                 Menu
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ px: 3, py: 1.25 }}
-                onClick={() => {
-                  const section = document.getElementById('contact-section');
-                  if (section) section.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Contact Us
               </Button>
             )}
           </Box>
