@@ -14,6 +14,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import Logo from './Logo';
 import Navigation from './Navigation';
 
@@ -21,6 +22,11 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+
+  const scrollToSection = (targetId) => {
+    const section = document.getElementById(targetId);
+    if (section) section.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <AppBar
@@ -54,6 +60,14 @@ function Header() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {!isMobile ? (
               <>
+                <IconButton
+                  size="large"
+                  sx={{ color: 'primary.main' }}
+                  onClick={() => scrollToSection('contact-section')}
+                  aria-label="Location"
+                >
+                  <LocationOnOutlinedIcon />
+                </IconButton>
                 <IconButton size="small" sx={{ color: 'primary.main' }}>
                   <FacebookIcon fontSize="small" />
                 </IconButton>
