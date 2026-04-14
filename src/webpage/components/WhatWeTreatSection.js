@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box, Container, Typography, Stack } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 
 function ListCard({ title, items }) {
   return (
@@ -32,26 +30,8 @@ function ListCard({ title, items }) {
       <Box
         sx={{
           position: 'relative',
-          maxHeight: 240,
-          overflowY: 'auto',
-          pr: 2.5,
-          scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(44,122,107,0.65) transparent',
-          '&::-webkit-scrollbar': { width: 6 },
-          '&::-webkit-scrollbar-track': { background: 'transparent' },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(44,122,107,0.65)',
-            borderRadius: 999,
-          },
         }}
       >
-        {/* <Box sx={{ position: 'absolute', right: 6, top: 2, color: 'rgba(44,122,107,0.55)' }}>
-          <KeyboardArrowUpRoundedIcon fontSize="small" />
-        </Box>
-        <Box sx={{ position: 'absolute', right: 6, bottom: 2, color: 'rgba(44,122,107,0.55)' }}>
-          <KeyboardArrowDownRoundedIcon fontSize="small" />
-        </Box> */}
-
         <Stack spacing={2.2}>
           {items.map((it) => (
             <Stack key={it} direction="row" spacing={1.4} alignItems="flex-start">
