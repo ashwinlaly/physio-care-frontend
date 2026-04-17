@@ -189,7 +189,11 @@ export const RegisterPage = () => {
             setUserId('');
             setUserName('');
         } catch (error) {
-            setStatusMessage(error?.message || 'Failed to submit face registration');
+            if (/already registered/i.test(error?.message || '')) {
+                setStatusMessage('This name is already registered. Please use a different name.');
+            } else {
+                setStatusMessage(error?.message || 'Failed to submit face registration');
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -318,24 +322,24 @@ export const RegisterPage = () => {
                                     >
                                         Register Face
                                     </Button>
-                                    <Button
-                                        variant={mode === 'attendance' ? 'contained' : 'outlined'}
-                                        onClick={() => {
-                                            setMode('attendance');
-                                            setDescriptor(null);
-                                            setStatusMessage('');
-                                        }}
-                                        disabled={isSubmitting || isCameraRunning}
-                                    >
-                                        Mark Attendance
-                                    </Button>
+                                    {/*<Button*/}
+                                    {/*    variant={mode === 'attendance' ? 'contained' : 'outlined'}*/}
+                                    {/*    onClick={() => {*/}
+                                    {/*        setMode('attendance');*/}
+                                    {/*        setDescriptor(null);*/}
+                                    {/*        setStatusMessage('');*/}
+                                    {/*    }}*/}
+                                    {/*    disabled={isSubmitting || isCameraRunning}*/}
+                                    {/*>*/}
+                                    {/*    Mark Attendance*/}
+                                    {/*</Button>*/}
                                 </Stack>
 
                                 <TextField
-                                    label="User Id"
+                                    label="User Name"
                                     value={userId}
                                     onChange={(event) => setUserId(event.target.value)}
-                                    placeholder="Enter user id"
+                                    placeholder="Enter user name"
                                     fullWidth
                                     disabled={isCameraRunning || isSubmitting}
                                 />
