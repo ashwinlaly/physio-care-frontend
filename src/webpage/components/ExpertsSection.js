@@ -161,8 +161,8 @@ function ExpertsSection() {
               const placeholderImages = [
                 '/images/femaledoc1.png',
                 '/images/femaledoc2.png',
+                '/images/lak.png',
                 '/images/sam.png',
-                '/images/maledoc2.png',
               ];
               const placeholder = placeholderImages[idx % placeholderImages.length];
               return (
