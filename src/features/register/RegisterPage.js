@@ -190,7 +190,7 @@ export const RegisterPage = () => {
             setUserName('');
         } catch (error) {
             if (/already registered/i.test(error?.message || '')) {
-                setStatusMessage('This name is already registered. Please use a different name.');
+                setStatusMessage(error?.message);
             } else {
                 setStatusMessage(error?.message || 'Failed to submit face registration');
             }
