@@ -11,7 +11,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const experts = [
   {
-    name: 'Mrs.T Krishnaveni',
+    name: 'Dr.T Krishnaveni',
     role: 'Cardio Respiratory Physiotherapist',
     gender: 'female',
     headline: 'icure Physiotherapist',
@@ -19,7 +19,7 @@ const experts = [
     socials: { facebook: '#', linkedin: '#', google: '#' },
   },
   {
-    name: 'Mr.Samuel Lenis Clifford',
+    name: 'Dr.Samuel Lenis Clifford',
     role: 'Orthopedic Specialist',
     gender: 'male',
     headline: 'icure Orthopedic Specialist',
@@ -27,7 +27,7 @@ const experts = [
     socials: { facebook: '#', linkedin: '#', google: '#' },
   },
    {
-    name: 'Miss.B Lakshmi Narayanan',
+    name: 'Dr.B Lakshmi Narayanan',
     role: 'Cardio Respiratory Specialist',
     gender: 'female',
     headline: 'icure Sports Specialist',
@@ -35,7 +35,7 @@ const experts = [
     socials: { facebook: '#', linkedin: '#', google: '#' },
   },
   {
-    name: 'Mr.N Sabarish',
+    name: 'Dr.N Sabarish',
     role: 'Neurologic Specialist',
     gender: 'male',
     headline: 'icure Senior Physiotherapist',
@@ -161,7 +161,7 @@ function ExpertsSection() {
               const placeholderImages = [
                 '/images/femaledoc1.png',
                 '/images/femaledoc2.png',
-                '/images/maledoc1.png',
+                '/images/sam.png',
                 '/images/maledoc2.png',
               ];
               const placeholder = placeholderImages[idx % placeholderImages.length];

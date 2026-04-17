@@ -27,7 +27,7 @@ function Logo() {
           letterSpacing: '-0.02em',
         }}
       >
-       icure Physiotheraphy
+       icure physiotherapy
       </Typography>
     </Box>
   );
