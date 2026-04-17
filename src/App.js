@@ -18,6 +18,9 @@ import { AppointmentsPage } from './features/appointment/AppointmentsPage';
 import {FinancialDashboard} from "./features/Financial/FinancialDashboard";
 import {ProductsPage} from "./features/products/ProductsPage";
 import {ExpensesPage} from "./features/expense/ExpensesPage";
+import {RegisterPage} from "./features/register/RegisterPage";
+import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
+
 
 const theme = createTheme({
   palette: {
@@ -85,10 +88,12 @@ function App() {
               <Route path="/doctors" element={<DoctorsPage />} />
               <Route path="/appointments" element={<AppointmentsPage />} />
 
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/expenses" element={<ExpensesPage />} />
+               <Route path="/products" element={<ProductsPage />} />
+               <Route path="/expenses" element={<ExpensesPage />} />
+               <Route path="/register" element={<RegisterPage />} />
+               <Route path="/attendance" element={<AttendanceMarking />} />
 
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

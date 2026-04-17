@@ -24,6 +24,7 @@ import {
   ExitToApp,
   AccountCircle,
   MedicalServices,
+  AppRegistrationRounded,
 } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -42,6 +43,8 @@ const menuItems = [
   { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors' },
   { text: 'Products', icon: <Inventory />, path: '/products' },
   { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses' },
+  { text: 'Register', icon: <AppRegistrationRounded />, path: '/register' },
+  { text: 'Attendance', icon: <lock />, path: '/attendance' },
 ];
 
 export const AppLayout = () => {
