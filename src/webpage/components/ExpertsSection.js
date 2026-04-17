@@ -14,12 +14,12 @@ const experts = [
     name: 'Dr.T Krishnaveni',
     role: 'Cardio Respiratory Physiotherapist',
     gender: 'female',
-    headline: 'icure Physiotherapist',
+    headline: 'iCure Physiotherapist',
     bio: 'Certified Antenatal Postnatal Excercise Specialist, CAPES Fitness and Pilates Consultant.',
     socials: { facebook: '#', linkedin: '#', google: '#' },
   },
   {
-    name: 'Dr.Samuel Lenis Clifford',
+    name: 'Dr.M Samuel Lenis Clifford',
     role: 'Orthopedic Specialist',
     gender: 'male',
     headline: 'icure Orthopedic Specialist',
@@ -29,7 +29,7 @@ const experts = [
    {
     name: 'Dr.B Lakshmi Narayanan',
     role: 'Cardio Respiratory Specialist',
-    gender: 'female',
+    gender: 'male',
     headline: 'icure Sports Specialist',
     bio: 'Certified Neuro Kinetic Therapist with 10+ years of experience in physiotherapy, helping patients recover and perform at their best.',
     socials: { facebook: '#', linkedin: '#', google: '#' },
@@ -160,9 +160,9 @@ function ExpertsSection() {
             {items.map((e, idx) => {
               const placeholderImages = [
                 '/images/femaledoc1.png',
-                '/images/femaledoc2.png',
-                '/images/lak.png',
                 '/images/sam.png',
+                '/images/lak.png',
+              '/images/maledoc1.png',
               ];
               const placeholder = placeholderImages[idx % placeholderImages.length];
               return (

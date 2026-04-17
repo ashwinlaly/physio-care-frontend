@@ -44,6 +44,7 @@ const menuItems = [
   { text: 'Products', icon: <Inventory />, path: '/products' },
   { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses' },
   { text: 'Register', icon: <AppRegistrationRounded />, path: '/register' },
+  { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance' },
 ];
 
 export const AppLayout = () => {

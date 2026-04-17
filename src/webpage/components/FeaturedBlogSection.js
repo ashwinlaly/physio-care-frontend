@@ -102,10 +102,7 @@ function FeaturedBlogSection() {
       }}
     >
       <Container
-        maxWidth={false}
-        sx={{
-          px: { xs: 2.5, sm: 3, md: '56px' },
-        }}
+          maxWidth="lg"
       >
         {/* Header */}
         <Box sx={{ mb: { xs: 4.5, md: 6.5 } }}>

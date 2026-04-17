@@ -7,6 +7,8 @@ import {
   useTheme,
   IconButton,
   Button,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -22,10 +24,17 @@ function Header() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const [mobileMenuAnchor, setMobileMenuAnchor] = React.useState(null);
+  const mobileMenuOpen = Boolean(mobileMenuAnchor);
 
   const scrollToSection = (targetId) => {
     const section = document.getElementById(targetId);
     if (section) section.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleMobileMenuClick = (targetId) => {
+    setMobileMenuAnchor(null);
+    scrollToSection(targetId);
   };
 
   return (
@@ -86,18 +95,40 @@ function Header() {
                 </IconButton>
               </>
             ) : (
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<MenuIcon />}
-                sx={{ px: 2, py: 0.9, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
-                onClick={() => {
-                  const section = document.getElementById('faq-section');
-                  if (section) section.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Menu
-              </Button>
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<MenuIcon />}
+                  sx={{ px: 2, py: 0.9, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
+                  onClick={(event) => setMobileMenuAnchor(event.currentTarget)}
+                >
+                  Menu
+                </Button>
+                <Menu
+                  anchorEl={mobileMenuAnchor}
+                  open={mobileMenuOpen}
+                  onClose={() => setMobileMenuAnchor(null)}
+                  slotProps={{ paper: { sx: { minWidth: 220 } } }}
+                >
+                  <MenuItem onClick={() => handleMobileMenuClick('home-section')}>Home</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('recovery-section')}>About Us</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('specialities-section')}>Specialities</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('treat-section')}>What We Treat</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('blog-section')}>Latest Blogs</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('faq-section')}>FAQ</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('experts-section')}>Experts</MenuItem>
+                  <MenuItem onClick={() => handleMobileMenuClick('contact-section')}>Contact Us</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setMobileMenuAnchor(null);
+                      navigate('/login');
+                    }}
+                  >
+                    Login
+                  </MenuItem>
+                </Menu>
+              </>
             )}
           </Box>
         </Box>
