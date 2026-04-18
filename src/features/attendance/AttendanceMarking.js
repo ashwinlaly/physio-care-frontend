@@ -15,9 +15,10 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    ToggleButton,
+    ToggleButtonGroup,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
 
 const FACE_API_SCRIPT_ID = 'face-api-js-script';
 const FACE_API_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js';
@@ -50,6 +51,7 @@ const loadFaceApiScript = () => {
 };
 
 export const AttendanceMarking = () => {
+    const [attendanceAction, setAttendanceAction] = useState('checkin');
     const [isModelsLoaded, setIsModelsLoaded] = useState(false);
     const [modelError, setModelError] = useState('');
     const [descriptor, setDescriptor] = useState(null);
@@ -64,11 +66,21 @@ export const AttendanceMarking = () => {
     const videoRef = useRef(null);
     const streamRef = useRef(null);
 
-    const statusSeverity = modelError || /failed|unable|error|please|not recognized/i.test(statusMessage)
-        ? 'error'
-        : /success|welcome|verified/i.test(statusMessage)
-            ? 'success'
-            : 'info';
+    const isCheckin = attendanceAction === 'checkin';
+    const actionLabel = isCheckin ? 'Check In' : 'Check Out';
+    let captureButtonLabel = `Capture & Verify for ${actionLabel}`;
+    if (isCapturing) {
+        captureButtonLabel = 'Capturing...';
+    } else if (isVerifying) {
+        captureButtonLabel = 'Verifying...';
+    }
+
+    let statusSeverity = 'info';
+    if (modelError || /failed|unable|error|please|not recognized/i.test(statusMessage)) {
+        statusSeverity = 'error';
+    } else if (/success|welcome|verified/i.test(statusMessage)) {
+        statusSeverity = 'success';
+    }
 
     const stopCamera = () => {
         if (streamRef.current) {
@@ -179,20 +191,20 @@ export const AttendanceMarking = () => {
         }
 
         setIsMarking(true);
-        setStatusMessage('Marking attendance...');
+        setStatusMessage(`Marking ${actionLabel.toLowerCase()}...`);
 
         try {
-            await apiRequest(`${API_BASE_URL}${MARK_ATTENDANCE_ENDPOINT}`, {
+            const response = await apiRequest(`${API_BASE_URL}${MARK_ATTENDANCE_ENDPOINT}`, {
                 method: 'POST',
                 body: {
                     userId: verifiedUser.userId,
                     descriptor,
                     name: verifiedUser.name,
-                    action: 'checkin',
+                    action: attendanceAction,
                 },
             });
 
-            setStatusMessage('✓ Attendance marked successfully!');
+            setStatusMessage(response?.message || `✓ ${actionLabel} marked successfully!`);
             setShowConfirmation(false);
 
             setTimeout(() => {
@@ -290,6 +302,26 @@ export const AttendanceMarking = () => {
                                     sx={{ alignSelf: 'center' }}
                                 />
 
+                                <Stack spacing={1} alignItems="center">
+                                    <Typography variant="body2" color="text.secondary">
+                                        Attendance Action
+                                    </Typography>
+                                    <ToggleButtonGroup
+                                        value={attendanceAction}
+                                        exclusive
+                                        onChange={(_, value) => {
+                                            if (value) {
+                                                setAttendanceAction(value);
+                                            }
+                                        }}
+                                        disabled={isVerifying || isMarking}
+                                        color="primary"
+                                    >
+                                        <ToggleButton value="checkin">Check In</ToggleButton>
+                                        <ToggleButton value="checkout">Check Out</ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Stack>
+
                                 <Box
                                     sx={{
                                         width: '100%',
@@ -363,7 +395,7 @@ export const AttendanceMarking = () => {
                                         background: isCameraRunning && !isCapturing ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : undefined,
                                     }}
                                 >
-                                    {isCapturing ? 'Capturing...' : isVerifying ? 'Verifying...' : 'Capture & Verify Face'}
+                                    {captureButtonLabel}
                                 </Button>
 
                                 {descriptor && (
@@ -418,7 +450,7 @@ export const AttendanceMarking = () => {
             </Card>
 
             <Dialog open={showConfirmation} onClose={handleCancel} maxWidth="sm" fullWidth>
-                <DialogTitle>Confirm Attendance</DialogTitle>
+                <DialogTitle>{`Confirm ${actionLabel}`}</DialogTitle>
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 2 }}>
                         <Box sx={{ textAlign: 'center' }}>
@@ -442,7 +474,7 @@ export const AttendanceMarking = () => {
                             </Typography>
                         </Box>
                         <Alert severity="info">
-                            Are you sure you want to mark attendance for {verifiedUser?.name}?
+                            {`Are you sure you want to ${actionLabel.toLowerCase()} for ${verifiedUser?.name}?`}
                         </Alert>
                     </Stack>
                 </DialogContent>
@@ -455,7 +487,7 @@ export const AttendanceMarking = () => {
                         variant="contained"
                         disabled={isMarking}
                     >
-                        {isMarking ? 'Marking...' : 'Confirm & Mark'}
+                        {isMarking ? `Marking ${actionLabel}...` : `Confirm ${actionLabel}`}
                     </Button>
                 </DialogActions>
             </Dialog>

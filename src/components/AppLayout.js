@@ -32,6 +32,7 @@ import EventIcon from '@mui/icons-material/Event';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import Inventory from '@mui/icons-material/Inventory';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 const drawerWidth = 240;
 
 const menuItems = [
@@ -45,6 +46,7 @@ const menuItems = [
   { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses' },
   { text: 'Register', icon: <AppRegistrationRounded />, path: '/register' },
   { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance' },
+  { text: 'Attendance Report', icon: <AssessmentIcon />, path: '/attendance/report' },
 ];
 
 export const AppLayout = () => {

@@ -20,6 +20,7 @@ import {ProductsPage} from "./features/products/ProductsPage";
 import {ExpensesPage} from "./features/expense/ExpensesPage";
 import {RegisterPage} from "./features/register/RegisterPage";
 import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
+import {MonthlyAttendanceReport} from './features/attendance/MonthlyAttendanceReport';
 
 
 const theme = createTheme({
@@ -92,6 +93,7 @@ function App() {
                <Route path="/expenses" element={<ExpensesPage />} />
                <Route path="/register" element={<RegisterPage />} />
                <Route path="/attendance" element={<AttendanceMarking />} />
+               <Route path="/attendance/report" element={<MonthlyAttendanceReport />} />
 
                <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
