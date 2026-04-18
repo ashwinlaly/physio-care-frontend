@@ -10,6 +10,7 @@ import {
     Button,
     Grid,
 } from '@mui/material';
+import {apiRequest} from "../../common/api";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -52,15 +53,14 @@ export const AddDoctorModal = ({ open, onClose, onDoctorAdded }) => {
 
         try {
             setSubmitting(true);
-            const response = await fetch(`${endpoint}/doctors`, {
+            const response = await apiRequest(`${endpoint}/doctors`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                auth: true,
                 body: formData,
             });
 
-            if (response.ok) {
-                const newDoctor = await response.json();
-                onDoctorAdded(newDoctor); // Pass the new doctor back to parent
+            if (response) {
+                onDoctorAdded(response); // Pass the new doctor back to parent
                 handleClose();
             } else {
                 const error = await response.json();

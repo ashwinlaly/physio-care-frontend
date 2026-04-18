@@ -27,6 +27,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {apiRequest} from "../../common/api";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -52,10 +53,9 @@ export const DoctorsPage = () => {
     const fetchDoctors = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${endpoint}/doctors`);
-            if (response.ok) {
-                const data = await response.json();
-                setDoctors(data);
+            const response = await apiRequest(`${endpoint}/doctors`, {auth: true});
+            if (response) {
+                setDoctors(response);
             } else {
                 showSnackbar('Failed to fetch doctors', 'error');
             }
@@ -136,21 +136,20 @@ export const DoctorsPage = () => {
 
             const method = editingDoctor ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await apiRequest(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
                 body: formData,
+                auth: true,
             });
 
-            if (response.ok) {
+            if (response) {
                 showSnackbar(
                     editingDoctor ? 'Doctor updated successfully' : 'Doctor added successfully'
                 );
                 handleCloseDialog();
                 fetchDoctors();
             } else {
-                const error = await response.json();
-                showSnackbar(error.message || 'Operation failed', 'error');
+                showSnackbar(response.message || 'Operation failed', 'error');
             }
         } catch (error) {
             console.error('Error saving doctor:', error);
@@ -164,12 +163,12 @@ export const DoctorsPage = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            const response = await fetch(
+            const response = await apiRequest(
                 `${endpoint}/doctors/${deleteDialog.doctorId}`,
-                { method: 'DELETE' }
+                { method: 'DELETE', auth: true },
             );
 
-            if (response.ok) {
+            if (response) {
                 showSnackbar('Doctor deleted successfully');
                 setDeleteDialog({ open: false, doctorId: null });
                 fetchDoctors();

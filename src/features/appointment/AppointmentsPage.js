@@ -22,6 +22,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { format, addDays, subDays } from 'date-fns';
 import { CreateAppointmentDialog } from './CreateAppointmentDialog';
 import { toast } from 'react-toastify';
+import {apiRequest} from "../../common/api";
 
 const endpoint = process.env.REACT_APP_API_URL;
 // Time slots (1-hour intervals from 9 AM to 6 PM)
@@ -59,11 +60,10 @@ export const AppointmentsPage = () => {
         try {
             setLoading(true);
             const dateStr = format(selectedDate, 'yyyy-MM-dd');
-            const response = await fetch(`${endpoint}/appointments/date/${dateStr}`);
+            const response = await apiRequest(`${endpoint}/appointments/date/${dateStr}`, {auth: true});
 
-            if (response.ok) {
-                const data = await response.json();
-                setAppointments(data);
+            if (response) {
+                setAppointments(response);
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
@@ -103,11 +103,12 @@ export const AppointmentsPage = () => {
         if (!window.confirm('Are you sure you want to delete this appointment?')) return;
 
         try {
-            const response = await fetch(`${endpoint}/appointments/${appointmentId}`, {
+            const response = await apiRequest(`${endpoint}/appointments/${appointmentId}`, {
                 method: 'DELETE',
+                auth: true,
             });
 
-            if (response.ok) {
+            if (response) {
                 fetchAppointments();
             } else {
                 alert('Failed to delete appointment');
@@ -120,17 +121,14 @@ export const AppointmentsPage = () => {
 
     const handleMarkAsCompleted = async (appointmentId, currentStatus) => {
         try {
-            const response = await fetch(`${endpoint}/appointments/${appointmentId}`, {
+            const response = await apiRequest(`${endpoint}/appointments/${appointmentId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     status: currentStatus === 'completed' ? 'scheduled' : 'completed'
-                }),
+                },
             });
 
-            if (response.ok) {
+            if (response) {
                 toast.success(currentStatus === 'completed' ? 'Marked as scheduled' : 'Marked as completed', {
                     position: 'top-center',
                     autoClose: 3000,

@@ -32,6 +32,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import {CreateAppointmentDialog} from "../../appointment/CreateAppointmentDialog";
 import {TextWithTooltip} from "../../../components/TextWithTooltip";
+import {apiRequest} from "../../../common/api";
 
 
 const endpoint = process.env.REACT_APP_API_URL;
@@ -66,12 +67,12 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
     const fetchSessions = async () => {
         try {
             setLoading(true);
-            const response = await fetch(
-                `${endpoint}/treatment/${patientId}/assessments/${assessmentId}/sessions`
+            const response = await apiRequest(
+                `${endpoint}/treatment/${patientId}/assessments/${assessmentId}/sessions`,
+                {auth: true}
             );
-            if (response.ok) {
-                const data = await response.json();
-                setSessions(data);
+            if (response) {
+                setSessions(response);
             } else {
                 showSnackbar('Failed to fetch treatment sessions', 'error');
             }
@@ -87,11 +88,10 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
         try {
             setLoading(true);
             const dateStr = format(selectedDate, 'yyyy-MM-dd');
-            const response = await fetch(`${endpoint}/appointments/date/${dateStr}`);
+            const response = await apiRequest(`${endpoint}/appointments/date/${dateStr}`, {auth: true});
 
-            if (response.ok) {
-                const data = await response.json();
-                setAppointments(data);
+            if (response) {
+                setAppointments(response);
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
@@ -128,16 +128,16 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
 
     const handleSaveNew = async () => {
         try {
-            const response = await fetch(
+            const response = await apiRequest(
                 `${endpoint}/treatment/${patientId}/assessments/${assessmentId}/sessions`,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newSession),
+                    body: newSession,
+                    auth: true
                 }
             );
 
-            if (response.ok) {
+            if (response) {
                 showSnackbar('Treatment session added successfully');
                 setIsAdding(false);
                 setNewSession({
@@ -178,13 +178,13 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
         try {
             const { id, assessmentId, patientId, createdAt, updatedAt, ...dataToUpdate } = editData;
 
-            const response = await fetch(`${endpoint}/treatment/sessions/${sessionId}`, {
+            const response = await apiRequest(`${endpoint}/treatment/sessions/${sessionId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToUpdate),
+                body: dataToUpdate,
+                auth: true,
             });
 
-            if (response.ok) {
+            if (response) {
                 showSnackbar('Treatment session updated successfully');
                 setEditingId(null);
                 setEditData({});
@@ -205,12 +205,12 @@ export const TreatmentSessionsTable = ({ patientId, assessmentId, patientDetails
 
     const handleConfirmDelete = async () => {
         try {
-            const response = await fetch(
+            const response = await apiRequest(
                 `${endpoint}/treatment/sessions/${deleteDialog.sessionId}`,
-                { method: 'DELETE' }
+                { method: 'DELETE', auth: true }
             );
 
-            if (response.ok) {
+            if (response) {
                 showSnackbar('Treatment session deleted successfully');
                 setDeleteDialog({ open: false, sessionId: null });
                 fetchSessions();

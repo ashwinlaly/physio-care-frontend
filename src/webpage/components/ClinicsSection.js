@@ -70,7 +70,7 @@ function ClinicsSection() {
             >
               <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                 <Typography sx={{ fontWeight: 900, fontSize: 14, letterSpacing: '0.12em', opacity: 0.9 }}>
-                  icurePHYSIOTHERAPY GREATER
+                  ICURE PHYSIOTHERAPY GREATER
                   <Box component="span" sx={{ display: 'block' }}>
                     KAILASH
                   </Box>

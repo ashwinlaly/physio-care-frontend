@@ -538,93 +538,93 @@ const handleConfirmSubmit = async () => {
                     </Grid>
                     <Grid item size={6} xs={12} sm={6}>
                       <Controller
-                        name="painDuration"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Duration of Pain"
-                            fullWidth
-                            variant="outlined"
-                            error={!!errors.painDuration}
-                            helperText={errors.painDuration?.message}
-                          />
-                        )}
+                          name="painLocation"
+                          control={control}
+                          render={({ field }) => (
+                              <TextField
+                                  {...field}
+                                  label="Pain Location"
+                                  fullWidth
+                                  variant="outlined"
+                                  error={!!errors.painLocation}
+                                  helperText={errors.painLocation?.message}
+                              />
+                          )}
                       />
                     </Grid>
                   </Grid>
-                  <Grid container spacing={2} mb={2}>
-                    <Grid item  size={6} xs={12} sm={6}>
-                      <Controller
-                        name="painLocation"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Pain Location"
-                            fullWidth
-                            variant="outlined"
-                            error={!!errors.painLocation}
-                            helperText={errors.painLocation?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item size={6} xs={12} sm={6}>
-                      <Controller
-                        name="painType"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Pain Type (e.g., sharp, dull, throbbing)"
-                            fullWidth
-                            variant="outlined"
-                            error={!!errors.painType}
-                            helperText={errors.painType?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={2} mb={2}>
-                    <Grid item size={6} xs={12} sm={6}>
-                      <Controller
-                        name="aggravatingFactors"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Aggravating Factors"
-                            fullWidth
-                            multiline
-                            rows={2}
-                            variant="outlined"
-                            error={!!errors.aggravatingFactors}
-                            helperText={errors.aggravatingFactors?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item size={6} xs={12} sm={6}>
-                      <Controller
-                        name="relievingFactors"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Relieving Factors"
-                            fullWidth
-                            multiline
-                            rows={2}
-                            variant="outlined"
-                            error={!!errors.relievingFactors}
-                            helperText={errors.relievingFactors?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
+                  {/*<Grid container spacing={2} mb={2}>*/}
+                  {/*  <Grid item  size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="painLocation"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Pain Location"*/}
+                  {/*          fullWidth*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.painLocation}*/}
+                  {/*          helperText={errors.painLocation?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*  <Grid item size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="painType"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Pain Type (e.g., sharp, dull, throbbing)"*/}
+                  {/*          fullWidth*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.painType}*/}
+                  {/*          helperText={errors.painType?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*</Grid>*/}
+                  {/*<Grid container spacing={2} mb={2}>*/}
+                  {/*  <Grid item size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="aggravatingFactors"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Aggravating Factors"*/}
+                  {/*          fullWidth*/}
+                  {/*          multiline*/}
+                  {/*          rows={2}*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.aggravatingFactors}*/}
+                  {/*          helperText={errors.aggravatingFactors?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*  <Grid item size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="relievingFactors"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Relieving Factors"*/}
+                  {/*          fullWidth*/}
+                  {/*          multiline*/}
+                  {/*          rows={2}*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.relievingFactors}*/}
+                  {/*          helperText={errors.relievingFactors?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*</Grid>*/}
                   <Grid container spacing={2} mb={2}>
                     <Grid item size={6} xs={12} sm={6}>
                       <FormControl fullWidth error={!!errors.painScale}>
@@ -654,81 +654,81 @@ const handleConfirmSubmit = async () => {
                         )}
                       </FormControl>
                     </Grid>
-                    <Grid item size={6} xs={12} sm={6}>
-                      <Controller
-                        name="painFrequency"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Frequency of Pain"
-                            fullWidth
-                            variant="outlined"
-                            error={!!errors.painFrequency}
-                            helperText={errors.painFrequency?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
+                    {/*<Grid item size={6} xs={12} sm={6}>*/}
+                    {/*  <Controller*/}
+                    {/*    name="painFrequency"*/}
+                    {/*    control={control}*/}
+                    {/*    render={({ field }) => (*/}
+                    {/*      <TextField*/}
+                    {/*        {...field}*/}
+                    {/*        label="Frequency of Pain"*/}
+                    {/*        fullWidth*/}
+                    {/*        variant="outlined"*/}
+                    {/*        error={!!errors.painFrequency}*/}
+                    {/*        helperText={errors.painFrequency?.message}*/}
+                    {/*      />*/}
+                    {/*    )}*/}
+                    {/*  />*/}
+                    {/*</Grid>*/}
                   </Grid>
-                  <Grid container spacing={2} mb={2}>
-                    <Grid item size={6} xs={12} sm={6}>
-                      <Controller
-                        name="painRadiation"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Radiation of Pain (e.g., Yes/No, description)"
-                            fullWidth
-                            multiline
-                            rows={1}
-                            variant="outlined"
-                            error={!!errors.painRadiation}
-                            helperText={errors.painRadiation?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item  size={6} xs={12} sm={6}>
-                      <Controller
-                        name="painTiming"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Timing of Pain (e.g., morning, night, activity-related)"
-                            fullWidth
-                            multiline
-                            rows={1}
-                            variant="outlined"
-                            error={!!errors.painTiming}
-                            helperText={errors.painTiming?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={2} mb={2}>
-                    <Grid item size={6} xs={ 12} sm={6}>
-                      <Controller
-                        name="functionalLimitation"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Functional Limitations due to Pain"
-                            fullWidth
-                            multiline
-                            rows={2}
-                            variant="outlined"
-                            error={!!errors.functionalLimitation}
-                            helperText={errors.functionalLimitation?.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
+                  {/*<Grid container spacing={2} mb={2}>*/}
+                  {/*  <Grid item size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="painRadiation"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Radiation of Pain (e.g., Yes/No, description)"*/}
+                  {/*          fullWidth*/}
+                  {/*          multiline*/}
+                  {/*          rows={1}*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.painRadiation}*/}
+                  {/*          helperText={errors.painRadiation?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*  <Grid item  size={6} xs={12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="painTiming"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Timing of Pain (e.g., morning, night, activity-related)"*/}
+                  {/*          fullWidth*/}
+                  {/*          multiline*/}
+                  {/*          rows={1}*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.painTiming}*/}
+                  {/*          helperText={errors.painTiming?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*</Grid>*/}
+                  {/*<Grid container spacing={2} mb={2}>*/}
+                  {/*  <Grid item size={6} xs={ 12} sm={6}>*/}
+                  {/*    <Controller*/}
+                  {/*      name="functionalLimitation"*/}
+                  {/*      control={control}*/}
+                  {/*      render={({ field }) => (*/}
+                  {/*        <TextField*/}
+                  {/*          {...field}*/}
+                  {/*          label="Functional Limitations due to Pain"*/}
+                  {/*          fullWidth*/}
+                  {/*          multiline*/}
+                  {/*          rows={2}*/}
+                  {/*          variant="outlined"*/}
+                  {/*          error={!!errors.functionalLimitation}*/}
+                  {/*          helperText={errors.functionalLimitation?.message}*/}
+                  {/*        />*/}
+                  {/*      )}*/}
+                  {/*    />*/}
+                  {/*  </Grid>*/}
+                  {/*</Grid>*/}
                 </Grid>
                 <Grid item size={4}>
                   {/*<Box sx={{mt: 3, display: 'flex', justifyContent: 'center'}}>*/}

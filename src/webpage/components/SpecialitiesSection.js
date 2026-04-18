@@ -96,7 +96,7 @@ function SpecialitiesSection() {
           variant="h3"
           sx={{ textAlign: 'center', fontWeight: 900, color: 'primary.main' }}
         >
-          icure Specialities
+          iCure Specialities
         </Typography>
 
         <Typography
@@ -110,7 +110,7 @@ function SpecialitiesSection() {
             lineHeight: 1.8,
           }}
         >
-          icure Physiotherapy offers a range of physiotherapy services with experienced specialists and modern care.
+          iCure Physiotherapy offers a range of physiotherapy services with experienced specialists and modern care.
         </Typography>
 
         <Box

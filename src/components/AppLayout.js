@@ -88,7 +88,7 @@ export const AppLayout = () => {
             <MenuIcon  />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Icure Physiotherapy
+            iCure Physiotherapy
           </Typography>
           <div>
             <Tooltip title="Account settings">

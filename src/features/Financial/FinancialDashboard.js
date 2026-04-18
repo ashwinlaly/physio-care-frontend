@@ -128,25 +128,24 @@ export const FinancialDashboard = () => {
     const fetchSessionsForPatient = async (patientId) => {
         try {
             // Fetch all assessments for the patient
-            const assessmentsResponse = await fetch(
-                `${endpoint}/assessment/${patientId}/assessments`
+            const assessments = await apiRequest(
+                `${endpoint}/assessment/${patientId}/assessments`,
+                {auth: true}
             );
 
-            if (!assessmentsResponse.ok) return [];
-
-            const assessments = await assessmentsResponse.json();
+            if (!assessments) return [];
             let allSessions = [];
 
             // For each assessment, fetch its sessions
             for (const assessment of assessments) {
-                const sessionsResponse = await fetch(
-                    `${endpoint}/treatment/${patientId}/assessments/${assessment.id}/sessions`
+                const sessionsResponse = await apiRequest(
+                    `${endpoint}/treatment/${patientId}/assessments/${assessment.id}/sessions`,
+                    {auth: true}
                 );
 
-                if (sessionsResponse.ok) {
-                    const sessions = await sessionsResponse.json();
+                if (sessionsResponse) {
                     // Add assessment info to each session
-                    const sessionsWithAssessment = sessions.map(session => ({
+                    const sessionsWithAssessment = sessionsResponse.map(session => ({
                         ...session,
                         assessmentData: assessment,
                     }));

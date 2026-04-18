@@ -287,7 +287,7 @@ function FooterSection() {
                 color: 'rgba(255,255,255,0.92)',
               }}
             >
-              Copyright © {new Date().getFullYear()} icure Physiotherapy Pvt. Ltd. All Rights Reserved.
+              Copyright © {new Date().getFullYear()} iCure Physiotherapy Pvt. Ltd. All Rights Reserved.
             </Typography>
 
             <Link

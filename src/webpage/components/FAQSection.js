@@ -15,7 +15,7 @@ const faqs = [
     a: 'It’s a structured approach that combines clinician guidance with assessment, planning, and tracking to support consistent recovery.',
   },
   {
-    q: 'What are the services offered by icurephysiotherapy?',
+    q: 'What are the services offered by iCure Physiotherapy?',
     a: 'We provide orthopedic, sports, neuro, geriatric and home-care physiotherapy along with guided recovery programs.',
   },
   {
@@ -23,7 +23,7 @@ const faqs = [
     a: 'Yes — we can support selected cases virtually, with assessment and tailored plans, depending on your condition and equipment access.',
   },
   {
-    q: 'How do I book an appointment for a icureclinic?',
+    q: 'How do I book an appointment for a iCure clinic?',
     a: 'Use the “Book Now” button at the top to start your booking, or log in to schedule an appointment slot.',
   },
   {
