@@ -126,6 +126,7 @@ export const AppointmentsPage = () => {
                 body: {
                     status: currentStatus === 'completed' ? 'scheduled' : 'completed'
                 },
+                auth: true,
             });
 
             if (response) {
