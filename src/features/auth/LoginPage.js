@@ -41,9 +41,7 @@ export const LoginPage = () => {
         localStorage.setItem('authToken', response.token);
         startSessionTimer(response.token);
         showToast("Logged in successfully", 'info');
-        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/dashboard';
-        sessionStorage.removeItem('redirectAfterLogin');
-        navigate(redirectPath);
+        navigate('/dashboard');
       } catch (error) {
         console.error('Login failed:', error);
         showToast("Logged in Failed", 'error');
