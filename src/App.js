@@ -35,6 +35,15 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Roboto, Arial, sans-serif',
   },
+  components: {
+    MuiFormLabel: {
+      styleOverrides: {
+        asterisk: {
+          color: '#d32f2f',
+        },
+      },
+    },
+  },
 });
 
 // A simple component to protect routes

@@ -33,6 +33,8 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import Inventory from '@mui/icons-material/Inventory';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import {clearSessionTimer} from '../common/sessionManager';
+
 const drawerWidth = 240;
 
 const menuItems = [
@@ -67,6 +69,8 @@ export const AppLayout = () => {
   const handleLogout = () => {
     console.log('Logging out...');
     handleClose();
+    clearSessionTimer();
+    localStorage.removeItem('authToken');
     navigate('/');
   };
 
