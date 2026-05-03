@@ -353,6 +353,42 @@ export const AssessmentForm = () => {
   const [patientDetails, setPatientDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [assessment, setAssessment] = useState(null);
+  const [editingPatient, setEditingPatient] = useState(false);
+  const [patientEditData, setPatientEditData] = useState({});
+  const [savingPatient, setSavingPatient] = useState(false);
+
+  const handleEditPatientClick = () => {
+    setPatientEditData({
+      name: patientDetails?.name || '',
+      age: patientDetails?.age || '',
+      gender: patientDetails?.gender || '',
+      contactNo: patientDetails?.contactNo || '',
+    });
+    setEditingPatient(true);
+  };
+
+  const handleCancelPatientEdit = () => {
+    setEditingPatient(false);
+    setPatientEditData({});
+  };
+
+  const handleSavePatientInfo = async () => {
+    try {
+      setSavingPatient(true);
+      const updated = await apiRequest(`${endpoint}/patients/${patientDetails.id}`, {
+        method: 'PUT',
+        body: patientEditData,
+        auth: true,
+      });
+      setPatientDetails({ ...patientDetails, ...patientEditData });
+      setEditingPatient(false);
+      showToast('Patient info updated successfully', 'success');
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setSavingPatient(false);
+    }
+  };
 
   const onSubmit = async (data) => {
     console.log(data)
@@ -412,9 +448,9 @@ const handleConfirmSubmit = async () => {
     });
 
     const message = assessmentId ? 'Assessment updated successfully.' : 'Assessment created successfully.';
-    showToast(message, 'info');
+    showToast(message, 'success');
     setShowPreview(false);
-    navigate(`/patients/${patientDetails.id}/assessment`);
+    navigate('/patients');
   } catch (error) {
     showToast(error.message, 'error');
   }
@@ -467,16 +503,73 @@ const handleConfirmSubmit = async () => {
                 1. Patient Details
               </Typography>
               <Paper variant="outlined" sx={{ p: 2 }}>
-                <Typography variant="body1" color="text.secondary">
-                  Name: {patientDetails?.name?.toUpperCase()}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Age: {patientDetails?.age}, Gender: {patientDetails?.gender?.toUpperCase()}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Contact: {patientDetails?.contactNo}
-                </Typography>
-                <Button variant="outlined" size="small" sx={{ mt: 1 }}>Edit Patient Info</Button>
+                {editingPatient ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <TextField
+                      label="Name"
+                      size="small"
+                      value={patientEditData.name}
+                      onChange={(e) => setPatientEditData({ ...patientEditData, name: e.target.value })}
+                      sx={{ width: 494 }} 
+                    />
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                      <TextField
+                        label="Age"
+                        size="small"
+                        
+                        value={patientEditData.age}
+                        onChange={(e) => setPatientEditData({ ...patientEditData, age: e.target.value })}
+                        sx={{ width: 100 }}
+                      />
+                      <TextField
+                        label="Gender"
+                        size="small"
+                        value={patientEditData.gender}
+                        onChange={(e) => setPatientEditData({ ...patientEditData, gender: e.target.value })}
+                        sx={{ width: 150 }}
+                      />
+                      <TextField
+                        label="Contact No."
+                        size="small"
+                        value={patientEditData.contactNo}
+                        onChange={(e) => setPatientEditData({ ...patientEditData, contactNo: e.target.value })}
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                      <Button
+                        type="button"
+                        variant="contained"
+                        size="small"
+                        onClick={handleSavePatientInfo}
+                        disabled={savingPatient}
+                      >
+                        {savingPatient ? 'Saving...' : 'Save'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        size="small"
+                        onClick={handleCancelPatientEdit}
+                        disabled={savingPatient}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <>
+                    <Typography variant="body1" color="text.secondary">
+                      Name: {patientDetails?.name?.toUpperCase()}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      Age: {patientDetails?.age}, Gender: {patientDetails?.gender?.toUpperCase()}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary">
+                      Contact: {patientDetails?.contactNo}
+                    </Typography>
+                    <Button type="button" variant="outlined" size="small" sx={{ mt: 1 }} onClick={handleEditPatientClick}>Edit Patient Info</Button>
+                  </>
+                )}
               </Paper>
             </Box>
 
@@ -971,17 +1064,6 @@ const handleConfirmSubmit = async () => {
               />
             </Box>
 
-            {assessment ?
-              <>
-                <Divider sx={{ my: 4 }} />
-                <TreatmentSessionsTable
-                    patientId={patientId}
-                    assessmentId={assessment || 'temp-id'}
-                    patientDetails={patientDetails}
-                />
-                <Divider sx={{ my: 4 }} />
-              </> : ''}
-
             <Button
                 type="submit"
                 variant="contained"
@@ -995,6 +1077,18 @@ const handleConfirmSubmit = async () => {
             </Button>
           </Stack>
         </form>
+
+        {assessment && (
+          <>
+            <Divider sx={{ my: 4 }} />
+            <TreatmentSessionsTable
+                patientId={patientId}
+                assessmentId={assessment || 'temp-id'}
+                patientDetails={patientDetails}
+            />
+            <Divider sx={{ my: 4 }} />
+          </>
+        )}
       </Paper>
 
 

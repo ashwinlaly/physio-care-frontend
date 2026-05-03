@@ -15,6 +15,20 @@ export const showToast = (message, type = 'error') => {
         });
         return;
     }
+    else if (type === 'success') {
+        toast.success(message, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+        });
+        return;
+    }
     toast.error(message, {
         position: "top-center",
         autoClose: 5000,

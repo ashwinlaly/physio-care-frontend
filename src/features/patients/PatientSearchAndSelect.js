@@ -7,9 +7,10 @@ import { showToast, fireBaseDate } from "../../common/util";
 import { apiRequest } from "../../common/api";
 
 export const PatientSearchAndSelect = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => sessionStorage.getItem('patientSearchTerm') || '');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [loadingPatients, setLoadingPatients] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(() => sessionStorage.getItem('selectedPatientId') || null);
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -18,7 +19,22 @@ export const PatientSearchAndSelect = () => {
 
   const endpoint = process.env.REACT_APP_API_URL;
 
+  // Restore assessments if patient was previously selected
   useEffect(() => {
+    const savedPatientId = sessionStorage.getItem('selectedPatientId');
+    if (savedPatientId) {
+      fetchAppointments(savedPatientId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.length >= 4) {
+      setLoadingPatients(true); // set immediately to suppress "No patients found"
+    } else {
+      setSearchResults([]);
+      setLoadingPatients(false);
+    }
+
     const fetchPatients = async () => {
       if (searchTerm.length >= 4) {
         try {
@@ -31,15 +47,15 @@ export const PatientSearchAndSelect = () => {
           showToast(error.message, 'error');
           console.error('Error fetching patients:', error);
           setSearchResults([]);
+        } finally {
+          setLoadingPatients(false);
         }
-      } else {
-        setSearchResults([]);
       }
     };
 
     const delayDebounceFn = setTimeout(() => {
       fetchPatients();
-    }, 300);
+    }, 600);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
@@ -64,14 +80,17 @@ export const PatientSearchAndSelect = () => {
   const handleSelectPatient = (patientId) => {
     console.log('Selected patient ID:', patientId);
     setSelectedPatientId(patientId);
-    fetchAppointments(patientId)
+    sessionStorage.setItem('selectedPatientId', patientId);
+    fetchAppointments(patientId);
   };
 
   const handleCreateAppointment = () => {
+    sessionStorage.setItem('patientSearchTerm', searchTerm);
     navigate(`/patients/${selectedPatientId}/assessment`);
   };
 
   const handleEditAppointment = (appointmentId) => {
+    sessionStorage.setItem('patientSearchTerm', searchTerm);
     navigate(`/patients/${selectedPatientId}/appointments/${appointmentId}/edit`);
   };
 
@@ -86,16 +105,16 @@ export const PatientSearchAndSelect = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      await apiRequest(`${endpoint}/patients/${selectedPatientId}/appointments/${appointmentToDelete}`, {
+      await apiRequest(`${endpoint}/assessment/${selectedPatientId}/assessments/${appointmentToDelete}`, {
         method: 'DELETE',
         auth: true,
       });
-      showToast('Appointment deleted successfully', 'success');
+      showToast('Assessment deleted successfully', 'success');
       setDeleteDialogOpen(false);
       fetchAppointments(selectedPatientId);
     } catch (error) {
       showToast(error.message, 'error');
-      console.error('Error deleting appointment:', error);
+      console.error('Error deleting assessment:', error);
     }
   };
 
@@ -114,7 +133,10 @@ export const PatientSearchAndSelect = () => {
         variant="outlined"
         fullWidth
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e) => {
+          setSearchTerm(e.target.value);
+          sessionStorage.setItem('patientSearchTerm', e.target.value);
+        }}
         sx={{ mb: 2 }}
         autoFocus
       />
@@ -131,7 +153,7 @@ export const PatientSearchAndSelect = () => {
         </Paper>
       )}
 
-      {searchTerm.length > 0 && searchResults.length === 0 && (
+      {searchTerm.length >=4 && !loadingPatients && searchResults.length === 0 && (
         <Typography variant="body1" color="textSecondary" sx={{ mb: 2, textAlign: 'center' }}>
           No patients found matching "{searchTerm}".
         </Typography>
@@ -141,20 +163,20 @@ export const PatientSearchAndSelect = () => {
       {selectedPatientId && (
         <Box sx={{ mt: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6">Patient Appointments</Typography>
+            <Typography variant="h6">Patient Assessments</Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={handleCreateAppointment}
             >
-              Create New Appointment
+              Create New Assessments
             </Button>
           </Box>
 
           {loadingAppointments ? (
-            <Typography>Loading appointments...</Typography>
+            <Typography>Loading assessments...</Typography>
           ) : appointments.length === 0 ? (
-            <Typography color="textSecondary">No appointments found for this patient.</Typography>
+            <Typography color="textSecondary">No assessments found for this patient.</Typography>
           ) : (
             <TableContainer component={Paper}>
               <Table>
@@ -185,21 +207,14 @@ export const PatientSearchAndSelect = () => {
                           >
                             Edit
                           </Button>
-                          {/*<Button*/}
-                          {/*  size="small"*/}
-                          {/*  startIcon={<Print />}*/}
-                          {/*  onClick={() => handlePrintAppointment(appointment)}*/}
-                          {/*>*/}
-                          {/*  Print*/}
-                          {/*</Button>*/}
-                          {/*<Button*/}
-                          {/*  size="small"*/}
-                          {/*  color="error"*/}
-                          {/*  startIcon={<Delete />}*/}
-                          {/*  onClick={() => handleDeleteClick(appointment.id)}*/}
-                          {/*>*/}
-                          {/*  Delete*/}
-                          {/*</Button>*/}
+                          <Button
+                            size="small"
+                            color="error"
+                            startIcon={<Delete />}
+                            onClick={() => handleDeleteClick(appointment.id)}
+                          >
+                            Delete
+                          </Button>
                         </Box>
                       </TableCell>
                     </TableRow>
