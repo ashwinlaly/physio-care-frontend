@@ -1,31 +1,58 @@
 // src/features/patients/PatientSearchAndSelect.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Edit, Print, Delete } from '@mui/icons-material';
 import { showToast, fireBaseDate } from "../../common/util";
 import { apiRequest } from "../../common/api";
 
 export const PatientSearchAndSelect = () => {
-  const [searchTerm, setSearchTerm] = useState(() => sessionStorage.getItem('patientSearchTerm') || '');
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loadingPatients, setLoadingPatients] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState(() => sessionStorage.getItem('selectedPatientId') || null);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [loadingAppointments, setLoadingAppointments] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const endpoint = process.env.REACT_APP_API_URL;
 
-  // Restore assessments if patient was previously selected
+  const fetchAppointments = useCallback(
+    async (patientId) => {
+      try {
+        setLoadingAppointments(true);
+        const data = await apiRequest(`${endpoint}/assessment/${patientId}/assessments`, {
+          method: 'GET',
+          auth: true,
+        });
+        setAppointments(data || []);
+      } catch (error) {
+        showToast(error.message, 'error');
+        console.error('Error fetching appointments:', error);
+        setAppointments([]);
+      } finally {
+        setLoadingAppointments(false);
+      }
+    },
+    [endpoint]
+  );
+
+  // Restore search + selection only when coming back from Assessment flow
   useEffect(() => {
-    const savedPatientId = sessionStorage.getItem('selectedPatientId');
-    if (savedPatientId) {
-      fetchAppointments(savedPatientId);
+    const state = location.state;
+    if (!state) return;
+
+    if (typeof state.patientSearchTerm === 'string') {
+      setSearchTerm(state.patientSearchTerm);
     }
-  }, []);
+    if (state.selectedPatientId) {
+      setSelectedPatientId(state.selectedPatientId);
+      fetchAppointments(state.selectedPatientId);
+    }
+  }, [fetchAppointments, location.state]);
 
   useEffect(() => {
     if (searchTerm.length >= 4) {
@@ -58,40 +85,24 @@ export const PatientSearchAndSelect = () => {
     }, 600);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
-
-  const fetchAppointments = async (patientId) => {
-    try {
-      setLoadingAppointments(true);
-      const data = await apiRequest(`${endpoint}/assessment/${patientId}/assessments`, {
-        method: 'GET',
-        auth: true,
-      });
-      setAppointments(data || []);
-    } catch (error) {
-      showToast(error.message, 'error');
-      console.error('Error fetching appointments:', error);
-      setAppointments([]);
-    } finally {
-      setLoadingAppointments(false);
-    }
-  };
+  }, [endpoint, searchTerm]);
 
   const handleSelectPatient = (patientId) => {
     console.log('Selected patient ID:', patientId);
     setSelectedPatientId(patientId);
-    sessionStorage.setItem('selectedPatientId', patientId);
     fetchAppointments(patientId);
   };
 
   const handleCreateAppointment = () => {
-    sessionStorage.setItem('patientSearchTerm', searchTerm);
-    navigate(`/patients/${selectedPatientId}/assessment`);
+    navigate(`/patients/${selectedPatientId}/assessment`, {
+      state: { patientSearchTerm: searchTerm, selectedPatientId },
+    });
   };
 
   const handleEditAppointment = (appointmentId) => {
-    sessionStorage.setItem('patientSearchTerm', searchTerm);
-    navigate(`/patients/${selectedPatientId}/appointments/${appointmentId}/edit`);
+    navigate(`/patients/${selectedPatientId}/appointments/${appointmentId}/edit`, {
+      state: { patientSearchTerm: searchTerm, selectedPatientId },
+    });
   };
 
   const handlePrintAppointment = (appointment) => {
@@ -135,7 +146,6 @@ export const PatientSearchAndSelect = () => {
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);
-          sessionStorage.setItem('patientSearchTerm', e.target.value);
         }}
         sx={{ mb: 2 }}
         autoFocus
