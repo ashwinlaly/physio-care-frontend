@@ -15,7 +15,7 @@ import {
   Tab,
   FormControl
 } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {showToast} from "../../common/util";
@@ -31,6 +31,13 @@ const endpoint = process.env.REACT_APP_API_URL;
 export const AssessmentForm = () => {
   const { patientId, appointmentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnState = location.state
+    ? {
+        patientSearchTerm: location.state.patientSearchTerm,
+        selectedPatientId: location.state.selectedPatientId,
+      }
+    : null;
   const [currentTab, setCurrentTab] = useState(0); // State for managing tabs
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState(null);
@@ -351,7 +358,6 @@ export const AssessmentForm = () => {
   });
 
   const [patientDetails, setPatientDetails] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [assessment, setAssessment] = useState(null);
   const [editingPatient, setEditingPatient] = useState(false);
   const [patientEditData, setPatientEditData] = useState({});
@@ -375,7 +381,7 @@ export const AssessmentForm = () => {
   const handleSavePatientInfo = async () => {
     try {
       setSavingPatient(true);
-      const updated = await apiRequest(`${endpoint}/patients/${patientDetails.id}`, {
+      await apiRequest(`${endpoint}/patients/${patientDetails.id}`, {
         method: 'PUT',
         body: patientEditData,
         auth: true,
@@ -398,7 +404,6 @@ export const AssessmentForm = () => {
 
 useEffect(() => {
   const fetchAssessment = async () => {
-    setLoading(true);
     try {
       const details = await apiRequest(`${endpoint}/patients/${patientId}`, {
         method: 'GET',
@@ -423,14 +428,13 @@ useEffect(() => {
     } catch (error) {
       showToast(error.message, 'error');
     } finally {
-      setLoading(false);
     }
   };
 
   if (patientId) {
     fetchAssessment();
   }
-}, [patientId, setValue]);
+}, [appointmentId, patientId, setValue]);
 
 
 const handleConfirmSubmit = async () => {
@@ -441,7 +445,7 @@ const handleConfirmSubmit = async () => {
       ? `${endpoint}/assessment/${patientDetails.id}/assessments/${assessmentId}`
       : `${endpoint}/assessment/${patientDetails.id}/assessments`;
 
-    const response = await apiRequest(url, {
+    await apiRequest(url, {
       method,
       body: previewData,
       auth: true,
@@ -450,7 +454,7 @@ const handleConfirmSubmit = async () => {
     const message = assessmentId ? 'Assessment updated successfully.' : 'Assessment created successfully.';
     showToast(message, 'success');
     setShowPreview(false);
-    navigate('/patients');
+    navigate('/patients', returnState ? { state: returnState } : undefined);
   } catch (error) {
     showToast(error.message, 'error');
   }
