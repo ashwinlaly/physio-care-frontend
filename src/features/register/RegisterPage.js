@@ -177,6 +177,7 @@ export const RegisterPage = () => {
         try {
             await apiRequest(`${API_BASE_URL}${FACE_REGISTER_ENDPOINT}`, {
                 method: 'POST',
+                auth: true,
                 body: {
                     userId: userId.trim(),
                     descriptor,
