@@ -17,6 +17,7 @@ import { DoctorsPage } from './features/doctors/DoctorsPage';
 import { AppointmentsPage } from './features/appointment/AppointmentsPage';
 import {FinancialDashboard} from "./features/Financial/FinancialDashboard";
 import {ProductsPage} from "./features/products/ProductsPage";
+import {SalesPage} from "./features/sales/SalesPage";
 import {ExpensesPage} from "./features/expense/ExpensesPage";
 import {RegisterPage} from "./features/register/RegisterPage";
 import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
@@ -99,6 +100,7 @@ function App() {
               <Route path="/appointments" element={<AppointmentsPage />} />
 
                <Route path="/products" element={<ProductsPage />} />
+               <Route path="/sales" element={<SalesPage />} />
                <Route path="/expenses" element={<ExpensesPage />} />
                <Route path="/register" element={<RegisterPage />} />
                <Route path="/attendance" element={<AttendanceMarking />} />

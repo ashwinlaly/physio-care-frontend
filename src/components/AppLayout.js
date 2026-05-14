@@ -16,6 +16,7 @@ import {
   MenuItem,
   Avatar,
   Tooltip,
+  Collapse,
 } from '@mui/material';
 import {
   Dashboard,
@@ -25,6 +26,8 @@ import {
   AccountCircle,
   MedicalServices,
   AppRegistrationRounded,
+  ExpandLess,
+  ExpandMore,
 } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -44,11 +47,15 @@ const menuItems = [
   { text: 'Financial', icon: <Receipt />, path: '/financial' },
   { text: 'Appointments', icon: <EventIcon />, path: '/appointments' },
   { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors' },
-  { text: 'Products', icon: <Inventory />, path: '/products' },
   { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses' },
   { text: 'Register', icon: <AppRegistrationRounded />, path: '/register' },
   { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance' },
   { text: 'Attendance Report', icon: <AssessmentIcon />, path: '/attendance/report' },
+];
+
+const inventoryMenuItems = [
+  { text: 'Products', path: '/products' },
+  { text: 'Sales', path: '/sales' },
 ];
 
 export const AppLayout = () => {
@@ -57,6 +64,7 @@ export const AppLayout = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [inventoryOpen, setInventoryOpen] = React.useState(true);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -81,6 +89,11 @@ export const AppLayout = () => {
 
   const handleSideBar = () => {
     setDrawerOpen((prev) => !prev);
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    setDrawerOpen(false);
   };
 
   return (
@@ -130,12 +143,31 @@ export const AppLayout = () => {
           <List>
             {menuItems.map((item) => (
               <ListItem key={item.text} disablePadding>
-                <ListItemButton onClick={() => navigate(item.path)}>
+                <ListItemButton onClick={() => handleNavigate(item.path)}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
             ))}
+
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => setInventoryOpen((prev) => !prev)}>
+                <ListItemIcon><Inventory /></ListItemIcon>
+                <ListItemText primary="Inventory" />
+                {inventoryOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={inventoryOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {inventoryMenuItems.map((item) => (
+                  <ListItem key={item.text} disablePadding>
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => handleNavigate(item.path)}>
+                      <ListItemText primary={item.text} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
           </List>
         </Box>
       </Drawer>
