@@ -5,6 +5,7 @@ import {
     Button,
     Card,
     CardContent,
+    Chip,
     CircularProgress,
     FormControl,
     Grid,
@@ -42,6 +43,26 @@ const monthOptions = [
     { value: 11, label: 'November' },
     { value: 12, label: 'December' },
 ];
+
+const getStatusChip = (status) => {
+    const statusConfig = {
+        complete: { label: 'Complete', color: 'success', icon: '✓' },
+        incomplete: { label: 'Incomplete', color: 'error', icon: '✗' },
+        'multiday-start': { label: 'Multi-day (Start)', color: 'warning', icon: '→' },
+        'multiday-end': { label: 'Multi-day (End)', color: 'info', icon: '←' },
+        empty: { label: 'No Activity', color: 'default', icon: '—' },
+    };
+
+    const config = statusConfig[status] || statusConfig.empty;
+    return (
+        <Chip
+            label={config.label}
+            color={config.color}
+            size="small"
+            variant="outlined"
+        />
+    );
+};
 
 export const MonthlyAttendanceReport = () => {
     const now = new Date();
@@ -239,22 +260,54 @@ export const MonthlyAttendanceReport = () => {
                     <TableContainer component={Paper}>
                         <Table size="small">
                             <TableHead>
-                                <TableRow>
-                                    <TableCell>Date</TableCell>
-                                    <TableCell align="right">Hours Worked</TableCell>
-                                    <TableCell align="right">Minutes Worked</TableCell>
-                                    <TableCell align="right">Sessions</TableCell>
-                                    {/*<TableCell align="right">Incomplete Sessions</TableCell>*/}
+                                <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                                    <TableCell><strong>Date</strong></TableCell>
+                                    <TableCell align="center"><strong>Check-In</strong></TableCell>
+                                    <TableCell align="center"><strong>Check-Out</strong></TableCell>
+                                    <TableCell align="right"><strong>Hours</strong></TableCell>
+                                    <TableCell align="right"><strong>Minutes</strong></TableCell>
+                                    <TableCell align="center"><strong>Status</strong></TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {report.items?.map((day) => (
-                                    <TableRow key={day.dateKey}>
+                                    <TableRow
+                                        key={day.dateKey}
+                                        sx={{
+                                            backgroundColor:
+                                                day.status === 'incomplete'
+                                                    ? 'rgba(244, 67, 54, 0.05)'
+                                                    : day.status === 'multiday-start' || day.status === 'multiday-end'
+                                                      ? 'rgba(255, 193, 7, 0.05)'
+                                                      : 'inherit',
+                                        }}
+                                    >
                                         <TableCell>{day.dateKey}</TableCell>
+                                        <TableCell align="center">
+                                            {day.firstCheckInTime ? (
+                                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                                    {day.firstCheckInTime}
+                                                </Typography>
+                                            ) : (
+                                                <Typography variant="body2" color="text.secondary">
+                                                    —
+                                                </Typography>
+                                            )}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {day.lastCheckOutTime ? (
+                                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                                    {day.lastCheckOutTime}
+                                                </Typography>
+                                            ) : (
+                                                <Typography variant="body2" color="error">
+                                                    Pending
+                                                </Typography>
+                                            )}
+                                        </TableCell>
                                         <TableCell align="right">{day.workedHours || 0}</TableCell>
                                         <TableCell align="right">{day.workedMinutes || 0}</TableCell>
-                                        <TableCell align="right">{day.sessions || 0}</TableCell>
-                                        {/*<TableCell align="right">{day.incompleteSessions || 0}</TableCell>*/}
+                                        <TableCell align="center">{getStatusChip(day.status)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
