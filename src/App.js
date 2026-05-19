@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './features/auth/LoginPage';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { AppLayout } from './components/AppLayout';
-import { CssBaseline, ThemeProvider, createTheme, Typography } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Home from './webpage/components/Home';
 
 import {PatientSearchAndSelect} from './features/patients/PatientSearchAndSelect';
@@ -22,6 +22,8 @@ import {ExpensesPage} from "./features/expense/ExpensesPage";
 import {RegisterPage} from "./features/register/RegisterPage";
 import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
 import {MonthlyAttendanceReport} from './features/attendance/MonthlyAttendanceReport';
+import { UsersAccessPage } from './features/users/UsersAccessPage';
+import { getPermissions } from './common/sessionManager';
 
 
 const theme = createTheme({
@@ -49,14 +51,19 @@ const theme = createTheme({
 
 // A simple component to protect routes
 const ProtectedRoute = ({ children }) => {
-  // To test the login flow, set this to false. Go to /, you'll be redirected
-  // to /login. After "logging in," you'll be sent back to /.
-  const isAuthenticated = localStorage.getItem("login"); 
-
-  if (isAuthenticated != 'true') {
-    // return <Navigate to="/login" replace />;
+  const isAuthenticated = Boolean(localStorage.getItem('authToken'));
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
+  return children;
+};
+
+const PermissionRoute = ({ permission, children }) => {
+  const permissions = getPermissions();
+  if (!permissions.includes(permission)) {
+    return <Navigate to="/dashboard" replace />;
+  }
   return children;
 };
 
@@ -84,27 +91,28 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route path="/dashboard"  element={<DashboardPage />} />
+              <Route path="/dashboard"  element={<PermissionRoute permission="dashboard"><DashboardPage /></PermissionRoute>} />
               <Route path="/masters" element={<div>Masters Page</div>} />
 
-              <Route path="/patients" element={<PatientSearchAndSelect />} />
-              <Route path="/patients/new" element={<NewPatientForm/>} />
-              <Route path="/patients/:patientId/assessment" element={<AssessmentForm />} />
-              <Route path="/patients/:patientId/appointments/new" element={<AssessmentForm />} />
-              <Route path="/patients/:patientId/appointments/:appointmentId/edit" element={<AssessmentForm />} />
+              <Route path="/patients" element={<PermissionRoute permission="patients"><PatientSearchAndSelect /></PermissionRoute>} />
+              <Route path="/patients/new" element={<PermissionRoute permission="patients"><NewPatientForm/></PermissionRoute>} />
+              <Route path="/patients/:patientId/assessment" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
+              <Route path="/patients/:patientId/appointments/new" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
+              <Route path="/patients/:patientId/appointments/:appointmentId/edit" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
 
-              <Route path="/financial" element={<FinancialDashboard/>} />
+              <Route path="/financial" element={<PermissionRoute permission="financial"><FinancialDashboard/></PermissionRoute>} />
 
-              <Route path="/me/profile" element={<Profile/>} />
-              <Route path="/doctors" element={<DoctorsPage />} />
-              <Route path="/appointments" element={<AppointmentsPage />} />
+              <Route path="/me/profile" element={<PermissionRoute permission="profile"><Profile/></PermissionRoute>} />
+              <Route path="/doctors" element={<PermissionRoute permission="doctors"><DoctorsPage /></PermissionRoute>} />
+              <Route path="/appointments" element={<PermissionRoute permission="appointments"><AppointmentsPage /></PermissionRoute>} />
 
-               <Route path="/products" element={<ProductsPage />} />
-               <Route path="/sales" element={<SalesPage />} />
-               <Route path="/expenses" element={<ExpensesPage />} />
-               <Route path="/register" element={<RegisterPage />} />
-               <Route path="/attendance" element={<AttendanceMarking />} />
-               <Route path="/attendance/report" element={<MonthlyAttendanceReport />} />
+               <Route path="/products" element={<PermissionRoute permission="products"><ProductsPage /></PermissionRoute>} />
+               <Route path="/sales" element={<PermissionRoute permission="sales"><SalesPage /></PermissionRoute>} />
+               <Route path="/expenses" element={<PermissionRoute permission="expenses"><ExpensesPage /></PermissionRoute>} />
+               <Route path="/register" element={<PermissionRoute permission="register"><RegisterPage /></PermissionRoute>} />
+               <Route path="/attendance" element={<PermissionRoute permission="attendance"><AttendanceMarking /></PermissionRoute>} />
+               <Route path="/attendance/report" element={<PermissionRoute permission="attendance_report"><MonthlyAttendanceReport /></PermissionRoute>} />
+               <Route path="/users-access" element={<PermissionRoute permission="users_access"><UsersAccessPage /></PermissionRoute>} />
 
                <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
