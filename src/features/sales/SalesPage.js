@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { apiRequest } from '../../common/api';
 import { showToast } from '../../common/util';
+import { usePermission } from '../../common/rbac';
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -35,6 +36,10 @@ export const SalesPage = () => {
   const [filterFromDate, setFilterFromDate] = useState('');
   const [filterToDate, setFilterToDate] = useState('');
   const [recentSales, setRecentSales] = useState([]);
+
+  // Permission checks
+  const canCreateSale = usePermission('sales.create');
+  const canReadSale = usePermission('sales.read');
 
   const selectedProduct = useMemo(
     () => products.find((p) => p.id === selectedProductId),
@@ -135,6 +140,11 @@ export const SalesPage = () => {
   const handleSubmitSale = async (event) => {
     event.preventDefault();
 
+    if (!canCreateSale) {
+      showToast('You don\'t have permission to create sales', 'error');
+      return;
+    }
+
     if (!selectedProduct) {
       showToast('Please select a product', 'error');
       return;
@@ -218,7 +228,7 @@ export const SalesPage = () => {
                 sx={{ minWidth: 180 }}
               />
 
-              <Button type="submit" variant="contained" disabled={loading || submitting || sellableProducts.length === 0}>
+              <Button type="submit" variant="contained" disabled={loading || submitting || sellableProducts.length === 0 || !canCreateSale}>
                 {submitting ? 'Saving...' : 'Save Sale'}
               </Button>
             </Stack>
@@ -236,14 +246,20 @@ export const SalesPage = () => {
             Recent Sales
           </Typography>
 
+          {!canReadSale && (
+            <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+              You don't have permission to view sales data
+            </Typography>
+          )}
+
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 2 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth disabled={salesLoading || !canReadSale}>
               <InputLabel>Filter Product</InputLabel>
               <Select
                 value={filterProductId}
                 label="Filter Product"
                 onChange={(e) => setFilterProductId(e.target.value)}
-                disabled={salesLoading}
+                disabled={salesLoading || !canReadSale}
               >
                 <MenuItem value="">All Products</MenuItem>
                 {products.map((product) => (
@@ -260,7 +276,7 @@ export const SalesPage = () => {
               value={filterFromDate}
               onChange={(e) => setFilterFromDate(e.target.value)}
               InputLabelProps={{ shrink: true }}
-              disabled={salesLoading}
+              disabled={salesLoading || !canReadSale}
             />
 
             <TextField
@@ -269,13 +285,13 @@ export const SalesPage = () => {
               value={filterToDate}
               onChange={(e) => setFilterToDate(e.target.value)}
               InputLabelProps={{ shrink: true }}
-              disabled={salesLoading}
+              disabled={salesLoading || !canReadSale}
             />
 
-            <Button variant="contained" onClick={handleApplyFilters} disabled={salesLoading}>
+            <Button variant="contained" onClick={handleApplyFilters} disabled={salesLoading || !canReadSale}>
               Apply
             </Button>
-            <Button variant="outlined" onClick={handleClearFilters} disabled={salesLoading}>
+            <Button variant="outlined" onClick={handleClearFilters} disabled={salesLoading || !canReadSale}>
               Clear
             </Button>
           </Stack>
@@ -292,7 +308,15 @@ export const SalesPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {recentSales.length === 0 ? (
+                {!canReadSale ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Typography variant="body2" color="text.secondary">
+                        Access Denied - You don't have permission to view sales
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : recentSales.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} align="center">
                       <Typography variant="body2" color="text.secondary">

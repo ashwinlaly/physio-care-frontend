@@ -11,6 +11,7 @@ import {
   Box,
   Typography,
   Button,
+  Checkbox,
   IconButton,
   InputAdornment,
   Link,
@@ -20,7 +21,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {apiRequest} from "../../common/api";
 import {showToast} from "../../common/util"; // Import useNavigate
-import { setAuthSession, startSessionTimer } from "../../common/sessionManager";
+import {startSessionTimer} from "../../common/sessionManager";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ export const LoginPage = () => {
           method: 'POST',
           body: data,
         });
-        setAuthSession({ token: response.token, user: response.user });
+        localStorage.setItem('authToken', response.token);
         startSessionTimer(response.token);
         showToast("Logged in successfully", 'info');
         navigate('/dashboard');
@@ -295,6 +296,21 @@ export const LoginPage = () => {
                 >
                   Cancel
                 </Button>
+              </Box>
+
+              <Box sx={{ textAlign: 'center', mt: 2 }}>
+                <Typography sx={{ fontSize: 13, color: 'rgba(255,255,255,0.9)' }}>
+                  Don't have an organization?{' '}
+                  <Link
+                    component="button"
+                    type="button"
+                    onClick={() => navigate('/signup')}
+                    underline="hover"
+                    sx={{ fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}
+                  >
+                    Create one
+                  </Link>
+                </Typography>
               </Box>
 
               {(errors.email || errors.password) && (

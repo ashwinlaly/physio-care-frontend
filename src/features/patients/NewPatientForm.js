@@ -13,7 +13,8 @@ import {
   FormLabel,
   Paper,
   Divider,
-  Stack
+  Stack,
+  Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,10 +22,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { styled } from '@mui/material/styles';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Lock as LockIcon } from '@mui/icons-material';
 import {showToast} from "../../common/util";
 import {apiRequest} from "../../common/api";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { usePermission } from "../../common/rbac";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -55,6 +58,8 @@ const Item = styled(Paper)(({ theme }) => ({
 export const NewPatientForm = () => {
   const [isDisabled, setDisabled] = React.useState(false);
   const navigate = useNavigate();
+  const { hasPermission } = usePermission();
+  const canCreatePatients = hasPermission('patients.create');
   const {
     control,
     handleSubmit,
@@ -109,6 +114,17 @@ export const NewPatientForm = () => {
         <Typography variant="subtitle1" color="text.secondary" align="center" sx={{ mb: 3 }}>
           Please fill out the patient's demographic information.
         </Typography>
+
+        {!canCreatePatients && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <LockIcon fontSize="small" />
+              <Typography variant="body2">
+                You don't have permission to create patient records. Contact your administrator.
+              </Typography>
+            </Box>
+          </Alert>
+        )}
 
         <Divider sx={{ mb: 4 }} />
 
@@ -321,7 +337,7 @@ export const NewPatientForm = () => {
               fullWidth
               size="large"
               sx={{ mt: 4 }}
-              disabled={isDisabled}
+              disabled={isDisabled || !canCreatePatients}
             >
               Register Patient & Start Assessment
             </Button>

@@ -11,10 +11,14 @@ import {
   Stack,
   TextField,
   Typography,
+  Alert,
+  Tooltip,
 } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 import { apiRequest } from '../../common/api';
 import { PERMISSION_OPTIONS } from '../../common/permissions';
 import { showToast } from '../../common/util';
+import { usePermission } from '../../common/rbac';
 
 const initialForm = {
   name: '',
@@ -28,6 +32,12 @@ const UsersAccessPage = () => {
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState(initialForm);
+
+  // Permission checks
+  const canCreateUser = usePermission('users.create');
+  const canUpdateUser = usePermission('users.update');
+  const canDeleteUser = usePermission('users.delete');
+  const canReadUsers = usePermission('users.read');
 
   const currentUserId = useMemo(() => {
     try {
@@ -112,117 +122,163 @@ const UsersAccessPage = () => {
     <Stack spacing={3}>
       <Typography variant="h5">Users & Access</Typography>
 
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Add User
-        </Typography>
-        <Box component="form" onSubmit={onCreateUser}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Name"
-                value={form.name}
-                onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                type="email"
-                label="Email"
-                value={form.email}
-                onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Password"
-                type="password"
-                value={form.password}
-                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                Menu Access
-              </Typography>
-              <Grid container>
-                {PERMISSION_OPTIONS.map((permission) => (
-                  <Grid item xs={12} sm={6} md={4} key={permission.key}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={form.menuPermissions.includes(permission.key)}
-                          onChange={() => toggleFormPermission(permission.key)}
-                        />
-                      }
-                      label={permission.label}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" disabled={saving}>
-                {saving ? 'Creating...' : 'Create User'}
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
+      {!canReadUsers && (
+        <Alert severity="error">
+          You don't have permission to manage users.
+        </Alert>
+      )}
 
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Manage Access
-        </Typography>
+      {canReadUsers && (
+        <>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Add User
+            </Typography>
+            
+            {!canCreateUser && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                You don't have permission to create new users.
+              </Alert>
+            )}
 
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Stack spacing={2}>
-            {users.map((user) => (
-              <Box key={user.id}>
-                <Typography variant="subtitle1">
-                  {user.name} ({user.email})
-                </Typography>
-                <Grid container>
-                  {PERMISSION_OPTIONS.map((permission) => {
-                    const checked = (user.menuPermissions || []).includes(permission.key);
-                    return (
-                      <Grid item xs={12} sm={6} md={4} key={`${user.id}-${permission.key}`}>
+            <Box component="form" onSubmit={onCreateUser}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Name"
+                    value={form.name}
+                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                    fullWidth
+                    required
+                    disabled={!canCreateUser}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    type="email"
+                    label="Email"
+                    value={form.email}
+                    onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                    fullWidth
+                    required
+                    disabled={!canCreateUser}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Password"
+                    type="password"
+                    value={form.password}
+                    onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                    fullWidth
+                    required
+                    disabled={!canCreateUser}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    Menu Access
+                  </Typography>
+                  <Grid container>
+                    {PERMISSION_OPTIONS.map((permission) => (
+                      <Grid item xs={12} sm={6} md={4} key={permission.key}>
                         <FormControlLabel
                           control={
                             <Checkbox
-                              checked={checked}
-                              onChange={(event) => {
-                                const current = user.menuPermissions || [];
-                                const nextPermissions = event.target.checked
-                                  ? [...current, permission.key]
-                                  : current.filter((item) => item !== permission.key);
-                                updateUserPermission(user.id, nextPermissions);
-                              }}
-                              disabled={user.id === currentUserId && permission.key === 'users_access'}
+                              checked={form.menuPermissions.includes(permission.key)}
+                              onChange={() => toggleFormPermission(permission.key)}
+                              disabled={!canCreateUser}
                             />
                           }
                           label={permission.label}
                         />
                       </Grid>
-                    );
-                  })}
+                    ))}
+                  </Grid>
                 </Grid>
-                <Divider sx={{ mt: 1 }} />
+                <Grid item xs={12}>
+                  <Tooltip title={!canCreateUser ? "You don't have permission to create users" : ''}>
+                    <Box>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={saving || !canCreateUser}
+                      >
+                        {saving ? 'Creating...' : 'Create User'}
+                      </Button>
+                    </Box>
+                  </Tooltip>
+                </Grid>
+              </Grid>
+            </Box>
+          </Paper>
+
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Manage Access
+            </Typography>
+
+            {!canUpdateUser && !canDeleteUser && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                You don't have permission to update or delete users.
+              </Alert>
+            )}
+
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
               </Box>
-            ))}
-          </Stack>
-        )}
-      </Paper>
+            ) : (
+              <Stack spacing={2}>
+                {users.map((user) => (
+                  <Box key={user.id}>
+                    <Typography variant="subtitle1">
+                      {user.name} ({user.email})
+                    </Typography>
+                    <Grid container>
+                      {PERMISSION_OPTIONS.map((permission) => {
+                        const checked = (user.menuPermissions || []).includes(permission.key);
+                        return (
+                          <Grid item xs={12} sm={6} md={4} key={`${user.id}-${permission.key}`}>
+                            <Tooltip
+                              title={
+                                !canUpdateUser
+                                  ? "You don't have permission to update user permissions"
+                                  : ''
+                              }
+                            >
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={checked}
+                                    onChange={(event) => {
+                                      const current = user.menuPermissions || [];
+                                      const nextPermissions = event.target.checked
+                                        ? [...current, permission.key]
+                                        : current.filter((item) => item !== permission.key);
+                                      updateUserPermission(user.id, nextPermissions);
+                                    }}
+                                    disabled={
+                                      (user.id === currentUserId && permission.key === 'users_access')
+                                      || !canUpdateUser
+                                    }
+                                  />
+                                }
+                                label={permission.label}
+                              />
+                            </Tooltip>
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                    <Divider sx={{ mt: 1 }} />
+                  </Box>
+                ))}
+              </Stack>
+            )}
+          </Paper>
+        </>
+      )}
     </Stack>
   );
 };

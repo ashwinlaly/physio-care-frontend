@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './features/auth/LoginPage';
+import { SignupPage } from './features/auth/SignupPage';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { AppLayout } from './components/AppLayout';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
@@ -23,6 +24,9 @@ import {RegisterPage} from "./features/register/RegisterPage";
 import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
 import {MonthlyAttendanceReport} from './features/attendance/MonthlyAttendanceReport';
 import { UsersAccessPage } from './features/users/UsersAccessPage';
+import { RolesPage } from './features/roles/RolesPage';
+import { UserRolesPage } from './features/users/UserRolesPage';
+import AuditLogsPage from './features/audit/AuditLogsPage';
 import { getPermissions } from './common/sessionManager';
 
 
@@ -90,6 +94,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard"  element={<PermissionRoute permission="dashboard"><DashboardPage /></PermissionRoute>} />
               <Route path="/masters" element={<div>Masters Page</div>} />
@@ -113,6 +118,9 @@ function App() {
                <Route path="/attendance" element={<PermissionRoute permission="attendance"><AttendanceMarking /></PermissionRoute>} />
                <Route path="/attendance/report" element={<PermissionRoute permission="attendance_report"><MonthlyAttendanceReport /></PermissionRoute>} />
                <Route path="/users-access" element={<PermissionRoute permission="users_access"><UsersAccessPage /></PermissionRoute>} />
+               <Route path="/roles" element={<PermissionRoute permission="roles.read"><RolesPage /></PermissionRoute>} />
+               <Route path="/users-roles" element={<PermissionRoute permission="users.update"><UserRolesPage /></PermissionRoute>} />
+               <Route path="/audit" element={<PermissionRoute permission="audit_logs.read"><AuditLogsPage /></PermissionRoute>} />
 
                <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>

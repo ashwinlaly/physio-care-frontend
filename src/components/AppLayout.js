@@ -28,6 +28,7 @@ import {
   AppRegistrationRounded,
   ExpandLess,
   ExpandMore,
+  History,
 } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -36,27 +37,28 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import Inventory from '@mui/icons-material/Inventory';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import { clearSessionTimer, hasPermission } from '../common/sessionManager';
+import {clearSessionTimer} from '../common/sessionManager';
+import { usePermission } from '../common/rbac';
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', permission: 'dashboard' },
-  { text: 'New Patient', icon: <MedicalServices />, path: '/patients/new', permission: 'patients' },
-  { text: 'Patient Details', icon: <People />, path: '/patients', permission: 'patients' },
-  { text: 'Financial', icon: <Receipt />, path: '/financial', permission: 'financial' },
-  { text: 'Appointments', icon: <EventIcon />, path: '/appointments', permission: 'appointments' },
-  { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors', permission: 'doctors' },
-  { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses', permission: 'expenses' },
-  { text: 'Register', icon: <AppRegistrationRounded />, path: '/register', permission: 'register' },
-  { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance', permission: 'attendance' },
-  { text: 'Attendance Report', icon: <AssessmentIcon />, path: '/attendance/report', permission: 'attendance_report' },
-  { text: 'Users & Access', icon: <People />, path: '/users-access', permission: 'users_access' },
+  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', permission: 'dashboard.read' },
+  { text: 'New Patient', icon: <MedicalServices />, path: '/patients/new', permission: 'patients.create' },
+  { text: 'Patient Details', icon: <People />, path: '/patients', permission: 'patients.read' },
+  { text: 'Financial', icon: <Receipt />, path: '/financial', permission: 'dashboard.read' },
+  { text: 'Appointments', icon: <EventIcon />, path: '/appointments', permission: 'appointments.read' },
+  { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors', permission: 'doctors.read' },
+  { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses', permission: 'expenses.read' },
+  { text: 'Register', icon: <AppRegistrationRounded />, path: '/register', permission: 'users.read' },
+  { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance', permission: 'attendance.read' },
+  { text: 'Attendance Report', icon: <AssessmentIcon />, path: '/attendance/report', permission: 'attendance.read' },
+  { text: 'Audit Logs', icon: <History />, path: '/audit', permission: 'audit_logs.read' },
 ];
 
 const inventoryMenuItems = [
-  { text: 'Products', path: '/products', permission: 'products' },
-  { text: 'Sales', path: '/sales', permission: 'sales' },
+  { text: 'Products', path: '/products', permission: 'products.read' },
+  { text: 'Sales', path: '/sales', permission: 'sales.read' },
 ];
 
 export const AppLayout = () => {
@@ -66,8 +68,12 @@ export const AppLayout = () => {
   const open = Boolean(anchorEl);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [inventoryOpen, setInventoryOpen] = React.useState(true);
-  const visibleMenuItems = menuItems.filter((item) => hasPermission(item.permission));
-  const visibleInventoryMenuItems = inventoryMenuItems.filter((item) => hasPermission(item.permission));
+  const { hasPermission } = usePermission();
+
+  // Filter menu items based on permissions
+  const visibleMenuItems = menuItems.filter(item => hasPermission(item.permission));
+  const visibleInventoryItems = inventoryMenuItems.filter(item => hasPermission(item.permission));
+  const hasInventoryAccess = visibleInventoryItems.length > 0;
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -82,8 +88,6 @@ export const AppLayout = () => {
     handleClose();
     clearSessionTimer();
     localStorage.removeItem('authToken');
-    localStorage.removeItem('login');
-    localStorage.removeItem('currentUser');
     navigate('/');
   };
 
@@ -144,41 +148,41 @@ export const AppLayout = () => {
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {visibleMenuItems.map((item) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton onClick={() => handleNavigate(item.path)}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+         <Box sx={{ overflow: 'auto' }}>
+           <List>
+             {visibleMenuItems.map((item) => (
+               <ListItem key={item.text} disablePadding>
+                 <ListItemButton onClick={() => handleNavigate(item.path)}>
+                   <ListItemIcon>{item.icon}</ListItemIcon>
+                   <ListItemText primary={item.text} />
+                 </ListItemButton>
+               </ListItem>
+             ))}
 
-            {visibleInventoryMenuItems.length > 0 && (
-              <>
-                <ListItem disablePadding>
-                  <ListItemButton onClick={() => setInventoryOpen((prev) => !prev)}>
-                    <ListItemIcon><Inventory /></ListItemIcon>
-                    <ListItemText primary="Inventory" />
-                    {inventoryOpen ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                </ListItem>
-                <Collapse in={inventoryOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {visibleInventoryMenuItems.map((item) => (
-                      <ListItem key={item.text} disablePadding>
-                        <ListItemButton sx={{ pl: 4 }} onClick={() => handleNavigate(item.path)}>
-                          <ListItemText primary={item.text} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Collapse>
-              </>
-            )}
-          </List>
-        </Box>
+             {hasInventoryAccess && (
+               <>
+                 <ListItem disablePadding>
+                   <ListItemButton onClick={() => setInventoryOpen((prev) => !prev)}>
+                     <ListItemIcon><Inventory /></ListItemIcon>
+                     <ListItemText primary="Inventory" />
+                     {inventoryOpen ? <ExpandLess /> : <ExpandMore />}
+                   </ListItemButton>
+                 </ListItem>
+                 <Collapse in={inventoryOpen} timeout="auto" unmountOnExit>
+                   <List component="div" disablePadding>
+                     {visibleInventoryItems.map((item) => (
+                       <ListItem key={item.text} disablePadding>
+                         <ListItemButton sx={{ pl: 4 }} onClick={() => handleNavigate(item.path)}>
+                           <ListItemText primary={item.text} />
+                         </ListItemButton>
+                       </ListItem>
+                     ))}
+                   </List>
+                 </Collapse>
+               </>
+             )}
+           </List>
+         </Box>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />

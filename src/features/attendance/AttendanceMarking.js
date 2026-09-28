@@ -19,6 +19,8 @@ import {
     ToggleButtonGroup,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LockIcon from '@mui/icons-material/Lock';
+import { usePermission } from '../../common/rbac';
 
 const FACE_API_SCRIPT_ID = 'face-api-js-script';
 const FACE_API_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js';
@@ -62,6 +64,9 @@ export const AttendanceMarking = () => {
     const [verifiedUser, setVerifiedUser] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [isMarking, setIsMarking] = useState(false);
+
+    // Permission checks
+    const canMarkAttendance = usePermission('attendance.create');
 
     const videoRef = useRef(null);
     const streamRef = useRef(null);
@@ -292,6 +297,12 @@ export const AttendanceMarking = () => {
 
                         {modelError && <Alert severity="error">Face model load error: {modelError}</Alert>}
 
+                        {!canMarkAttendance && (
+                            <Alert severity="error" icon={<LockIcon />}>
+                                You don't have permission to mark attendance. Please contact your administrator.
+                            </Alert>
+                        )}
+
                         {isModelsLoaded && (
                             <>
                                 <Chip
@@ -365,9 +376,10 @@ export const AttendanceMarking = () => {
                                     <Button
                                         variant="contained"
                                         onClick={startCamera}
-                                        disabled={isCameraRunning || isVerifying || isMarking}
+                                        disabled={isCameraRunning || isVerifying || isMarking || !canMarkAttendance}
                                         fullWidth
                                         sx={{ py: 1.5 }}
+                                        title={!canMarkAttendance ? 'You don\'t have permission to mark attendance' : ''}
                                     >
                                         Start Camera
                                     </Button>
@@ -388,12 +400,13 @@ export const AttendanceMarking = () => {
                                     variant="contained"
                                     size="large"
                                     onClick={captureAndVerifyFace}
-                                    disabled={!isCameraRunning || isCapturing || isVerifying || isMarking}
+                                    disabled={!isCameraRunning || isCapturing || isVerifying || isMarking || !canMarkAttendance}
                                     fullWidth
                                     sx={{
                                         py: 2,
                                         background: isCameraRunning && !isCapturing ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : undefined,
                                     }}
+                                    title={!canMarkAttendance ? 'You don\'t have permission to mark attendance' : ''}
                                 >
                                     {captureButtonLabel}
                                 </Button>

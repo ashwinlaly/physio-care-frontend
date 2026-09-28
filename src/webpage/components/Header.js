@@ -66,71 +66,86 @@ function Header() {
 
           <Box sx={{ flex: 1, display: { xs: 'none', md: 'block' } }} />
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            {!isMobile ? (
-              <>
-                <IconButton
-                  size="large"
-                  sx={{ color: 'primary.main' }}
-                  onClick={() => scrollToSection('contact-section')}
-                  aria-label="Location"
-                >
-                  <LocationOnOutlinedIcon />
-                </IconButton>
-                <IconButton size="small" sx={{ color: 'primary.main' }}>
-                  <FacebookIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" sx={{ color: 'primary.main' }}>
-                  <InstagramIcon fontSize="small" />
-                </IconButton>
-                <IconButton size="small" sx={{ color: 'primary.main' }}>
-                  <LinkedInIcon fontSize="small" />
-                </IconButton>
-                <IconButton
-                  size="large"
-                  sx={{ color: 'primary.main' }}
-                  onClick={() => navigate('/login')}
-                >
-                  <AccountCircleOutlinedIcon />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<MenuIcon />}
-                  sx={{ px: 2, py: 0.9, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
-                  onClick={(event) => setMobileMenuAnchor(event.currentTarget)}
-                >
-                  Menu
-                </Button>
-                <Menu
-                  anchorEl={mobileMenuAnchor}
-                  open={mobileMenuOpen}
-                  onClose={() => setMobileMenuAnchor(null)}
-                  slotProps={{ paper: { sx: { minWidth: 220 } } }}
-                >
-                  <MenuItem onClick={() => handleMobileMenuClick('home-section')}>Home</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('recovery-section')}>About Us</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('specialities-section')}>Specialities</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('treat-section')}>What We Treat</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('blog-section')}>Latest Blogs</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('faq-section')}>FAQ</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('experts-section')}>Experts</MenuItem>
-                  <MenuItem onClick={() => handleMobileMenuClick('contact-section')}>Contact Us</MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      setMobileMenuAnchor(null);
-                      navigate('/login');
-                    }}
-                  >
-                    Login
-                  </MenuItem>
-                </Menu>
-              </>
-            )}
-          </Box>
+           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+             {!isMobile ? (
+               <>
+                 <IconButton
+                   size="large"
+                   sx={{ color: 'primary.main' }}
+                   onClick={() => scrollToSection('contact-section')}
+                   aria-label="Location"
+                 >
+                   <LocationOnOutlinedIcon />
+                 </IconButton>
+                 <IconButton size="small" sx={{ color: 'primary.main' }}>
+                   <FacebookIcon fontSize="small" />
+                 </IconButton>
+                 <IconButton size="small" sx={{ color: 'primary.main' }}>
+                   <InstagramIcon fontSize="small" />
+                 </IconButton>
+                 <IconButton size="small" sx={{ color: 'primary.main' }}>
+                   <LinkedInIcon fontSize="small" />
+                 </IconButton>
+                 <Button
+                   variant="text"
+                   sx={{ color: 'primary.main', mx: 0.5 }}
+                   onClick={() => navigate('/signup')}
+                 >
+                   Sign Up
+                 </Button>
+                 <IconButton
+                   size="large"
+                   sx={{ color: 'primary.main' }}
+                   onClick={() => navigate('/login')}
+                 >
+                   <AccountCircleOutlinedIcon />
+                 </IconButton>
+               </>
+             ) : (
+               <>
+                 <Button
+                   variant="outlined"
+                   color="primary"
+                   startIcon={<MenuIcon />}
+                   sx={{ px: 2, py: 0.9, borderWidth: 2, '&:hover': { borderWidth: 2 } }}
+                   onClick={(event) => setMobileMenuAnchor(event.currentTarget)}
+                 >
+                   Menu
+                 </Button>
+                 <Menu
+                   anchorEl={mobileMenuAnchor}
+                   open={mobileMenuOpen}
+                   onClose={() => setMobileMenuAnchor(null)}
+                   slotProps={{ paper: { sx: { minWidth: 220 } } }}
+                 >
+                   <MenuItem onClick={() => handleMobileMenuClick('home-section')}>Home</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('recovery-section')}>About Us</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('specialities-section')}>Specialities</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('treat-section')}>What We Treat</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('blog-section')}>Latest Blogs</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('faq-section')}>FAQ</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('experts-section')}>Experts</MenuItem>
+                   <MenuItem onClick={() => handleMobileMenuClick('contact-section')}>Contact Us</MenuItem>
+                   <MenuItem
+                     onClick={() => {
+                       setMobileMenuAnchor(null);
+                       navigate('/signup');
+                     }}
+                   >
+                     Sign Up
+                   </MenuItem>
+                   <MenuItem
+                     onClick={() => {
+                       setMobileMenuAnchor(null);
+                       navigate('/login');
+                     }}
+                   >
+                     Login
+                   </MenuItem>
+                 </Menu>
+               </>
+             )}
+           </Box>
         </Box>
       </Toolbar>
     </AppBar>

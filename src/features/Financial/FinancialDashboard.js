@@ -29,17 +29,24 @@ import {
     Chip,
     CircularProgress,
     Divider,
-    Autocomplete, List, ListItem, ListItemText
+    Autocomplete,
+    List,
+    ListItem,
+    ListItemText,
+    Alert,
+    Tooltip,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DownloadIcon from '@mui/icons-material/Download';
+import LockIcon from '@mui/icons-material/Lock';
 import SearchIcon from '@mui/icons-material/Search';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import * as XLSX from 'xlsx';
 import {apiRequest} from "../../common/api";
 import {fireBaseDate, showToast} from "../../common/util";
+import { usePermission } from '../../common/rbac';
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -56,6 +63,9 @@ export const FinancialDashboard = () => {
     const [financialData, setFinancialData] = useState([]);
     const [expandedPatient, setExpandedPatient] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
+
+    // Permission checks
+    const canReadDashboard = usePermission('dashboard.read');
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -372,193 +382,156 @@ export const FinancialDashboard = () => {
                 Financial Dashboard
             </Typography>
 
-            {/* Summary Cards */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ bgcolor: '#E3F2FD' }}>
-                        <CardContent>
-                            <Typography variant="h6" color="text.secondary">Total Revenue</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                                ₹{summary.totalRevenue.toFixed(2)}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ bgcolor: '#F3E5F5' }}>
-                        <CardContent>
-                            <Typography variant="h6" color="text.secondary">Total Patients</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'secondary.main' }}>
-                                {summary.totalPatients}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ bgcolor: '#E8F5E9' }}>
-                        <CardContent>
-                            <Typography variant="h6" color="text.secondary">Total Sessions</Typography>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                                {summary.totalSessions}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+            {!canReadDashboard && (
+                <Alert severity="error" sx={{ mb: 3 }}>
+                    You don't have permission to access the financial dashboard.
+                </Alert>
+            )}
 
-            {/* Filters Section */}
-            <Paper sx={{ p: 3, mb: 3 }}>
-                <Grid container spacing={3} alignItems="center">
-                    {/* View Type Radio */}
-                    <Grid item xs={12} md={3}>
-                        <FormControl component="fieldset">
-                            <TextField
-                                label="Search by Name or Contact No."
-                                variant="outlined"
-                                fullWidth
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                sx={{ mb: 2 }}
-                                autoFocus
-                            />
-
-                            {searchResults.length > 0 && searchTerm.length > 0 && (
-                                <Paper elevation={1} sx={{ mb: 2 }}>
-                                    <List>
-                                        {searchResults.map(patient => (
-                                            <ListItem button key={patient.id} onClick={() => handleSelectPatient(patient)}>
-                                                <ListItemText primary={patient.name} secondary={`Contact: ${patient.contactNo}`} />
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Paper>
-                            )}
-                        </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} md={3}>
-                        <Grid item xs={12} md={viewType === 'single' ? 12 : 3}>
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    setSearchTerm('');
-                                    setSearchResults([]);
-                                    setSelectedPatient('');
-
-                                }}
-                                fullWidth
-                            >
-                               Clear
-                            </Button>
+            {canReadDashboard && (
+                <>
+                    {/* Summary Cards */}
+                    <Grid container spacing={3} sx={{ mb: 4 }}>
+                        <Grid item xs={12} sm={4}>
+                            <Card sx={{ bgcolor: '#E3F2FD' }}>
+                                <CardContent>
+                                    <Typography variant="h6" color="text.secondary">Total Revenue</Typography>
+                                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                                        ₹{calculateSummary().totalRevenue.toFixed(2)}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card sx={{ bgcolor: '#F3E5F5' }}>
+                                <CardContent>
+                                    <Typography variant="h6" color="text.secondary">Total Patients</Typography>
+                                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'secondary.main' }}>
+                                        {calculateSummary().totalPatients}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <Card sx={{ bgcolor: '#E8F5E9' }}>
+                                <CardContent>
+                                    <Typography variant="h6" color="text.secondary">Total Sessions</Typography>
+                                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                                        {calculateSummary().totalSessions}
+                                    </Typography>
+                                </CardContent>
+                            </Card>
                         </Grid>
                     </Grid>
-                    {/* Patient Selection (only for single view) */}
-                    {/*{viewType === 'single' && (*/}
-                    {/*    <Grid item xs={12} md={12} >*/}
-                    {/*        <Autocomplete*/}
-                    {/*            options={patients}*/}
-                    {/*            getOptionLabel={(option) => option.name || 'Unknown'}*/}
-                    {/*            value={patients.find(p => p.id === selectedPatient) || null}*/}
-                    {/*            onChange={(event, newValue) => {*/}
-                    {/*                setSelectedPatient(newValue ? newValue.id : '');*/}
-                    {/*            }}*/}
-                    {/*            renderInput={(params) => (*/}
-                    {/*                <TextField*/}
-                    {/*                    {...params}*/}
-                    {/*                    label="Search & Select Patient"*/}
-                    {/*                    placeholder="Type to search..."*/}
-                    {/*                />*/}
-                    {/*            )}*/}
-                    {/*            renderOption={(props, option) => (*/}
-                    {/*                <li {...props}>*/}
-                    {/*                    <Box>*/}
-                    {/*                        <Typography variant="body1">{option.name}</Typography>*/}
-                    {/*                        <Typography variant="caption" color="text.secondary">*/}
-                    {/*                            ID: {option.id}*/}
-                    {/*                        </Typography>*/}
-                    {/*                    </Box>*/}
-                    {/*                </li>*/}
-                    {/*            )}*/}
-                    {/*            isOptionEqualToValue={(option, value) => option.id === value.id}*/}
-                    {/*            noOptionsText="No patients found"*/}
-                    {/*        />*/}
-                    {/*    </Grid>*/}
-                    {/*)}*/}
 
-                     Date Range
-                    <Grid item xs={12} md={3}>
-                        <DatePicker
-                            label="From Date"
-                            value={fromDate}
-                            onChange={(newValue) => setFromDate(newValue)}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
-                            inputFormat="dd/MM/yyyy"
+                    {/* Filters Section */}
+                    <Paper sx={{ p: 3, mb: 3 }}>
+                        <Grid container spacing={3} alignItems="center">
+                            {/* View Type Radio */}
+                            <Grid item xs={12} md={3}>
+                                <FormControl component="fieldset">
+                                    <TextField
+                                        label="Search by Name or Contact No."
+                                        variant="outlined"
+                                        fullWidth
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        sx={{ mb: 2 }}
+                                        autoFocus
+                                    />
+
+                                    {searchResults.length > 0 && searchTerm.length > 0 && (
+                                        <Paper elevation={1} sx={{ mb: 2 }}>
+                                            <List>
+                                                {searchResults.map(patient => (
+                                                    <ListItem button key={patient.id} onClick={() => handleSelectPatient(patient)}>
+                                                        <ListItemText primary={patient.name} secondary={`Contact: ${patient.contactNo}`} />
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                        </Paper>
+                                    )}
+                                </FormControl>
+                            </Grid>
+
+                            <Grid item xs={12} md={3}>
+                                <Grid item xs={12} md={viewType === 'single' ? 12 : 3}>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={() => {
+                                            setSearchTerm('');
+                                            setSearchResults([]);
+                                            setSelectedPatient('');
+
+                                        }}
+                                        fullWidth
+                                    >
+                                        Clear
+                                    </Button>
+                                </Grid>
+                            </Grid>
+
+                            Date Range
+                            <Grid item xs={12} md={3}>
+                                <DatePicker
+                                    label="From Date"
+                                    value={fromDate}
+                                    onChange={(newValue) => setFromDate(newValue)}
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    inputFormat="dd/MM/yyyy"
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <DatePicker
+                                    label="To Date"
+                                    value={toDate}
+                                    onChange={(newValue) => setToDate(newValue)}
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    inputFormat="dd/MM/yyyy"
+                                />
+                            </Grid>
+
+                            {/* Export Button */}
+                            <Grid item xs={12} md={viewType === 'single' ? 12 : 3}>
+                                <Tooltip title={!canReadDashboard ? "You don't have permission to export" : ''}>
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<DownloadIcon />}
+                                            onClick={handleExportExcel}
+                                            fullWidth
+                                            disabled={financialData.length === 0 || !canReadDashboard}
+                                        >
+                                            Export to Excel
+                                        </Button>
+                                    </Box>
+                                </Tooltip>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    {/* Data Display */}
+                    {loading ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : financialData.length === 0 ? (
+                        <Paper sx={{ p: 8, textAlign: 'center' }}>
+                            <Typography variant="h6" color="text.secondary">
+                                No financial data found for the selected filters
+                            </Typography>
+                        </Paper>
+                    ) : viewType === 'single' ? (
+                        <SinglePatientView data={financialData[0]} formatDate={formatDate} patient={patient} />
+                    ) : (
+                        <AllPatientsView
+                            data={filteredFinancialData}
+                            formatDate={formatDate}
+                            expandedPatient={expandedPatient}
+                            handleExpandClick={handleExpandClick}
                         />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <DatePicker
-                            label="To Date"
-                            value={toDate}
-                            onChange={(newValue) => setToDate(newValue)}
-                            renderInput={(params) => <TextField {...params} fullWidth />}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </Grid>
-
-                    {/* Export Button */}
-                    <Grid item xs={12} md={viewType === 'single' ? 12 : 3}>
-                        <Button
-                            variant="contained"
-                            startIcon={<DownloadIcon />}
-                            onClick={handleExportExcel}
-                            fullWidth
-                            disabled={financialData.length === 0}
-                        >
-                            Export to Excel
-                        </Button>
-                    </Grid>
-
-                    {/* Search (only for all patients view) */}
-                    {/*{viewType === 'all' && (*/}
-                    {/*    <Grid item xs={12} md={9}>*/}
-                    {/*        <TextField*/}
-                    {/*            fullWidth*/}
-                    {/*            placeholder="Search by patient name..."*/}
-                    {/*            value={searchTerm}*/}
-                    {/*            onChange={(e) => setSearchTerm(e.target.value)}*/}
-                    {/*            InputProps={{*/}
-                    {/*                startAdornment: (*/}
-                    {/*                    <InputAdornment position="start">*/}
-                    {/*                        <SearchIcon />*/}
-                    {/*                    </InputAdornment>*/}
-                    {/*                ),*/}
-                    {/*            }}*/}
-                    {/*        />*/}
-                    {/*    </Grid>*/}
-                    {/*)}*/}
-                </Grid>
-            </Paper>
-
-            {/* Data Display */}
-            {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                    <CircularProgress />
-                </Box>
-            ) : financialData.length === 0 ? (
-                <Paper sx={{ p: 8, textAlign: 'center' }}>
-                    <Typography variant="h6" color="text.secondary">
-                        No financial data found for the selected filters
-                    </Typography>
-                </Paper>
-            ) : viewType === 'single' ? (
-                <SinglePatientView data={financialData[0]} formatDate={formatDate} patient={patient} />
-            ) : (
-                <AllPatientsView
-                    data={filteredFinancialData}
-                    formatDate={formatDate}
-                    expandedPatient={expandedPatient}
-                    handleExpandClick={handleExpandClick}
-                />
+                    )}
+                </>
             )}
         </Box>
     );

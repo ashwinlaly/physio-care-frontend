@@ -19,10 +19,12 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LockIcon from '@mui/icons-material/Lock';
 import { format, addDays, subDays } from 'date-fns';
 import { CreateAppointmentDialog } from './CreateAppointmentDialog';
 import { toast } from 'react-toastify';
 import {apiRequest} from "../../common/api";
+import { usePermission } from "../../common/rbac";
 
 const endpoint = process.env.REACT_APP_API_URL;
 // Time slots (1-hour intervals from 9 AM to 6 PM)
@@ -51,6 +53,11 @@ export const AppointmentsPage = () => {
     const [loading, setLoading] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [editingAppointment, setEditingAppointment] = useState(null);
+
+    // Permission checks
+    const canCreateAppointment = usePermission('appointments.create');
+    const canUpdateAppointment = usePermission('appointments.update');
+    const canDeleteAppointment = usePermission('appointments.delete');
 
     useEffect(() => {
         fetchAppointments();
@@ -166,13 +173,24 @@ export const AppointmentsPage = () => {
                 <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                     Appointments
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpenDialog()}
-                >
-                    Book Appointment
-                </Button>
+                {canCreateAppointment ? (
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        Book Appointment
+                    </Button>
+                ) : (
+                    <Button
+                        variant="contained"
+                        disabled
+                        startIcon={<LockIcon />}
+                        title="You don't have permission to create appointments"
+                    >
+                        Book Appointment (Restricted)
+                    </Button>
+                )}
             </Box>
 
             {/* Date Navigation */}
@@ -284,26 +302,29 @@ export const AppointmentsPage = () => {
                                                                     }}
                                                                 />
                                                             </Box>
-                                                            <Box sx={{ display: 'flex', gap: 1 }}>
-                                                                <IconButton
-                                                                    size="small"
-                                                                    color={appointment.status === 'completed' ? 'success' : 'default'}
-                                                                    title={appointment.status === 'completed' ? 'Mark as scheduled' : 'Mark as completed'}
-                                                                    onClick={() => handleMarkAsCompleted(appointment.id, appointment.status)}
-                                                                    sx={{
-                                                                        backgroundColor: appointment.status === 'completed' ? 'rgba(76, 175, 80, 0.1)' : 'transparent'
-                                                                    }}
-                                                                >
-                                                                    <CheckCircleIcon />
-                                                                </IconButton>
-                                                                <IconButton
-                                                                    size="small"
-                                                                    color="error"
-                                                                    onClick={() => handleDeleteAppointment(appointment.id)}
-                                                                >
-                                                                    <DeleteIcon />
-                                                                </IconButton>
-                                                            </Box>
+                                            <Box sx={{ display: 'flex', gap: 1 }}>
+                                                <IconButton
+                                                    size="small"
+                                                    color={appointment.status === 'completed' ? 'success' : 'default'}
+                                                    title={!canUpdateAppointment ? 'You don\'t have permission to update appointments' : (appointment.status === 'completed' ? 'Mark as scheduled' : 'Mark as completed')}
+                                                    onClick={() => handleMarkAsCompleted(appointment.id, appointment.status)}
+                                                    disabled={!canUpdateAppointment}
+                                                    sx={{
+                                                        backgroundColor: appointment.status === 'completed' ? 'rgba(76, 175, 80, 0.1)' : 'transparent'
+                                                    }}
+                                                >
+                                                    <CheckCircleIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                    size="small"
+                                                    color="error"
+                                                    onClick={() => handleDeleteAppointment(appointment.id)}
+                                                    disabled={!canDeleteAppointment}
+                                                    title={!canDeleteAppointment ? 'You don\'t have permission to delete appointments' : 'Delete appointment'}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Box>
                                                         </Box>
                                                     </CardContent>
                                                 </Card>
@@ -313,15 +334,28 @@ export const AppointmentsPage = () => {
 
                                     {/* Quick Add Button */}
                                     {status !== 'full' && (
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<AddIcon />}
-                                            onClick={() => handleOpenDialog({ timeSlot, date: format(selectedDate, 'yyyy-MM-dd') })}
-                                            sx={{ minWidth: '120px' }}
-                                        >
-                                            Add
-                                        </Button>
+                                        canCreateAppointment ? (
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                startIcon={<AddIcon />}
+                                                onClick={() => handleOpenDialog({ timeSlot, date: format(selectedDate, 'yyyy-MM-dd') })}
+                                                sx={{ minWidth: '120px' }}
+                                            >
+                                                Add
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="outlined"
+                                                size="small"
+                                                disabled
+                                                startIcon={<LockIcon />}
+                                                title="You don't have permission to create appointments"
+                                                sx={{ minWidth: '120px' }}
+                                            >
+                                                Add
+                                            </Button>
+                                        )
                                     )}
                                 </Box>
                             </Paper>

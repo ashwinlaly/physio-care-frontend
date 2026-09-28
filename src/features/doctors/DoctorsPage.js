@@ -27,7 +27,9 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LockIcon from '@mui/icons-material/Lock';
 import {apiRequest} from "../../common/api";
+import { usePermission, CanAccess } from "../../common/rbac";
 
 const endpoint = process.env.REACT_APP_API_URL;
 
@@ -38,6 +40,12 @@ export const DoctorsPage = () => {
     const [editingDoctor, setEditingDoctor] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, doctorId: null });
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    
+    // Permission checks
+    const canCreateDoctor = usePermission('doctors.create');
+    const canUpdateDoctor = usePermission('doctors.update');
+    const canDeleteDoctor = usePermission('doctors.delete');
+    
     let [formData, setFormData] = useState({
         name: '',
         specialization: '',
@@ -192,13 +200,24 @@ export const DoctorsPage = () => {
                 <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                     Doctors Management
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpenDialog()}
-                >
-                    Add Doctor
-                </Button>
+                {canCreateDoctor ? (
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                    >
+                        Add Doctor
+                    </Button>
+                ) : (
+                    <Button
+                        variant="contained"
+                        disabled
+                        startIcon={<LockIcon />}
+                        title="You don't have permission to create doctors"
+                    >
+                        Add Doctor (Restricted)
+                    </Button>
+                )}
             </Box>
 
             {/* Doctors Table */}
@@ -244,6 +263,8 @@ export const DoctorsPage = () => {
                                             size="small"
                                             color="primary"
                                             onClick={() => handleOpenDialog(doctor)}
+                                            disabled={!canUpdateDoctor}
+                                            title={!canUpdateDoctor ? 'You don\'t have permission to edit doctors' : 'Edit doctor'}
                                         >
                                             <EditIcon />
                                         </IconButton>
@@ -251,6 +272,8 @@ export const DoctorsPage = () => {
                                             size="small"
                                             color="error"
                                             onClick={() => handleDeleteClick(doctor.id)}
+                                            disabled={!canDeleteDoctor}
+                                            title={!canDeleteDoctor ? 'You don\'t have permission to delete doctors' : 'Delete doctor'}
                                         >
                                             <DeleteIcon />
                                         </IconButton>

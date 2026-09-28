@@ -33,8 +33,10 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import WarningIcon from '@mui/icons-material/Warning';
+import LockIcon from '@mui/icons-material/Lock';
 import { apiRequest } from '../../common/api';
 import { showToast } from '../../common/util';
+import { usePermission } from '../../common/rbac';
 import { AddEditProductDialog } from './AddEditProductDialog';
 import { StockAdjustmentDialog } from './StockAdjustmentDialog';
 
@@ -48,6 +50,11 @@ export const ProductsPage = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openStockDialog, setOpenStockDialog] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+
+    // Permission checks
+    const canCreateProduct = usePermission('products.create');
+    const canUpdateProduct = usePermission('products.update');
+    const canDeleteProduct = usePermission('products.delete');
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -133,6 +140,10 @@ export const ProductsPage = () => {
     };
 
     const handleDeleteProduct = async (productId) => {
+        if (!canDeleteProduct) {
+            showToast('You don\'t have permission to delete products', 'error');
+            return;
+        }
         if (!window.confirm('Are you sure you want to delete this product?')) {
             return;
         }
@@ -199,13 +210,24 @@ export const ProductsPage = () => {
                         Manage your clinic's product inventory
                     </Typography>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={handleAddProduct}
-                >
-                    Add Product
-                </Button>
+                {canCreateProduct ? (
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddProduct}
+                    >
+                        Add Product
+                    </Button>
+                ) : (
+                    <Button
+                        variant="contained"
+                        disabled
+                        startIcon={<LockIcon />}
+                        title="You don't have permission to create products"
+                    >
+                        Add Product (Restricted)
+                    </Button>
+                )}
             </Box>
 
             {/* Low Stock Alert */}
@@ -340,13 +362,16 @@ export const ProductsPage = () => {
                                                     color={stockStatus.color}
                                                     icon={stockStatus.icon}
                                                 />
-                                                <Tooltip title="Adjust Stock">
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={() => handleStockAdjustment(product)}
-                                                    >
-                                                        <InventoryIcon fontSize="small" />
-                                                    </IconButton>
+                                                <Tooltip title={!canUpdateProduct ? 'You don\'t have permission to adjust stock' : 'Adjust Stock'}>
+                                                    <span>
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={() => handleStockAdjustment(product)}
+                                                            disabled={!canUpdateProduct}
+                                                        >
+                                                            <InventoryIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </span>
                                                 </Tooltip>
                                             </Box>
                                             {product.currentStock <= product.minimumStockLevel && (
@@ -363,23 +388,29 @@ export const ProductsPage = () => {
                                             />
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Tooltip title="Edit">
-                                                <IconButton
-                                                    size="small"
-                                                    color="primary"
-                                                    onClick={() => handleEditProduct(product)}
-                                                >
-                                                    <EditIcon />
-                                                </IconButton>
+                                            <Tooltip title={!canUpdateProduct ? 'You don\'t have permission to edit products' : 'Edit'}>
+                                                <span>
+                                                    <IconButton
+                                                        size="small"
+                                                        color="primary"
+                                                        onClick={() => handleEditProduct(product)}
+                                                        disabled={!canUpdateProduct}
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </span>
                                             </Tooltip>
-                                            <Tooltip title="Delete">
-                                                <IconButton
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={() => handleDeleteProduct(product.id)}
-                                                >
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                            <Tooltip title={!canDeleteProduct ? 'You don\'t have permission to delete products' : 'Delete'}>
+                                                <span>
+                                                    <IconButton
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={() => handleDeleteProduct(product.id)}
+                                                        disabled={!canDeleteProduct}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </span>
                                             </Tooltip>
                                         </TableCell>
                                     </TableRow>

@@ -13,11 +13,13 @@ import {
   Slider,
   Tabs,
   Tab,
-  FormControl
+  FormControl,
+  Alert
 } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Lock as LockIcon } from '@mui/icons-material';
 import {showToast} from "../../common/util";
 import {apiRequest} from "../../common/api";
 import {MuscularEvaluationMMT} from "./components/MuscularEvaluationMMT";
@@ -26,12 +28,15 @@ import {assessmentSchema} from "../../Schema/AssessmentSchema";
 import {TabPanel} from "../../components/TabPanel";
 import {PreviewTreatment} from "./components/PreviewTreatment";
 import {TreatmentSessionsTable} from "./components/TreatmentSessionsTable";
+import { usePermission } from "../../common/rbac";
 
 const endpoint = process.env.REACT_APP_API_URL;
 export const AssessmentForm = () => {
   const { patientId, appointmentId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { hasPermission } = usePermission();
+  const canUpdatePatients = hasPermission('patients.update');
   const returnState = location.state
     ? {
         patientSearchTerm: location.state.patientSearchTerm,
@@ -486,6 +491,17 @@ const handleConfirmSubmit = async () => {
         <Typography variant="subtitle1" color="text.secondary" align="center" sx={{ mb: 3 }}>
           Complete the comprehensive assessment for Patient ID: {patientDetails?.contactNo}
         </Typography>
+
+        {!canUpdatePatients && (
+          <Alert severity="warning" sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <LockIcon fontSize="small" />
+              <Typography variant="body2">
+                You don't have permission to update patient assessments. Contact your administrator.
+              </Typography>
+            </Box>
+          </Alert>
+        )}
 
         <Divider sx={{ mb: 4 }} />
 
@@ -1075,7 +1091,7 @@ const handleConfirmSubmit = async () => {
                 fullWidth
                 size="large"
                 sx={{ mt: 4 }}
-                disabled={isSubmitting || showPreview}
+                disabled={isSubmitting || showPreview || !canUpdatePatients}
             >
               {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Review Assessment'}
             </Button>

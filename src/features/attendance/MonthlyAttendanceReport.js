@@ -21,9 +21,12 @@ import {
     TableHead,
     TableRow,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 import { apiRequest } from '../../common/api';
+import { usePermission } from '../../common/rbac';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 const ATTENDANCE_USERS_ENDPOINT = process.env.REACT_APP_ATTENDANCE_USERS_ENDPOINT || '/attendance/users';
@@ -75,6 +78,9 @@ export const MonthlyAttendanceReport = () => {
     const [reportLoading, setReportLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [report, setReport] = useState(null);
+
+    // Permission checks
+    const canReadAttendance = usePermission('attendance.read');
 
     const selectedUser = useMemo(
         () => users.find((user) => user.userId === selectedUserId) || null,
@@ -154,166 +160,180 @@ export const MonthlyAttendanceReport = () => {
                 </Typography>
             </Box>
 
-            <Card>
-                <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={4}>
-                            <FormControl fullWidth size="small" disabled={usersLoading || reportLoading}>
-                                <InputLabel id="attendance-user-label">User</InputLabel>
-                                <Select
-                                    labelId="attendance-user-label"
-                                    label="User"
-                                    value={selectedUserId}
-                                    onChange={(event) => setSelectedUserId(event.target.value)}
-                                >
-                                    {users.map((user) => (
-                                        <MenuItem key={user.userId} value={user.userId}>
-                                            {user.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={6} md={3}>
-                            <FormControl fullWidth size="small" disabled={reportLoading}>
-                                <InputLabel id="attendance-month-label">Month</InputLabel>
-                                <Select
-                                    labelId="attendance-month-label"
-                                    label="Month"
-                                    value={month}
-                                    onChange={(event) => setMonth(Number(event.target.value))}
-                                >
-                                    {monthOptions.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={6} md={3}>
-                            <TextField
-                                fullWidth
-                                size="small"
-                                label="Year"
-                                value={year}
-                                onChange={(event) => setYear(event.target.value)}
-                                disabled={reportLoading}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} md={2}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={handleGenerateReport}
-                                disabled={reportLoading || usersLoading}
-                                sx={{ height: '100%' }}
-                            >
-                                {reportLoading ? 'Loading...' : 'Search'}
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-
-            {usersLoading && (
-                <Stack direction="row" spacing={1} alignItems="center">
-                    <CircularProgress size={20} />
-                    <Typography variant="body2">Loading users...</Typography>
-                </Stack>
+            {!canReadAttendance && (
+                <Alert severity="error">
+                    You don't have permission to view attendance reports.
+                </Alert>
             )}
 
-            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-
-            {report && (
-                <Stack spacing={2}>
+            {canReadAttendance && (
+                <>
                     <Card>
                         <CardContent>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={4}>
-                                    <Typography variant="caption" color="text.secondary">User</Typography>
-                                    <Typography variant="h6">{report.name || selectedUser?.name || selectedUserId}</Typography>
+                                    <FormControl fullWidth size="small" disabled={usersLoading || reportLoading}>
+                                        <InputLabel id="attendance-user-label">User</InputLabel>
+                                        <Select
+                                            labelId="attendance-user-label"
+                                            label="User"
+                                            value={selectedUserId}
+                                            onChange={(event) => setSelectedUserId(event.target.value)}
+                                        >
+                                            {users.map((user) => (
+                                                <MenuItem key={user.userId} value={user.userId}>
+                                                    {user.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                                <Grid item xs={6} md={2}>
-                                    <Typography variant="caption" color="text.secondary">Month</Typography>
-                                    <Typography variant="h6">{report.month}/{report.year}</Typography>
+
+                                <Grid item xs={6} md={3}>
+                                    <FormControl fullWidth size="small" disabled={reportLoading}>
+                                        <InputLabel id="attendance-month-label">Month</InputLabel>
+                                        <Select
+                                            labelId="attendance-month-label"
+                                            label="Month"
+                                            value={month}
+                                            onChange={(event) => setMonth(Number(event.target.value))}
+                                        >
+                                            {monthOptions.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
-                                <Grid item xs={6} md={2}>
-                                    <Typography variant="caption" color="text.secondary">Total Hours</Typography>
-                                    <Typography variant="h6">{report.totalWorkedHours || 0}</Typography>
+
+                                <Grid item xs={6} md={3}>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        label="Year"
+                                        value={year}
+                                        onChange={(event) => setYear(event.target.value)}
+                                        disabled={reportLoading}
+                                    />
                                 </Grid>
-                                <Grid item xs={6} md={2}>
-                                    <Typography variant="caption" color="text.secondary">Sessions</Typography>
-                                    <Typography variant="h6">{report.totalSessions || 0}</Typography>
+
+                                <Grid item xs={12} md={2}>
+                                    <Tooltip title={!canReadAttendance ? "You don't have permission to generate reports" : ''}>
+                                        <Box sx={{ height: '100%' }}>
+                                            <Button
+                                                fullWidth
+                                                variant="contained"
+                                                onClick={handleGenerateReport}
+                                                disabled={reportLoading || usersLoading || !canReadAttendance}
+                                                sx={{ height: '100%' }}
+                                            >
+                                                {reportLoading ? 'Loading...' : 'Search'}
+                                            </Button>
+                                        </Box>
+                                    </Tooltip>
                                 </Grid>
-                                {/*<Grid item xs={6} md={2}>*/}
-                                {/*    <Typography variant="caption" color="text.secondary">Incomplete</Typography>*/}
-                                {/*    <Typography variant="h6">{report.totalIncompleteSessions || 0}</Typography>*/}
-                                {/*</Grid>*/}
                             </Grid>
                         </CardContent>
                     </Card>
 
-                    <TableContainer component={Paper}>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                                    <TableCell><strong>Date</strong></TableCell>
-                                    <TableCell align="center"><strong>Check-In</strong></TableCell>
-                                    <TableCell align="center"><strong>Check-Out</strong></TableCell>
-                                    <TableCell align="right"><strong>Hours</strong></TableCell>
-                                    <TableCell align="right"><strong>Minutes</strong></TableCell>
-                                    <TableCell align="center"><strong>Status</strong></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {report.items?.map((day) => (
-                                    <TableRow
-                                        key={day.dateKey}
-                                        sx={{
-                                            backgroundColor:
-                                                day.status === 'incomplete'
-                                                    ? 'rgba(244, 67, 54, 0.05)'
-                                                    : day.status === 'multiday-start' || day.status === 'multiday-end'
-                                                      ? 'rgba(255, 193, 7, 0.05)'
-                                                      : 'inherit',
-                                        }}
-                                    >
-                                        <TableCell>{day.dateKey}</TableCell>
-                                        <TableCell align="center">
-                                            {day.firstCheckInTime ? (
-                                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                                    {day.firstCheckInTime}
-                                                </Typography>
-                                            ) : (
-                                                <Typography variant="body2" color="text.secondary">
-                                                    —
-                                                </Typography>
-                                            )}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            {day.lastCheckOutTime ? (
-                                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                                    {day.lastCheckOutTime}
-                                                </Typography>
-                                            ) : (
-                                                <Typography variant="body2" color="error">
-                                                    Pending
-                                                </Typography>
-                                            )}
-                                        </TableCell>
-                                        <TableCell align="right">{day.workedHours || 0}</TableCell>
-                                        <TableCell align="right">{day.workedMinutes || 0}</TableCell>
-                                        <TableCell align="center">{getStatusChip(day.status)}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Stack>
+                    {usersLoading && (
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <CircularProgress size={20} />
+                            <Typography variant="body2">Loading users...</Typography>
+                        </Stack>
+                    )}
+
+                    {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+
+                    {report && (
+                        <Stack spacing={2}>
+                            <Card>
+                                <CardContent>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} md={4}>
+                                            <Typography variant="caption" color="text.secondary">User</Typography>
+                                            <Typography variant="h6">{report.name || selectedUser?.name || selectedUserId}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} md={2}>
+                                            <Typography variant="caption" color="text.secondary">Month</Typography>
+                                            <Typography variant="h6">{report.month}/{report.year}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} md={2}>
+                                            <Typography variant="caption" color="text.secondary">Total Hours</Typography>
+                                            <Typography variant="h6">{report.totalWorkedHours || 0}</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} md={2}>
+                                            <Typography variant="caption" color="text.secondary">Sessions</Typography>
+                                            <Typography variant="h6">{report.totalSessions || 0}</Typography>
+                                        </Grid>
+                                        {/*<Grid item xs={6} md={2}>*/}
+                                        {/*    <Typography variant="caption" color="text.secondary">Incomplete</Typography>*/}
+                                        {/*    <Typography variant="h6">{report.totalIncompleteSessions || 0}</Typography>*/}
+                                        {/*</Grid>*/}
+                                    </Grid>
+                                </CardContent>
+                            </Card>
+
+                            <TableContainer component={Paper}>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                                            <TableCell><strong>Date</strong></TableCell>
+                                            <TableCell align="center"><strong>Check-In</strong></TableCell>
+                                            <TableCell align="center"><strong>Check-Out</strong></TableCell>
+                                            <TableCell align="right"><strong>Hours</strong></TableCell>
+                                            <TableCell align="right"><strong>Minutes</strong></TableCell>
+                                            <TableCell align="center"><strong>Status</strong></TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {report.items?.map((day) => (
+                                            <TableRow
+                                                key={day.dateKey}
+                                                sx={{
+                                                    backgroundColor:
+                                                        day.status === 'incomplete'
+                                                            ? 'rgba(244, 67, 54, 0.05)'
+                                                            : day.status === 'multiday-start' || day.status === 'multiday-end'
+                                                              ? 'rgba(255, 193, 7, 0.05)'
+                                                              : 'inherit',
+                                                }}
+                                            >
+                                                <TableCell>{day.dateKey}</TableCell>
+                                                <TableCell align="center">
+                                                    {day.firstCheckInTime ? (
+                                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                                            {day.firstCheckInTime}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography variant="body2" color="text.secondary">
+                                                            —
+                                                        </Typography>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {day.lastCheckOutTime ? (
+                                                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                                            {day.lastCheckOutTime}
+                                                        </Typography>
+                                                    ) : (
+                                                        <Typography variant="body2" color="error">
+                                                            Pending
+                                                        </Typography>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell align="right">{day.workedHours || 0}</TableCell>
+                                                <TableCell align="right">{day.workedMinutes || 0}</TableCell>
+                                                <TableCell align="center">{getStatusChip(day.status)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Stack>
+                    )}
+                </>
             )}
         </Stack>
     );

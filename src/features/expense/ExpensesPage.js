@@ -35,9 +35,11 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import PendingIcon from '@mui/icons-material/Pending';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DownloadIcon from '@mui/icons-material/Download';
+import LockIcon from '@mui/icons-material/Lock';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { apiRequest } from '../../common/api';
 import { showToast } from '../../common/util';
+import { usePermission } from '../../common/rbac';
 import { AddEditExpenseDialog } from './AddEditExpenseDialog';
 import { format } from 'date-fns';
 import * as XLSX from 'xlsx';
@@ -67,6 +69,11 @@ export const ExpensesPage = () => {
     });
     const [categoryChartData, setCategoryChartData] = useState([]);
     const [monthlyChartData, setMonthlyChartData] = useState([]);
+
+    // Permission checks
+    const canCreateExpense = usePermission('expenses.create');
+    const canUpdateExpense = usePermission('expenses.update');
+    const canDeleteExpense = usePermission('expenses.delete');
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -328,16 +335,28 @@ export const ExpensesPage = () => {
     };
 
     const handleAddExpense = () => {
+        if (!canCreateExpense) {
+            showToast('You don\'t have permission to create expenses', 'error');
+            return;
+        }
         setSelectedExpense(null);
         setOpenDialog(true);
     };
 
     const handleEditExpense = (expense) => {
+        if (!canUpdateExpense) {
+            showToast('You don\'t have permission to edit expenses', 'error');
+            return;
+        }
         setSelectedExpense(expense);
         setOpenDialog(true);
     };
 
     const handleDeleteExpense = async (expenseId) => {
+        if (!canDeleteExpense) {
+            showToast('You don\'t have permission to delete expenses', 'error');
+            return;
+        }
         if (!window.confirm('Are you sure you want to delete this expense?')) {
             return;
         }
@@ -419,9 +438,15 @@ export const ExpensesPage = () => {
                     >
                         Export to Excel
                     </Button>
-                    <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddExpense}>
-                        Add Expense
-                    </Button>
+                    {canCreateExpense ? (
+                        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddExpense}>
+                            Add Expense
+                        </Button>
+                    ) : (
+                        <Button variant="contained" disabled startIcon={<LockIcon />} title="You don't have permission to create expenses">
+                            Add Expense (Restricted)
+                        </Button>
+                    )}
                 </Box>
             </Box>
 
@@ -793,23 +818,29 @@ export const ExpensesPage = () => {
                                         />
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Tooltip title="Edit">
-                                            <IconButton
-                                                size="small"
-                                                color="primary"
-                                                onClick={() => handleEditExpense(expense)}
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
+                                        <Tooltip title={!canUpdateExpense ? 'You don\'t have permission to edit expenses' : 'Edit'}>
+                                            <span>
+                                                <IconButton
+                                                    size="small"
+                                                    color="primary"
+                                                    onClick={() => handleEditExpense(expense)}
+                                                    disabled={!canUpdateExpense}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </span>
                                         </Tooltip>
-                                        <Tooltip title="Delete">
-                                            <IconButton
-                                                size="small"
-                                                color="error"
-                                                onClick={() => handleDeleteExpense(expense.id)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
+                                        <Tooltip title={!canDeleteExpense ? 'You don\'t have permission to delete expenses' : 'Delete'}>
+                                            <span>
+                                                <IconButton
+                                                    size="small"
+                                                    color="error"
+                                                    onClick={() => handleDeleteExpense(expense.id)}
+                                                    disabled={!canDeleteExpense}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </span>
                                         </Tooltip>
                                     </TableCell>
                                 </TableRow>

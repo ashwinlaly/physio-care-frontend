@@ -1,10 +1,11 @@
 // src/features/patients/PatientSearchAndSelect.jsx
 import React, { useCallback, useEffect, useState } from 'react';
-import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TextField, Button, List, ListItem, ListItemText, Paper, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Edit, Print, Delete } from '@mui/icons-material';
+import { Edit, Print, Delete, Lock as LockIcon } from '@mui/icons-material';
 import { showToast, fireBaseDate } from "../../common/util";
 import { apiRequest } from "../../common/api";
+import { usePermission } from "../../common/rbac";
 
 export const PatientSearchAndSelect = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,6 +18,8 @@ export const PatientSearchAndSelect = () => {
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { hasPermission } = usePermission();
+  const canReadPatients = hasPermission('patients.read');
 
   const endpoint = process.env.REACT_APP_API_URL;
 
@@ -139,6 +142,18 @@ export const PatientSearchAndSelect = () => {
       <Typography variant="h5" gutterBottom align="center">
         Search or Select Patient
       </Typography>
+
+      {!canReadPatients && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LockIcon fontSize="small" />
+            <Typography variant="body2">
+              You don't have permission to read patient records. Contact your administrator to enable this permission.
+            </Typography>
+          </Box>
+        </Alert>
+      )}
+
       <TextField
         label="Search by Name or Contact No."
         variant="outlined"
@@ -149,6 +164,7 @@ export const PatientSearchAndSelect = () => {
         }}
         sx={{ mb: 2 }}
         autoFocus
+        disabled={!canReadPatients}
       />
 
       {searchResults.length > 0 && searchTerm.length > 0 && (
