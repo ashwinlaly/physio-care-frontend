@@ -70,10 +70,31 @@ export const AppLayout = () => {
   const [inventoryOpen, setInventoryOpen] = React.useState(true);
   const { hasPermission } = usePermission();
 
+  // Debug: Log permissions
+  React.useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      try {
+        const parts = token.split('.');
+        const payload = JSON.parse(atob(parts[1]));
+        console.log('🔐 JWT Payload:', payload);
+        console.log('📋 Permissions in token:', payload.permissions);
+      } catch (e) {
+        console.error('Error decoding token:', e);
+      }
+    }
+  }, []);
+
   // Filter menu items based on permissions
-  const visibleMenuItems = menuItems.filter(item => hasPermission(item.permission));
+  const visibleMenuItems = menuItems.filter(item => {
+    const has = hasPermission(item.permission);
+    console.log(`🔍 Permission check: ${item.permission} = ${has}`);
+    return has;
+  });
   const visibleInventoryItems = inventoryMenuItems.filter(item => hasPermission(item.permission));
   const hasInventoryAccess = visibleInventoryItems.length > 0;
+  
+  console.log(`📊 Menu items visible: ${visibleMenuItems.length}, Inventory items: ${visibleInventoryItems.length}`);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
