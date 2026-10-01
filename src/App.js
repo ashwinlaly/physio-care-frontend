@@ -27,7 +27,7 @@ import { UsersAccessPage } from './features/users/UsersAccessPage';
 import { RolesPage } from './features/roles/RolesPage';
 import { UserRolesPage } from './features/users/UserRolesPage';
 import AuditLogsPage from './features/audit/AuditLogsPage';
-import { getPermissions } from './common/sessionManager';
+import { getPermissions, hasPermission } from './common/sessionManager';
 
 
 const theme = createTheme({
@@ -64,8 +64,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const PermissionRoute = ({ permission, children }) => {
-  const permissions = getPermissions();
-  if (!permissions.includes(permission)) {
+  if (!hasPermission(permission)) {
     return <Navigate to="/dashboard" replace />;
   }
   return children;
