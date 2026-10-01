@@ -11,9 +11,9 @@ env:
   # Example: us-central1
   REGION: 'asia-southeast1'
   # The name of your Artifact Registry repository
-  REPO_NAME: 'icure-frontend'
+  REPO_NAME: 'physio-frontend'
   # The name you want for your Cloud Run service
-  SERVICE_NAME: 'icure-frontend'
+  SERVICE_NAME: 'physio-frontend'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:

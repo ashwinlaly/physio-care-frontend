@@ -96,28 +96,28 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              <Route path="/dashboard"  element={<PermissionRoute permission="dashboard"><DashboardPage /></PermissionRoute>} />
+              <Route path="/dashboard"  element={<PermissionRoute permission="dashboard.read"><DashboardPage /></PermissionRoute>} />
               <Route path="/masters" element={<div>Masters Page</div>} />
 
-              <Route path="/patients" element={<PermissionRoute permission="patients"><PatientSearchAndSelect /></PermissionRoute>} />
-              <Route path="/patients/new" element={<PermissionRoute permission="patients"><NewPatientForm/></PermissionRoute>} />
-              <Route path="/patients/:patientId/assessment" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
-              <Route path="/patients/:patientId/appointments/new" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
-              <Route path="/patients/:patientId/appointments/:appointmentId/edit" element={<PermissionRoute permission="patients"><AssessmentForm /></PermissionRoute>} />
+              <Route path="/patients" element={<PermissionRoute permission="patients.read"><PatientSearchAndSelect /></PermissionRoute>} />
+              <Route path="/patients/new" element={<PermissionRoute permission="patients.create"><NewPatientForm/></PermissionRoute>} />
+              <Route path="/patients/:patientId/assessment" element={<PermissionRoute permission="patients.create"><AssessmentForm /></PermissionRoute>} />
+              <Route path="/patients/:patientId/appointments/new" element={<PermissionRoute permission="appointments.create"><AssessmentForm /></PermissionRoute>} />
+              <Route path="/patients/:patientId/appointments/:appointmentId/edit" element={<PermissionRoute permission="appointments.update"><AssessmentForm /></PermissionRoute>} />
 
-              <Route path="/financial" element={<PermissionRoute permission="financial"><FinancialDashboard/></PermissionRoute>} />
+              <Route path="/financial" element={<PermissionRoute permission="dashboard.read"><FinancialDashboard/></PermissionRoute>} />
 
-              <Route path="/me/profile" element={<PermissionRoute permission="profile"><Profile/></PermissionRoute>} />
-              <Route path="/doctors" element={<PermissionRoute permission="doctors"><DoctorsPage /></PermissionRoute>} />
-              <Route path="/appointments" element={<PermissionRoute permission="appointments"><AppointmentsPage /></PermissionRoute>} />
+              <Route path="/me/profile" element={<PermissionRoute permission="users.read"><Profile/></PermissionRoute>} />
+              <Route path="/doctors" element={<PermissionRoute permission="doctors.read"><DoctorsPage /></PermissionRoute>} />
+              <Route path="/appointments" element={<PermissionRoute permission="appointments.read"><AppointmentsPage /></PermissionRoute>} />
 
-               <Route path="/products" element={<PermissionRoute permission="products"><ProductsPage /></PermissionRoute>} />
-               <Route path="/sales" element={<PermissionRoute permission="sales"><SalesPage /></PermissionRoute>} />
-               <Route path="/expenses" element={<PermissionRoute permission="expenses"><ExpensesPage /></PermissionRoute>} />
-               <Route path="/register" element={<PermissionRoute permission="register"><RegisterPage /></PermissionRoute>} />
-               <Route path="/attendance" element={<PermissionRoute permission="attendance"><AttendanceMarking /></PermissionRoute>} />
-               <Route path="/attendance/report" element={<PermissionRoute permission="attendance_report"><MonthlyAttendanceReport /></PermissionRoute>} />
-               <Route path="/users-access" element={<PermissionRoute permission="users_access"><UsersAccessPage /></PermissionRoute>} />
+               <Route path="/products" element={<PermissionRoute permission="products.read"><ProductsPage /></PermissionRoute>} />
+               <Route path="/sales" element={<PermissionRoute permission="sales.read"><SalesPage /></PermissionRoute>} />
+               <Route path="/expenses" element={<PermissionRoute permission="expenses.read"><ExpensesPage /></PermissionRoute>} />
+               <Route path="/register" element={<PermissionRoute permission="users.read"><RegisterPage /></PermissionRoute>} />
+               <Route path="/attendance" element={<PermissionRoute permission="attendance.read"><AttendanceMarking /></PermissionRoute>} />
+               <Route path="/attendance/report" element={<PermissionRoute permission="attendance.read"><MonthlyAttendanceReport /></PermissionRoute>} />
+               <Route path="/users-access" element={<PermissionRoute permission="users.read"><UsersAccessPage /></PermissionRoute>} />
                <Route path="/roles" element={<PermissionRoute permission="roles.read"><RolesPage /></PermissionRoute>} />
                <Route path="/users-roles" element={<PermissionRoute permission="users.update"><UserRolesPage /></PermissionRoute>} />
                <Route path="/audit" element={<PermissionRoute permission="audit_logs.read"><AuditLogsPage /></PermissionRoute>} />

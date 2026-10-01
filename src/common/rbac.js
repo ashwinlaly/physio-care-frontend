@@ -4,11 +4,27 @@ import { getPermissions, hasAnyPermission, hasAllPermissions } from './sessionMa
 
 /**
  * Hook to check permissions in functional components
+ * When called with no arguments, returns an object with hasPermission function
+ * When called with permissions, returns boolean directly
  * @param {string|string[]} permissions - Single permission or array of permissions to check
  * @param {string} mode - 'any' for OR logic (default), 'all' for AND logic
- * @returns {boolean} - True if user has required permission(s)
+ * @returns {boolean|Object} - True if user has required permission(s), or object with hasPermission function
  */
 export const usePermission = (permissions, mode = 'any') => {
+  // If no permissions passed, return object with hasPermission function
+  if (permissions === undefined) {
+    return {
+      hasPermission: (permission) => {
+        const permissionsArray = Array.isArray(permission) ? permission : [permission];
+        if (mode === 'all') {
+          return hasAllPermissions(permissionsArray);
+        }
+        return hasAnyPermission(permissionsArray);
+      }
+    };
+  }
+  
+  // If permissions passed, return boolean directly (backward compatible)
   const permissionsArray = Array.isArray(permissions) ? permissions : [permissions];
   
   if (mode === 'all') {
@@ -33,9 +49,9 @@ export const CanAccess = ({
   fallback = null,
   testId = 'can-access'
 }) => {
-  const hasPermission = usePermission(require, mode);
+  const hasUserPermission = usePermission(require, mode);
   
-  if (!hasPermission) {
+  if (!hasUserPermission) {
     return fallback;
   }
   
@@ -57,9 +73,9 @@ export const withPermission = (
   FallbackComponent = () => null
 ) => {
   return (props) => {
-    const hasPermission = usePermission(requiredPermissions, mode);
+    const hasUserPermission = usePermission(requiredPermissions, mode);
     
-    if (!hasPermission) {
+    if (!hasUserPermission) {
       return <FallbackComponent {...props} />;
     }
     
