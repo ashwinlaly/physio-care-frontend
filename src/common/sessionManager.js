@@ -114,33 +114,64 @@ export const getPermissions = () => {
 
 /**
  * Check if current user has a specific permission
+ * Supports permission hierarchy: manage > update > create > read
  * @param {string} permissionKey - Permission to check (e.g., 'patients.read')
  * @returns {boolean} True if user has permission
  */
 export const hasPermission = (permissionKey) => {
-  return getPermissions().includes(permissionKey);
+  const userPermissions = getPermissions();
+  
+  // Direct match
+  if (userPermissions.includes(permissionKey)) {
+    return true;
+  }
+  
+  // Permission hierarchy: manage > update > create > read
+  // If user has a higher-level permission, they implicitly have lower-level ones
+  const [resource, action] = permissionKey.split('.');
+  if (!resource || !action) {
+    return false;
+  }
+  
+  const hierarchy = ['read', 'create', 'update', 'delete', 'manage'];
+  const requiredLevel = hierarchy.indexOf(action);
+  
+  if (requiredLevel === -1) {
+    // Unknown action, fall back to direct match only
+    return false;
+  }
+  
+  // Check if user has any higher-level permission for this resource
+  for (let i = requiredLevel + 1; i < hierarchy.length; i++) {
+    const higherPermission = `${resource}.${hierarchy[i]}`;
+    if (userPermissions.includes(higherPermission)) {
+      return true;
+    }
+  }
+  
+  return false;
 };
 
 /**
  * Check if user has any of the provided permissions (OR logic)
+ * Supports permission hierarchy: manage > update > create > read
  * @param {string|string[]} permissionKeys - Permission or array of permissions to check
  * @returns {boolean} True if user has any permission
  */
 export const hasAnyPermission = (permissionKeys) => {
   const permArray = Array.isArray(permissionKeys) ? permissionKeys : [permissionKeys];
-  const userPermissions = getPermissions();
-  return permArray.some(perm => userPermissions.includes(perm));
+  return permArray.some(perm => hasPermission(perm));
 };
 
 /**
  * Check if user has all of the provided permissions (AND logic)
+ * Supports permission hierarchy: manage > update > create > read
  * @param {string|string[]} permissionKeys - Permission or array of permissions to check
  * @returns {boolean} True if user has all permissions
  */
 export const hasAllPermissions = (permissionKeys) => {
   const permArray = Array.isArray(permissionKeys) ? permissionKeys : [permissionKeys];
-  const userPermissions = getPermissions();
-  return permArray.every(perm => userPermissions.includes(perm));
+  return permArray.every(perm => hasPermission(perm));
 };
 
 export const clearSessionTimer = () => {
