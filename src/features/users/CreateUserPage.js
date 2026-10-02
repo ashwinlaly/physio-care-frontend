@@ -44,7 +44,9 @@ const CreateUserPage = () => {
       const response = await apiRequest(`${process.env.REACT_APP_API_URL}/roles`, {
         auth: true,
       });
-      setRoles(response.roles || response || []);
+      // Handle different response formats
+      const rolesArray = response.data || response.roles || response || [];
+      setRoles(Array.isArray(rolesArray) ? rolesArray : []);
     } catch (error) {
       showToast(error.message || 'Unable to load roles', 'error');
       setRoles([]);
@@ -54,8 +56,21 @@ const CreateUserPage = () => {
   };
 
   useEffect(() => {
-    loadRoles();
-  }, []);
+    if (canCreateUser) {
+      loadRoles();
+    }
+  }, [canCreateUser]);
+
+  if (!canCreateUser) {
+    return (
+      <Stack spacing={3}>
+        <Typography variant="h5">Create New User</Typography>
+        <Alert severity="error">
+          You don't have permission to create new users. Please contact your administrator.
+        </Alert>
+      </Stack>
+    );
+  }
 
   const handleInputChange = (field) => (event) => {
     setForm((prev) => ({
@@ -132,31 +147,18 @@ const CreateUserPage = () => {
     }
   };
 
-  if (!canCreateUser) {
-    return (
-      <Stack spacing={3}>
-        <Typography variant="h5">Create New User</Typography>
-        <Alert severity="error">
-          You don't have permission to create new users. Please contact your administrator.
-        </Alert>
-      </Stack>
-    );
-  }
-
   return (
     <Stack spacing={3}>
-      <Typography variant="h5">Create New User</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5">Create New User</Typography>
+      </Box>
 
       <Card>
         <CardContent>
-          <Typography variant="h6" sx={{ mb: 3 }}>
-            User Details
-          </Typography>
-
           <Box component="form" onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
+            <Grid container spacing={2} alignItems="flex-end">
               {/* Name Field */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} md={3}>
                 <TextField
                   label="Full Name"
                   value={form.name}
@@ -165,11 +167,12 @@ const CreateUserPage = () => {
                   required
                   placeholder="e.g., John Doe"
                   disabled={submitting}
+                  size="small"
                 />
               </Grid>
 
               {/* Email Field */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} md={3}>
                 <TextField
                   type="email"
                   label="Email Address"
@@ -179,11 +182,12 @@ const CreateUserPage = () => {
                   required
                   placeholder="e.g., john@example.com"
                   disabled={submitting}
+                  size="small"
                 />
               </Grid>
 
               {/* Password Field */}
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} md={2}>
                 <TextField
                   type="password"
                   label="Password"
@@ -191,14 +195,15 @@ const CreateUserPage = () => {
                   onChange={handleInputChange('password')}
                   fullWidth
                   required
-                  placeholder="Minimum 6 characters"
+                  placeholder="Min 6 chars"
                   disabled={submitting}
+                  size="small"
                 />
               </Grid>
 
               {/* Role Dropdown */}
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required disabled={submitting || loadingRoles}>
+              <Grid item xs={12} sm={6} md={2}>
+                <FormControl fullWidth required disabled={submitting || loadingRoles} size="small">
                   <InputLabel id="role-select-label">Role</InputLabel>
                   <Select
                     labelId="role-select-label"
@@ -209,16 +214,14 @@ const CreateUserPage = () => {
                   >
                     {loadingRoles ? (
                       <MenuItem disabled>
-                        <CircularProgress size={20} sx={{ mr: 1 }} />
-                        Loading roles...
+                        Loading...
                       </MenuItem>
                     ) : roles.length === 0 ? (
-                      <MenuItem disabled>No roles available</MenuItem>
+                      <MenuItem disabled>No roles</MenuItem>
                     ) : (
                       roles.map((role) => (
                         <MenuItem key={role.id} value={role.id}>
                           {role.name}
-                          {role.description && ` - ${role.description}`}
                         </MenuItem>
                       ))
                     )}
@@ -227,33 +230,18 @@ const CreateUserPage = () => {
               </Grid>
 
               {/* Submit Button */}
-              <Grid item xs={12}>
-                <Tooltip
-                  title={
-                    !form.name || !form.email || !form.password || !form.roleId
-                      ? 'Please fill in all required fields'
-                      : ''
-                  }
+              <Grid item xs={12} sm={6} md={2}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={submitting || loadingRoles}
+                  fullWidth
+                  size="small"
+                  sx={{ height: '40px' }}
                 >
-                  <Box>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={submitting || loadingRoles}
-                      sx={{ mt: 1 }}
-                    >
-                      {submitting ? (
-                        <>
-                          <CircularProgress size={20} sx={{ mr: 1 }} />
-                          Creating...
-                        </>
-                      ) : (
-                        'Create User'
-                      )}
-                    </Button>
-                  </Box>
-                </Tooltip>
+                  {submitting ? 'Creating...' : 'Create'}
+                </Button>
               </Grid>
             </Grid>
           </Box>
