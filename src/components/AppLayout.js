@@ -29,6 +29,7 @@ import {
   ExpandLess,
   ExpandMore,
   History,
+  PersonAdd,
 } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -53,6 +54,7 @@ const menuItems = [
   { text: 'Register', icon: <AppRegistrationRounded />, path: '/register', permission: 'users.read' },
   { text: 'Attendance', icon: <AppRegistrationRounded />, path: '/attendance', permission: 'attendance.read' },
   { text: 'Attendance Report', icon: <AssessmentIcon />, path: '/attendance/report', permission: 'attendance.read' },
+  { text: 'Create User', icon: <PersonAdd />, path: '/users/new', permission: 'users.create' },
   { text: 'Audit Logs', icon: <History />, path: '/audit', permission: 'audit_logs.read' },
 ];
 
