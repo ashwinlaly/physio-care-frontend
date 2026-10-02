@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../../common/api';
 import { PERMISSION_OPTIONS } from '../../common/permissions';
 import { showToast } from '../../common/util';
@@ -28,6 +29,7 @@ const initialForm = {
 };
 
 const UsersAccessPage = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState([]);
@@ -120,7 +122,18 @@ const UsersAccessPage = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h5">Users & Access</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5">Users & Access</Typography>
+        {canCreateUser && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/users/new')}
+          >
+            Create New User
+          </Button>
+        )}
+      </Box>
 
       {!canReadUsers && (
         <Alert severity="error">

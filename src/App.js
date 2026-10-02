@@ -24,6 +24,7 @@ import {RegisterPage} from "./features/register/RegisterPage";
 import {AttendanceMarking} from "./features/attendance/AttendanceMarking";
 import {MonthlyAttendanceReport} from './features/attendance/MonthlyAttendanceReport';
 import { UsersAccessPage } from './features/users/UsersAccessPage';
+import { CreateUserPage } from './features/users/CreateUserPage';
 import { RolesPage } from './features/roles/RolesPage';
 import { UserRolesPage } from './features/users/UserRolesPage';
 import AuditLogsPage from './features/audit/AuditLogsPage';
@@ -116,9 +117,10 @@ function App() {
                <Route path="/register" element={<PermissionRoute permission="users.read"><RegisterPage /></PermissionRoute>} />
                <Route path="/attendance" element={<PermissionRoute permission="attendance.read"><AttendanceMarking /></PermissionRoute>} />
                <Route path="/attendance/report" element={<PermissionRoute permission="attendance.read"><MonthlyAttendanceReport /></PermissionRoute>} />
-               <Route path="/users-access" element={<PermissionRoute permission="users.read"><UsersAccessPage /></PermissionRoute>} />
-               <Route path="/roles" element={<PermissionRoute permission="roles.read"><RolesPage /></PermissionRoute>} />
-               <Route path="/users-roles" element={<PermissionRoute permission="users.update"><UserRolesPage /></PermissionRoute>} />
+                <Route path="/users-access" element={<PermissionRoute permission="users.read"><UsersAccessPage /></PermissionRoute>} />
+                <Route path="/users/new" element={<PermissionRoute permission="users.create"><CreateUserPage /></PermissionRoute>} />
+                <Route path="/roles" element={<PermissionRoute permission="roles.read"><RolesPage /></PermissionRoute>} />
+                <Route path="/users-roles" element={<PermissionRoute permission="users.update"><UserRolesPage /></PermissionRoute>} />
                <Route path="/audit" element={<PermissionRoute permission="audit_logs.read"><AuditLogsPage /></PermissionRoute>} />
 
                <Route path="*" element={<Navigate to="/dashboard" replace />} />
