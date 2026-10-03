@@ -44,10 +44,10 @@ import { usePermission } from '../common/rbac';
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', permission: 'dashboard.read' },
+  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard', permission: 'dashboard.read', adminOnly: true },
   { text: 'New Patient', icon: <MedicalServices />, path: '/patients/new', permission: 'patients.create' },
   { text: 'Patient Details', icon: <People />, path: '/patients', permission: 'patients.read' },
-  { text: 'Financial', icon: <Receipt />, path: '/financial', permission: 'dashboard.read' },
+  { text: 'Financial', icon: <Receipt />, path: '/financial', permission: 'dashboard.read', adminOnly: true },
   { text: 'Appointments', icon: <EventIcon />, path: '/appointments', permission: 'appointments.read' },
   { text: 'Doctors', icon: <LocalHospitalIcon />, path: '/doctors', permission: 'doctors.read' },
   { text: 'Expenses', icon: <AddShoppingCartIcon />, path: '/expenses', permission: 'expenses.read' },
@@ -88,7 +88,12 @@ export const AppLayout = () => {
   }, []);
 
   // Filter menu items based on permissions
+  const isAdmin = hasPermission('users.manage'); // Only Admin role has this
   const visibleMenuItems = menuItems.filter(item => {
+    // If item requires admin, check if user is admin
+    if (item.adminOnly && !isAdmin) {
+      return false;
+    }
     const has = hasPermission(item.permission);
     console.log(`🔍 Permission check: ${item.permission} = ${has}`);
     return has;
