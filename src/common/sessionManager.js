@@ -181,6 +181,43 @@ export const clearSessionTimer = () => {
   }
 };
 
+/**
+ * Determine appropriate redirect path based on user's role/permissions
+ * @returns {string} Path to redirect to
+ */
+export const getRedirectPath = () => {
+  // Admin can access dashboard
+  if (hasPermission('users.manage')) {
+    return '/dashboard';
+  }
+  
+  // Therapist - redirect to patients or appointments
+  if (hasPermission('patients.read')) {
+    return '/patients';
+  }
+  
+  // Receptionist - redirect to appointments
+  if (hasPermission('appointments.read')) {
+    return '/appointments';
+  }
+  
+  // Default fallback - redirect to first available page based on permissions
+  if (hasPermission('products.read')) {
+    return '/products';
+  }
+  
+  if (hasPermission('expenses.read')) {
+    return '/expenses';
+  }
+  
+  if (hasPermission('attendance.read')) {
+    return '/attendance';
+  }
+  
+  // Last resort - go to dashboard (will be blocked if no permission, but better than error)
+  return '/dashboard';
+};
+
 const expireSession = () => {
   localStorage.removeItem('authToken');
   localStorage.removeItem('login');

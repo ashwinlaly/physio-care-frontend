@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {apiRequest} from "../../common/api";
 import {showToast} from "../../common/util"; // Import useNavigate
-import {startSessionTimer} from "../../common/sessionManager";
+import {startSessionTimer, getRedirectPath} from "../../common/sessionManager";
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +41,10 @@ export const LoginPage = () => {
         localStorage.setItem('authToken', response.token);
         startSessionTimer(response.token);
         showToast("Logged in successfully", 'info');
-        navigate('/dashboard');
+        
+        // Determine redirect path based on user role/permissions
+        const redirectPath = getRedirectPath();
+        navigate(redirectPath);
       } catch (error) {
         console.error('Login failed:', error);
         showToast("Logged in Failed", 'error');
