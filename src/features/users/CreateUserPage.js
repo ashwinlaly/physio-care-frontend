@@ -45,8 +45,12 @@ const CreateUserPage = () => {
         auth: true,
       });
       // Handle different response formats
-      const rolesArray = response.data || response.roles || response || [];
-      setRoles(Array.isArray(rolesArray) ? rolesArray : []);
+      let rolesArray = response.data || response.roles || response || [];
+      rolesArray = Array.isArray(rolesArray) ? rolesArray : [];
+      
+      // Filter out Patient role - only show roles for staff creation (Admin, Therapist, Receptionist)
+      const staffRoles = rolesArray.filter(role => role.name && role.name.toLowerCase() !== 'patient');
+      setRoles(staffRoles);
     } catch (error) {
       showToast(error.message || 'Unable to load roles', 'error');
       setRoles([]);
@@ -125,7 +129,7 @@ const CreateUserPage = () => {
     setSubmitting(true);
     try {
       const response = await apiRequest(
-        `${process.env.REACT_APP_API_URL}/users/create-org-user`,
+        `${process.env.REACT_APP_API_URL}/me/create-org-user`,
         {
           method: 'POST',
           auth: true,
